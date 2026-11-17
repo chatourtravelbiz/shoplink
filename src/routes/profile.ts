@@ -59,7 +59,7 @@ function footer(c: ProfileContent): string {
       <a href="/blog">Blog</a><a href="/#kontak">Kontak</a>
     </nav>
     <p class="muted">Situs Pusat: <a href="https://chatourtravel.id/" target="_blank" rel="noopener">chatourtravel.id</a></p>
-    <p class="muted"><a href="https://www.facebook.com/share/1Fw2HpRVqy/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a> · <a href="https://youtube.com/@chatourofficial" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.instagram.com/chatourtravelofficial" target="_blank" rel="noopener">Instagram</a> · <a href="https://tiktok.com/@chatour.official" target="_blank" rel="noopener">TikTok</a> · <a href="https://play.google.com/store/apps/details?id=com.chatour.jamaah.app" target="_blank" rel="noopener">Aplikasi Jamaah</a></p>
+    <p class="muted"><a href="https://www.facebook.com/chatourtravelcom" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/chatourtravelcom/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@chatourtravelkediri" target="_blank" rel="noopener">TikTok</a> · <a href="https://www.youtube.com/@ChatourTravelCom" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.linkedin.com/company/chatourtravelcom" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://id.pinterest.com/chatourtravelcom/" target="_blank" rel="noopener">Pinterest</a> · <a href="https://play.google.com/store/apps/details?id=com.chatour.jamaah.app" target="_blank" rel="noopener">Aplikasi Jamaah</a></p>
     <p class="muted">© ${new Date().getFullYear()} Chatour Travel. Semua hak dilindungi.</p>
   </div></footer><button id="scroll-top" type="button" class="scroll-top" aria-label="Kembali ke atas">↑</button>`;
 }
