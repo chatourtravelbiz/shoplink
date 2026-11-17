@@ -102,7 +102,7 @@ export async function viewProduct(username, productId) {
       ${field('Catatan (opsional)', `<input name="notes" maxlength="500" class="${inputCls}" placeholder="Contoh: berangkat berdua dengan istri" />`)}
       <div class="flex items-center justify-between border-t border-stone-100 pt-3"><span class="text-sm text-stone-600">Total (<span id="qty-label">1</span> × ${priceLabel(p.price)})</span><span id="total-label" class="text-xl font-extrabold">${priceLabel(p.price)}</span></div>
       <button class="w-full py-3 rounded-xl text-white font-semibold" style="background:${t.main}">Pesan Sekarang</button>
-      <p class="text-xs text-stone-500 text-center">Order dicatat di toko, lalu kamu konfirmasi ke penjual via WhatsApp. Tanpa pembayaran online.</p>
+      <p class="text-xs text-stone-500 text-center">Order dicatat di toko, lalu kamu konfirmasi ke penjual via WhatsApp. Pembayaran manual via WhatsApp / COD / Transfer.</p>
     </form>
     ${others}
     ${storeFooter(store)}
