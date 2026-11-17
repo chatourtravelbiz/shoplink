@@ -57,11 +57,20 @@ export async function viewDashboard() {
   const sources = data.top_sources.length
     ? data.top_sources.map((s) => `<li class="flex justify-between py-2 border-t border-stone-100 text-sm"><span>${esc(s.host)}</span><span class="font-medium">${s.views} kunjungan</span></li>`).join('')
     : '<li class="py-2 text-sm text-stone-500">Belum ada data kunjungan.</li>';
+  const store = state.session.store || {};
+  // Nama toko ditampilkan apa adanya (tanpa awalan "Toko") — nama toko
+  // sudah bisa mengandung kata "Toko" sendiri (mis. "Toko Demo"), dan
+  // awalan itu membuat dashboard menulis "Toko Toko Demo". Tautan memakai
+  // domain kustom bila ada, kalau tidak chatourtravel.com/:username.
+  const storeHref = store.custom_domain
+    ? `https://${store.custom_domain}`
+    : `https://chatourtravel.com/${state.session.user.username}`;
+  const storeLabel = store.custom_domain || `chatourtravel.com/${state.session.user.username}`;
   return `${topbar('dashboard')}
   <main class="max-w-5xl mx-auto px-4 py-8">
     <div class="flex flex-wrap items-end justify-between gap-3">
       <div><h1 class="text-2xl font-bold">Halo, ${esc(state.session.user.first_name || state.session.user.username)} 👋</h1>
-      <p class="text-sm text-stone-600">Toko <b>${esc(state.session.store?.store_name || '')}</b> · <a class="text-red-700 underline" href="/${esc(state.session.user.username)}">chatourtravel.com/${esc(state.session.user.username)}</a></p></div>
+      <p class="text-sm text-stone-600"><b>${esc(store.store_name || '')}</b> · <a class="text-red-700 underline" href="${esc(storeHref)}">${esc(storeLabel)}</a></p></div>
       <a href="/products" class="px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">+ Tambah Produk</a>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6">${cards}</div>
