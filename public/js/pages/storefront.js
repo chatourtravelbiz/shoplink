@@ -35,7 +35,7 @@ function storeHeader(store) {
 }
 
 function productCard(username, p, theme) {
-  return `<a href="#/s/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" class="bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-md transition block">
+  return `<a href="/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" class="bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-md transition block">
     <img src="${esc(p.image_url)}" class="w-full h-44 object-cover" alt="${esc(p.name)}" loading="lazy" />
     <div class="p-4">
       <div class="flex items-start justify-between gap-2"><h3 class="font-semibold leading-snug">${esc(p.name)}</h3><span class="font-extrabold whitespace-nowrap" style="color:${theme.main}">${rupiah(p.price)}</span></div>
@@ -49,11 +49,11 @@ export async function viewStore(username) {
   try {
     data = await loadStore(username);
   } catch (e) {
-    return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="#/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold">Kembali ke Beranda</a></div></main>`;
+    return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold">Kembali ke Beranda</a></div></main>`;
   }
   const { store, products } = data;
   const t = themeOf(store.theme);
-  const params = new URLSearchParams(location.hash.split('?')[1] || '');
+  const params = new URLSearchParams(location.search);
   const q = params.get('q') || '';
   const cat = params.get('cat') || 'Semua';
   const cats = ['Semua', ...new Set(products.map((p) => p.category))];
@@ -77,12 +77,12 @@ export async function viewStore(username) {
 
 export function storeFilter(username, cat) {
   clearStoreCache();
-  go(`#/s/${username}${cat !== 'Semua' ? `?cat=${encodeURIComponent(cat)}` : ''}`);
+  go(`/${username}${cat !== 'Semua' ? `?cat=${encodeURIComponent(cat)}` : ''}`);
 }
 
 export async function trackClick(username) {
   try {
-    await api('/api/analytics/track', { method: 'POST', body: JSON.stringify({ store_username: username, event_type: 'click', page_path: `/s/${username}` }) });
+    await api('/api/analytics/track', { method: 'POST', body: JSON.stringify({ store_username: username, event_type: 'click', page_path: `/${username}` }) });
   } catch {
     // Analitik gagal: abaikan.
   }

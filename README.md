@@ -45,8 +45,8 @@ delegation (`data-action`), bukan inline handler berisi data user.
   status; gambar via URL tempel (Unsplash) **atau** upload file ke R2.
 - **Pengaturan** — nama toko, tagline, bio, nomor WhatsApp, mata uang, tema warna
   (emerald/rose/amber/sky/violet), logo URL.
-- **Storefront publik** — `#/s/:username`: header toko, tombol WhatsApp, grid
-  produk, filter kategori + cari; `#/s/:username/p/:id`: detail + form order.
+- **Storefront publik** — `/:username`: header toko, tombol WhatsApp, grid
+  produk, filter kategori + cari; `/:username/p/:id`: detail + form order.
 - **Order publik** — tanpa login; stok berkurang bila stok > 0 (stok 0 = pre-order
   tanpa batas); balasan berisi `whatsapp_url` (`wa.me/<nomor seller>?text=...`).
 - **Analitik** — view toko + klik produk dicatat ke `analytics_daily` /
@@ -91,7 +91,7 @@ npm run deploy
 | --- | --- |
 | Email | `john@example.com` |
 | Password | `password123` |
-| Toko | `@demo` — "Toko Demo" (`#/s/demo`) |
+| Toko | `@demo` — "Toko Demo" (`/demo`) |
 
 Seed dibuat oleh `scripts/make-seed.mjs`: hash password dihitung dengan
 PBKDF2-SHA256 Node (format `salt:hash` yang sama dengan verifikasi WebCrypto di

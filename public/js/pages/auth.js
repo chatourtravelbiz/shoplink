@@ -10,8 +10,8 @@ export function viewLanding() {
       <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight">Toko online kamu,<br/>cukup dari <span class="text-emerald-600">link di bio</span>.</h1>
       <p class="mt-4 text-stone-600 max-w-xl mx-auto">Buat etalase produk, bagikan satu link di Instagram, dan terima order langsung lewat WhatsApp. Tanpa pembayaran online, tanpa ribet — pembeli bisa bayar via WhatsApp, COD, atau transfer manual.</p>
       <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <a href="#/signup" class="px-5 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow">Buat Tokoku — Gratis</a>
-        <a href="#/s/demo" class="px-5 py-3 rounded-xl bg-white border border-stone-300 font-semibold">Lihat Toko Demo</a>
+        <a href="/signup" class="px-5 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow">Buat Tokoku — Gratis</a>
+        <a href="/demo" class="px-5 py-3 rounded-xl bg-white border border-stone-300 font-semibold">Lihat Toko Demo</a>
       </div>
       <p class="mt-3 text-xs text-stone-500">Akun demo: john@example.com / password123</p>
     </section>
@@ -26,27 +26,33 @@ export function viewLanding() {
     </section>
     <section class="mt-8 bg-emerald-700 text-white rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div><h2 class="text-xl font-bold">Mulai jualan hari ini juga</h2><p class="text-emerald-100 text-sm mt-1">Daftar 1 menit, isi produk, bagikan link tokomu.</p></div>
-      <a href="#/signup" class="px-5 py-3 rounded-xl bg-white text-emerald-700 font-semibold shrink-0">Daftar Sekarang →</a>
+      <a href="/signup" class="px-5 py-3 rounded-xl bg-white text-emerald-700 font-semibold shrink-0">Daftar Sekarang →</a>
     </section>
   </main>
   <footer class="max-w-5xl mx-auto px-4 pb-8 text-center text-xs text-stone-400">Shoplink D1 — berjalan di Cloudflare Workers + D1 + R2. Tanpa pembayaran online.</footer>`;
+}
+
+/** Field password + tombol ikon mata (lihat/sembunyikan). Tombol type="button"
+    agar tidak submit form; aria-label berubah sesuai state di toggle. */
+function passwordField(extra) {
+  return `<div class="relative"><input required type="password" name="password" ${extra} class="${inputCls} pr-10" /><button type="button" data-action="toggle-password" aria-label="Lihat password" class="absolute right-2 top-1/2 -translate-y-1/2 text-lg leading-none">👁</button></div>`;
 }
 
 export function viewSignup() {
   return `${topbar()}
   <main class="max-w-md mx-auto px-4 py-10">
     <h1 class="text-2xl font-bold">Buat akun &amp; toko</h1>
-    <p class="text-sm text-stone-600 mt-1">Sudah punya akun? <a class="text-emerald-700 underline" href="#/login">Masuk di sini</a></p>
+    <p class="text-sm text-stone-600 mt-1">Sudah punya akun? <a class="text-emerald-700 underline" href="/login">Masuk di sini</a></p>
     <form id="f-signup" class="mt-6 space-y-4 bg-white border border-stone-200 rounded-2xl p-5">
       <div id="err"></div>
       ${field('Email', `<input required type="email" name="email" class="${inputCls}" placeholder="kamu@email.com" />`)}
-      ${field('Username toko', `<input required name="username" class="${inputCls}" placeholder="tokokamu" />`, '3–30 karakter, huruf kecil/angka/underscore. Link tokomu: /s/username')}
+      ${field('Username toko', `<input required name="username" class="${inputCls}" placeholder="tokokamu" />`, '3–30 karakter, huruf kecil/angka/underscore. Link tokomu: /username')}
       <div class="grid grid-cols-2 gap-3">
         ${field('Nama depan', `<input name="first_name" class="${inputCls}" placeholder="Sifa" />`)}
         ${field('Nama belakang', `<input name="last_name" class="${inputCls}" placeholder="Putri" />`)}
       </div>
       ${field('Nomor WhatsApp', `<input required name="whatsapp_number" class="${inputCls}" placeholder="0812xxxxxx" />`, 'Dipakai pembeli untuk konfirmasi order. Boleh diawali 0 atau 62.')}
-      ${field('Password', `<input required type="password" name="password" minlength="6" class="${inputCls}" placeholder="Minimal 6 karakter" />`)}
+      ${field('Password', passwordField('minlength="6" placeholder="Minimal 6 karakter"'))}
       <button class="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold">Daftar &amp; Buat Toko</button>
     </form>
   </main>`;
@@ -56,13 +62,13 @@ export function viewLogin() {
   return `${topbar()}
   <main class="max-w-md mx-auto px-4 py-10">
     <h1 class="text-2xl font-bold">Masuk ke dashboard</h1>
-    <p class="text-sm text-stone-600 mt-1">Belum punya akun? <a class="text-emerald-700 underline" href="#/signup">Daftar di sini</a></p>
+    <p class="text-sm text-stone-600 mt-1">Belum punya akun? <a class="text-emerald-700 underline" href="/signup">Daftar di sini</a></p>
     <form id="f-login" class="mt-6 space-y-4 bg-white border border-stone-200 rounded-2xl p-5">
       <div id="err"></div>
       ${field('Email', `<input required type="email" name="email" class="${inputCls}" placeholder="kamu@email.com" />`)}
-      ${field('Password', `<input required type="password" name="password" class="${inputCls}" />`)}
+      ${field('Password', passwordField(''))}
       <button class="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold">Masuk</button>
-      <p class="text-xs text-stone-500 text-center">Akun demo: john@example.com / password123 — <a class="underline" href="#/s/demo">lihat toko demo</a></p>
+      <p class="text-xs text-stone-500 text-center">Akun demo: john@example.com / password123 — <a class="underline" href="/demo">lihat toko demo</a></p>
     </form>
   </main>`;
 }
@@ -76,7 +82,7 @@ export function bindAuth() {
       try {
         await api('/api/auth/signup', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(signup))) });
         await loadSession();
-        go('#/dashboard');
+        go('/dashboard');
       } catch (err) {
         setErr('err', err.message);
       }
@@ -89,7 +95,7 @@ export function bindAuth() {
       try {
         await api('/api/auth/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(login))) });
         await loadSession();
-        go('#/dashboard');
+        go('/dashboard');
       } catch (err) {
         setErr('err', err.message);
       }

@@ -4,6 +4,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import type { App } from './types';
+import { serveSpa } from './lib/spa';
 import { authRoutes } from './routes/auth';
 import { dashboardRoutes } from './routes/dashboard';
 import { productsRoutes } from './routes/products';
@@ -38,8 +39,16 @@ app.route('/api', storesRoutes);
 app.route('/api', analyticsRoutes);
 app.route('/api', uploadsRoutes);
 
-// 404 JSON untuk path API yang tidak dikenal.
-app.notFound((c) => c.json({ error: 'Tidak ditemukan.' }, 404));
+// 404 JSON hanya untuk /api/* yang tidak dikenal. Path non-API (/, /demo,
+// /dashboard, ...) adalah route SPA: layani index.html via binding Assets.
+// Path file statis yang hilang (ada ekstensi) tetap 404 JSON, bukan HTML.
+app.notFound(async (c) => {
+  const path = c.req.path;
+  if (path.startsWith('/api/') || /\.[a-z0-9]+$/i.test(path)) {
+    return c.json({ error: 'Tidak ditemukan.' }, 404);
+  }
+  return serveSpa(c);
+});
 
 // Jangan pernah expose stack trace / detail error internal ke client.
 app.onError((error, c) => {

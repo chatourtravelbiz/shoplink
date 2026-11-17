@@ -8,11 +8,11 @@ export async function viewProduct(username, productId) {
   try {
     data = await api(`/api/stores/${username}/products/${productId}`);
   } catch (e) {
-    return `${topbar()}<main class="max-w-3xl mx-auto px-4 py-10">${errorBox(e.message)}<a href="#/s/${esc(username)}" class="text-emerald-700 underline text-sm">← Kembali ke toko</a></main>`;
+    return `${topbar()}<main class="max-w-3xl mx-auto px-4 py-10">${errorBox(e.message)}<a href="/${esc(username)}" class="text-emerald-700 underline text-sm">← Kembali ke toko</a></main>`;
   }
   const { store, product: p } = data;
   const t = themeOf(store.theme);
-  const params = new URLSearchParams(location.hash.split('?')[1] || '');
+  const params = new URLSearchParams(location.search);
   const done = params.get('done');
   const wa = params.get('wa');
   const success = done
@@ -20,12 +20,12 @@ export async function viewProduct(username, productId) {
       <h2 class="font-bold text-emerald-800">✅ Order kamu tercatat!</h2>
       <p class="text-sm text-emerald-700 mt-1">Langkah terakhir: konfirmasi order ke penjual lewat WhatsApp supaya segera diproses.</p>
       ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener" class="inline-block mt-3 px-5 py-3 rounded-xl text-white font-semibold" style="background:#25D366">💬 Konfirmasi via WhatsApp</a>` : ''}
-      <a href="#/s/${esc(username)}" class="inline-block mt-3 ml-2 px-4 py-3 rounded-xl border bg-white text-sm font-semibold">Kembali ke Toko</a>
+      <a href="/${esc(username)}" class="inline-block mt-3 ml-2 px-4 py-3 rounded-xl border bg-white text-sm font-semibold">Kembali ke Toko</a>
     </div>`
     : '';
   return `${topbar()}
   <main class="max-w-3xl mx-auto px-4 py-8">
-    <a href="#/s/${esc(username)}" class="text-sm text-stone-600">← ${esc(store.store_name)}</a>
+    <a href="/${esc(username)}" class="text-sm text-stone-600">← ${esc(store.store_name)}</a>
     ${success}
     <div class="bg-white border border-stone-200 rounded-2xl overflow-hidden mt-4">
       <img src="${esc(p.image_url)}" class="w-full h-72 object-cover" alt="${esc(p.name)}" />
@@ -71,7 +71,7 @@ export function bindProduct() {
         method: 'POST',
         body: JSON.stringify({ ...Object.fromEntries(fd), quantity: Number(fd.get('quantity')) }),
       });
-      go(`#/s/${username}/p/${fd.get('product_id')}?done=1&wa=${encodeURIComponent(r.whatsapp_url)}`);
+      go(`/${username}/p/${fd.get('product_id')}?done=1&wa=${encodeURIComponent(r.whatsapp_url)}`);
     } catch (err) {
       setErr('err', err.message);
     }

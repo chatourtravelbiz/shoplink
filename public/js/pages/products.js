@@ -10,7 +10,7 @@ let editingProduct = null;
 
 export async function viewProducts() {
   if (!state.session) {
-    go('#/login');
+    go('/login');
     return '';
   }
   try {

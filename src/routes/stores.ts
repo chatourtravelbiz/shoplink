@@ -20,7 +20,7 @@ storesRoutes.get('/stores/:username', async (c) => {
   )
     .bind(username)
     .all<ProductRow>();
-  await trackEvent(c.env, username, 'view', `/s/${username}`, c.req.header('Referer'));
+  await trackEvent(c.env, username, 'view', `/${username}`, c.req.header('Referer'));
   return c.json({ store: publicStore(store), products: (rows.results ?? []).map(publicProduct) });
 });
 

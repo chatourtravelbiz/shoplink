@@ -1,4 +1,4 @@
-// Util murni: format, escape HTML, tema, label. Tidak ada akses DOM/API di sini.
+// Util murni: format, escape HTML, tema, label — kecuali go(), navigasi SPA.
 export const rupiah = (n) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(n) || 0);
 
@@ -24,8 +24,20 @@ export const STATUS_CLASS = {
   cancelled: 'bg-rose-100 text-rose-800',
 };
 
-export function go(hash) {
-  location.hash = hash;
+/** Navigasi SPA path bersih (History API). */
+export function go(path) {
+  history.pushState(null, '', String(path || '/'));
+  window.dispatchEvent(new Event('popstate'));
+}
+
+/** Toggle lihat/sembunyikan password pada field di sekitar tombol. */
+export function togglePasswordVisibility(button) {
+  const input = button.closest('div')?.querySelector('input');
+  if (!input) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  button.textContent = show ? '🙈' : '👁';
+  button.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Lihat password');
 }
 
 /** Nomor WhatsApp -> digit internasional (0... jadi 62...). */
