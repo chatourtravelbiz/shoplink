@@ -21,6 +21,7 @@ export type UserRow = {
   whatsapp_number: string;
   avatar_url: string | null;
   role: string;
+  email_verified: number;
   created_at: string;
 };
 

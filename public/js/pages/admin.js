@@ -221,17 +221,21 @@ export async function viewAdmin() {
     return `${topbar('admin')}<main class="max-w-3xl mx-auto px-4 py-10 text-center"><h1 class="text-xl font-bold">Admin Platform</h1><p class="text-stone-600 text-sm mt-2">Silakan masuk dulu dengan akun admin.</p><a href="/login" class="inline-block mt-4 px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">Masuk</a></main>`;
   }
   const tab = new URLSearchParams(location.search).get('tab') || 'users';
+  const isSuper = roleOf() === 'super_admin';
   let data;
+  let settings = null;
   try {
-    const [overview, users, stores, orders, posts] = await Promise.all([
+    const [overview, users, stores, orders, posts, st] = await Promise.all([
       api('/api/admin/overview'),
       api('/api/admin/users'),
       api('/api/admin/stores'),
       api('/api/admin/orders'),
       api('/api/admin/posts'),
+      isSuper ? api('/api/admin/settings').catch(() => null) : Promise.resolve(null),
     ]);
     data = { overview, users: users.users, stores: stores.stores, orders: orders.orders };
     currentPosts = posts.posts || [];
+    settings = st;
   } catch (e) {
     return `${topbar('admin')}<main class="max-w-5xl mx-auto px-4 py-10">${errorBox(e.message)}<p class="text-sm text-stone-600 mt-3">Halaman ini hanya untuk admin platform (Super Admin / Admin / Moderator / Support). Akun merchant tidak bisa masuk.</p></main>`;
   }
@@ -243,7 +247,8 @@ export async function viewAdmin() {
   const body = tab === 'stores' ? storesTable(data.stores)
     : tab === 'orders' ? ordersTable(data.orders)
       : tab === 'posts' ? postsTable(currentPosts)
-        : usersTable(data.users, roleOf() === 'super_admin');
+        : tab === 'settings' ? settingsSection(settings, isSuper)
+          : usersTable(data.users, roleOf() === 'super_admin');
   return `${topbar('admin')}
   <main class="max-w-5xl mx-auto px-4 py-8">
     <div class="flex flex-wrap items-end justify-between gap-2">
@@ -257,6 +262,7 @@ export async function viewAdmin() {
       ${tabBtn('stores', tab, `Toko (${t.stores})`)}
       ${tabBtn('orders', tab, `Order (${t.orders})`)}
       ${tabBtn('posts', tab, `Blog (${currentPosts.length})`)}
+      ${isSuper ? tabBtn('settings', tab, 'Pengaturan') : ''}
     </div>
     <div class="mt-4">${body}</div>
   </main>`;
@@ -317,8 +323,41 @@ export function bindPostForm(render) {
   });
 }
 
+/** Tab Pengaturan (hanya Super Admin): kunci API Resend untuk email verifikasi. */
+function settingsSection(s, isSuper) {
+  if (!isSuper) return '<p class="text-sm text-stone-600">Hanya Super Admin yang bisa mengubah pengaturan platform.</p>';
+  const st = s || { configured: false, key_masked: '', from: '' };
+  return `<form id="f-admin-settings" class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4 max-w-2xl">
+    <h2 class="font-bold">Pengaturan Platform</h2>
+    <div id="settings-msg"></div>
+    <p class="text-sm ${st.configured ? 'text-emerald-700' : 'text-amber-700'}">${st.configured ? `✓ Kunci Resend terpasang (${esc(st.key_masked)}). Email verifikasi akan dikirim.` : '⚠ Belum ada kunci Resend — email verifikasi tidak akan terkirim sampai kunci diisi.'}</p>
+    <div><label class="text-sm font-medium text-stone-700">Kunci API Resend *</label>
+      <input type="password" name="resend_api_key" autocomplete="off" placeholder="re_... — kosongkan bila tidak mengganti" class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+      <span class="text-xs text-stone-500">Dapatkan di resend.com → API Keys. Kunci disimpan di server dan tidak pernah ditampilkan utuh.</span></div>
+    <div><label class="text-sm font-medium text-stone-700">Alamat pengirim</label>
+      <input name="resend_from" value="${esc(st.from || 'Chatour Travel <noreply@chatourtravel.com>')}" class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+      <span class="text-xs text-stone-500">Domain pengirim harus sudah terverifikasi di Resend (Settings → Domains) — tanpa itu Resend menolak pengiriman.</span></div>
+    <button class="px-4 py-2 rounded-xl bg-red-700 text-white font-semibold text-sm">Simpan Pengaturan</button>
+  </form>`;
+}
+
 /** Pasang listener ubah-role (change) bila select role ada di DOM. */
 export function bindAdmin() {
+  const settingsForm = document.getElementById('f-admin-settings');
+  if (settingsForm && !settingsForm.dataset.bound) {
+    settingsForm.dataset.bound = '1';
+    settingsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msgEl = document.getElementById('settings-msg');
+      try {
+        const r = await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify(Object.fromEntries(new FormData(settingsForm))) });
+        if (msgEl) msgEl.innerHTML = `<div class="rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-2 text-sm">✓ Pengaturan tersimpan.${r.configured ? ` Kunci Resend terpasang (${esc(r.key_masked)}).` : ''}</div>`;
+        settingsForm.querySelector('[name="resend_api_key"]').value = '';
+      } catch (err) {
+        if (msgEl) msgEl.innerHTML = errorBox(err.message);
+      }
+    });
+  }
   document.querySelectorAll('[data-role-user]').forEach((sel) => {
     sel.addEventListener('focus', () => { sel.dataset.prev = sel.value; });
     sel.addEventListener('change', async () => {

@@ -9,7 +9,11 @@ export async function api(path, opts = {}) {
     ...opts,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Gagal (${res.status})`);
+  if (!res.ok) {
+    const e = new Error(data.error || `Gagal (${res.status})`);
+    e.code = data.code || null;
+    throw e;
+  }
   return data;
 }
 

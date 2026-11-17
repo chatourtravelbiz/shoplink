@@ -9,6 +9,7 @@ import { publicOrder, publicPost, publicStore } from '../lib/db';
 import { logAudit, requireAdmin, type AdminRole } from '../lib/rbac';
 import { isPostStatus, isRole, isSlug, isStoreStatus, str } from '../lib/validation';
 import { newId } from '../lib/crypto';
+import { getResendStatus, setPlatformSetting } from '../lib/email';
 
 export const adminRoutes: App = new Hono();
 
@@ -216,4 +217,28 @@ adminRoutes.delete('/admin/posts/:id', async (c) => {
   if ((res.meta?.changes ?? 0) === 0) return err(c, 404, 'Artikel tidak ditemukan.');
   await logAudit(c.env, me.id, 'post:delete', 'post', c.req.param('id'));
   return c.json({ ok: true });
+});
+
+// Pengaturan platform — hanya Super Admin (kunci API email itu kredensial).
+adminRoutes.get('/admin/settings', async (c) => {
+  const me = await requireAdmin(c, ['super_admin']);
+  if (me instanceof Response) return me;
+  return c.json(await getResendStatus(c.env));
+});
+
+adminRoutes.put('/admin/settings', async (c) => {
+  const me = await requireAdmin(c, ['super_admin']);
+  if (me instanceof Response) return me;
+  const body = await jsonBody(c);
+  if (!body) return err(c, 400, 'Data tidak valid.');
+  // Kunci kosong = jangan ubah (agar tidak terhapus tak sengaja).
+  const key = str(body.resend_api_key, 200);
+  if (key) await setPlatformSetting(c.env, 'resend_api_key', key);
+  const from = str(body.resend_from, 200);
+  if (from) {
+    if (!from.includes('@')) return err(c, 400, 'Alamat pengirim harus berisi @.');
+    await setPlatformSetting(c.env, 'resend_from', from);
+  }
+  await logAudit(c.env, me.id, 'settings:update', 'platform', 'resend');
+  return c.json(await getResendStatus(c.env));
 });

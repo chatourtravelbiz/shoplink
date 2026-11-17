@@ -56,6 +56,11 @@ export function newSessionToken(): string {
   return `ms_${randomHex(32)}`;
 }
 
+/** Token acak 64 karakter hex — untuk tautan verifikasi email. */
+export function newToken(): string {
+  return randomHex(32);
+}
+
 export function newId(prefix: string): string {
   return `${prefix}_${randomHex(10)}`;
 }
