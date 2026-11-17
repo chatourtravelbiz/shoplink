@@ -91,6 +91,16 @@ app.notFound(async (c) => {
     return c.json({ error: 'Tidak ditemukan.' }, 404);
   }
   const customStore = c.get('customStore');
+  // /demo pindah permanen ke demo.chatourtravel.com (301; query dipertahankan,
+  // mis. /demo/p/:id?done=1&wa=... dari alur order). Berlaku juga bila path
+  // /demo dibuka di subdomain itu sendiri (→ /).
+  const demoMatch = /^\/demo(\/.*)?$/.exec(path);
+  if (demoMatch) {
+    const url = new URL(c.req.url);
+    url.hostname = 'demo.chatourtravel.com';
+    url.pathname = path.slice(5) || '/';
+    return c.redirect(url.toString(), 301);
+  }
   if (customStore) {
     const productMatch = /^\/p\/([^/]+)$/.exec(path);
     if (productMatch) return serveSpaForStore(c, customStore, productMatch[1]);

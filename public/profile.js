@@ -98,6 +98,20 @@ async function init() {
     </div>`).join("");
 }
 
+// Mode gelap — pilihan tersimpan di localStorage ('ct-theme'), kunci yang
+// sama dipakai SPA. Script anti-kedip di <head> sudah memasang class-nya.
+(function () {
+  const btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  const sync = () => { btn.textContent = document.documentElement.classList.contains("dark") ? "☀️" : "🌙"; };
+  sync();
+  btn.addEventListener("click", () => {
+    const dark = document.documentElement.classList.toggle("dark");
+    try { localStorage.setItem("ct-theme", dark ? "dark" : "light"); } catch { /* abaikan */ }
+    sync();
+  });
+})();
+
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-faq]");
   if (!btn) return;

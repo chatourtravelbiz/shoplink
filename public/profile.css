@@ -177,6 +177,33 @@ img { max-width: 100%; }
 .social-list svg { vertical-align: -3px; }
 .chip { display: inline-block; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); margin: 4px; font-size: 0.9rem; }
 
+/* Mode gelap — cukup timpa variabel; hero, strip legalitas & footer
+   (sudah gelap) tidak berubah. Tombol tetap di kotak putih agar terbaca. */
+html.dark {
+  color-scheme: dark;
+  --bg: #1c1917;
+  --ink: #fafaf9;
+  --muted: #a8a29e;
+  --line: #44403c;
+  --white: #292524;
+  --red-soft: #292524;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+html.dark .topbar { background: rgba(28, 25, 23, 0.96); }
+html.dark .nav a:hover { background: #44403c; color: #fca5a5; }
+html.dark .subhead, html.dark .group-title { color: #fca5a5; }
+html.dark .stat-num, html.dark .feature h3, html.dark .contact-card h3, html.dark .toc-title { color: #f87171; }
+html.dark .article-body p { color: #e7e5e4; }
+html.dark .faq-q { color: #fafaf9; }
+.theme-toggle {
+  margin-left: 8px; flex: none;
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--line); border-radius: 999px;
+  font-size: 1.05rem; cursor: pointer;
+}
+.theme-toggle:hover { background: var(--red-soft); }
+
 @media (max-width: 640px) {
   .nav { display: none; }
   .hero h1 { font-size: 1.7rem; }

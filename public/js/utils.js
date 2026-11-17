@@ -49,6 +49,20 @@ export function togglePasswordVisibility(button) {
   button.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Lihat password');
 }
 
+/** Mode gelap/terang SPA — pilihan tersimpan di localStorage ('ct-theme'),
+ *  kunci yang sama dipakai company profile. Tanpa nilai tersimpan, ikut
+ *  prefers-color-scheme (diterapkan sebelum paint oleh script di spa.html). */
+export function isDark() {
+  return document.documentElement.classList.contains('dark');
+}
+
+export function toggleTheme() {
+  const dark = document.documentElement.classList.toggle('dark');
+  try { localStorage.setItem('ct-theme', dark ? 'dark' : 'light'); } catch { /* abaikan */ }
+  const btn = document.querySelector('[data-action="toggle-theme"]');
+  if (btn) btn.textContent = dark ? '☀️' : '🌙';
+}
+
 /** Nomor WhatsApp -> digit internasional (0... jadi 62...). */
 export function waDigits(phone) {
   const digits = String(phone ?? '').replace(/\D/g, '');

@@ -2,7 +2,7 @@
 // user di inline handler: semua aksi lewat data-action / data-id, dan semua
 // output di-escape (esc()).
 import { loadSession, logout } from './api.js';
-import { go, togglePasswordVisibility } from './utils.js';
+import { go, togglePasswordVisibility, toggleTheme } from './utils.js';
 import { isInternalPath, parsePath } from './router.js';
 import { errorBox, topbar } from './ui.js';
 import { bindAuth, viewLogin, viewSignup } from './pages/auth.js';
@@ -68,6 +68,8 @@ document.addEventListener('click', async (e) => {
   if (action === 'logout') {
     await logout();
     go('/login');
+  } else if (action === 'toggle-theme') {
+    toggleTheme();
   } else if (action === 'toggle-password') {
     togglePasswordVisibility(el);
   } else if (action === 'new-product') {

@@ -35,7 +35,7 @@ async function getContent(env: Env): Promise<ProfileContent> {
   } catch {
     // pakai default di bawah
   }
-  return { waLink: '#', shopUrl: 'https://chatourtravel.com/demo', email: 'info@chatourtravel.com' };
+  return { waLink: '#', shopUrl: 'https://demo.chatourtravel.com/', email: 'info@chatourtravel.com' };
 }
 
 function header(c: ProfileContent): string {
@@ -45,6 +45,7 @@ function header(c: ProfileContent): string {
       <a href="/#tentang">Tentang</a><a href="/#umroh">Paket Umroh</a><a href="/#haji">Paket Haji</a>
       <a href="/blog">Blog</a><a href="/#kontak">Kontak</a>
     </nav>
+    <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Ganti mode gelap/terang">🌙</button>
     <a class="btn btn-wa" href="${esc(c.waLink || '#')}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
   </div></header>`;
 }
@@ -62,6 +63,9 @@ function footer(c: ProfileContent): string {
     <p class="muted">© ${new Date().getFullYear()} Chatour Travel. Semua hak dilindungi.</p>
   </div></footer>`;
 }
+
+/** Saklar mode gelap halaman blog (beranda memakai profile.js). */
+const THEME_SCRIPT = `<script>(function(){var b=document.getElementById('theme-toggle');if(!b)return;var s=function(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙'};s();b.addEventListener('click',function(){var d=document.documentElement.classList.toggle('dark');try{localStorage.setItem('ct-theme',d?'dark':'light')}catch(e){}s();});})();</script>`;
 
 function page(site: string, opts: {
   title: string; description: string; canonical: string; ogImage?: string;
@@ -81,9 +85,10 @@ function page(site: string, opts: {
   <meta property="og:image" content="${esc(ogImage || `${site}/logo-chatour.png`)}" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/png" href="/logo-chatour.png" />
-  <link rel="stylesheet" href="/profile.css" />`;
+  <link rel="stylesheet" href="/profile.css" />
+  <script>try{var t=localStorage.getItem('ct-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}</script>`;
   const ld = jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : '';
-  return new Response(`<!doctype html><html lang="id"><head>${meta}${ld}</head><body>${header(content)}<main>${body}</main>${footer(content)}${script || ''}</body></html>`, {
+  return new Response(`<!doctype html><html lang="id"><head>${meta}${ld}</head><body>${header(content)}<main>${body}</main>${footer(content)}${script || ''}${THEME_SCRIPT}</body></html>`, {
     headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' },
   });
 }

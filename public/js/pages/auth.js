@@ -39,7 +39,7 @@ export function viewLogin() {
       ${field('Email', `<input required type="email" name="email" class="${inputCls}" placeholder="kamu@email.com" />`)}
       ${field('Password', passwordField(''))}
       <button class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Masuk</button>
-      <p class="text-xs text-stone-500 text-center">Akun demo: john@example.com / password123 — <a class="underline" href="/demo">lihat toko demo</a></p>
+      <p class="text-xs text-stone-500 text-center">Akun demo: john@example.com / password123 — <a class="underline" href="https://demo.chatourtravel.com/" target="_blank" rel="noopener">lihat toko demo</a></p>
     </form>
   </main>`;
 }
