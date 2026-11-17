@@ -15,7 +15,7 @@ const WA_PATH =
 const WA_SVG =
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" focusable="false"><path d="${WA_PATH}"/></svg>`;
 
-type ProfileContent = { waLink?: string; shopUrl?: string; email?: string };
+type ProfileContent = { waLink?: string; shopUrl?: string; email?: string; agen?: { waLink?: string } };
 
 const esc = (s: unknown): string =>
   String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] as string);
@@ -46,7 +46,7 @@ function header(c: ProfileContent): string {
       <a href="/blog">Blog</a><a href="/#kontak">Kontak</a>
     </nav>
     <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Ganti mode gelap/terang">🌙</button>
-    <a class="btn btn-wa" href="${esc(c.waLink || '#')}" target="_blank" rel="noopener">${WA_SVG}<span class="btn-wa-label">WhatsApp</span></a>
+    <a class="btn btn-wa" href="${esc(c.agen?.waLink || c.waLink || '#')}" target="_blank" rel="noopener">${WA_SVG}<span class="btn-wa-label">WhatsApp</span></a>
   </div></header>`;
 }
 
@@ -178,7 +178,7 @@ profileRoutes.get('/blog/:slug', async (c) => {
       ${row.cover_url ? `<img src="${esc(row.cover_url)}" alt="${esc(row.title)}" style="width:100%;border-radius:12px;margin:16px 0" />` : ''}
       ${tocHtml(toc)}
       <div class="article-body">${articleHtml}</div>
-      <p class="note" style="margin-top:32px">Punya pertanyaan tentang paket Umroh &amp; Haji? <a href="${esc(content.waLink || '#')}" target="_blank" rel="noopener">Hubungi kami via WhatsApp</a>.</p>
+      <p class="note" style="margin-top:32px">Punya pertanyaan tentang paket Umroh &amp; Haji? <a href="${esc(content.agen?.waLink || content.waLink || '#')}" target="_blank" rel="noopener">Hubungi kami via WhatsApp</a>.</p>
     </div></section>`,
     content,
   });

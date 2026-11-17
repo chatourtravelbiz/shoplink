@@ -17,6 +17,13 @@ const SOCIAL_PATHS: Record<string, string> = {
 type C = Record<string, any>;
 
 const waHref = (c: C, text?: string): string => {
+  // Tombol WA utama mengarah ke agen Kediri (Sifa), bukan ke pusat.
+  const base = c.agen?.waLink || c.waLink || '#';
+  return text ? `${base}${base.includes('?') ? '&' : '?'}text=${encodeURIComponent(text)}` : base;
+};
+
+// Khusus kartu kantor pusat: tetap nomor pusat.
+const waHrefPusat = (c: C, text?: string): string => {
   const base = c.waLink || '#';
   return text ? `${base}${base.includes('?') ? '&' : '?'}text=${encodeURIComponent(text)}` : base;
 };
@@ -91,7 +98,7 @@ export async function renderHome(env: Env): Promise<Response | null> {
   html = fill(html, 'cara-daftar', (c.caraDaftar || []).map((s: any) => `<article class="card"><span class="step-num">${esc(s.langkah)}</span><h3>${esc(s.judul)}</h3><p>${esc(s.isi)}</p></article>`).join(''));
   html = fill(html, 'testimoni', (c.testimoni || []).map((t: any) => `<article class="card"><p class="quote">&ldquo;${esc(t.isi)}&rdquo;</p><p class="quote-name">${esc(t.nama)}</p></article>`).join(''));
   html = fill(html, 'faq-list', (c.faq || []).map((f: any, i: number) => `<div class="faq-item"><button class="faq-q" type="button" aria-expanded="${i === 0}" data-faq="${i}">${esc(f.q)}<span aria-hidden="true">${i === 0 ? '−' : '+'}</span></button><div class="faq-a" ${i === 0 ? '' : 'hidden'}>${esc(f.a)}</div></div>`).join(''));
-  html = fillHrefText(html, 'kontak-wa', waHref(c), c.waNumber);
+  html = fillHrefText(html, 'kontak-wa', waHrefPusat(c), c.waNumber);
   html = fillHrefText(html, 'kontak-tel', c.telLink || '#', c.telepon);
   html = fillHrefText(html, 'kontak-email', `mailto:${c.email}`, c.email);
   html = fill(html, 'kontak-email-note', esc(c.emailNote || ''));

@@ -23,6 +23,13 @@ const socialLinks = (c) => (c.sosial || []).map((s) =>
 
 
 const waHref = (c, text) => {
+  // Tombol WA utama mengarah ke agen Kediri (Sifa), bukan ke pusat.
+  const base = (c.agen && c.agen.waLink) || c.waLink || "#";
+  return text ? `${base}${base.includes("?") ? "&" : "?"}text=${encodeURIComponent(text)}` : base;
+};
+
+// Khusus kartu kantor pusat: tetap nomor pusat.
+const waHrefPusat = (c, text) => {
   const base = c.waLink || "#";
   return text ? `${base}${base.includes("?") ? "&" : "?"}text=${encodeURIComponent(text)}` : base;
 };
@@ -45,7 +52,7 @@ async function init() {
   } catch {
     return; // HTML statis tetap tampil walau JSON gagal dimuat
   }
-  document.title = `${c.biro} — Biro Umroh & Haji`;
+  document.title = c.seoTitle || `${c.biro} — Biro Umroh & Haji`;
   document.getElementById("hero-title").textContent = c.heroTitle;
   document.getElementById("hero-sub").textContent = c.heroSub;
   document.getElementById("tentang-text").textContent = c.tentang;
@@ -56,7 +63,7 @@ async function init() {
     document.getElementById(id).href = waHref(c, "Assalamu'alaikum, saya ingin bertanya tentang paket Umroh & Haji Chatour Travel.");
   }
   const waEl = document.getElementById("kontak-wa");
-  waEl.href = waHref(c);
+  waEl.href = waHrefPusat(c);
   waEl.textContent = c.waNumber;
   const telEl = document.getElementById("kontak-tel");
   telEl.href = c.telLink || "#";
