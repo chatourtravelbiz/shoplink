@@ -2,7 +2,7 @@
 import { api, state } from '../api.js';
 import { THEMES, esc, go, storePath, themeOf } from '../utils.js';
 import { icon, waIcon } from '../icons.js';
-import { field, inputCls, setErr, showToast, topbar } from '../ui.js';
+import { bindPasswordForm, field, inputCls, passwordForm, setErr, showToast, topbar } from '../ui.js';
 
 const BUTTON_STYLES = [
   ['rounded', 'Membulat'],
@@ -129,6 +129,7 @@ export function viewSettings() {
       </div>
       <button class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Simpan Pengaturan</button>
     </form>
+    <div class="mt-6">${passwordForm()}</div>
     ${domainSection(s)}
   </main>`;
 }
@@ -148,6 +149,7 @@ export function pickTheme(key) {
 }
 
 export function bindSettings() {
+  bindPasswordForm();
   const form = document.getElementById('f-settings');
   if (form && !form.dataset.bound) {
     form.dataset.bound = '1';

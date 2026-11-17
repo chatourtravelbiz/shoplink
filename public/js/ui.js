@@ -1,7 +1,7 @@
 // Komponen UI bersama (topbar, field form, kotak error). Semua teks dinamis
 // yang berasal dari user/server sudah di-escape oleh pemanggil via esc().
 import { esc, isDark, storePath } from './utils.js';
-import { state } from './api.js';
+import { api, state } from './api.js';
 
 export const inputCls = 'mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 bg-white';
 
@@ -51,4 +51,36 @@ export function topbar(active) {
       <a href="${state.session ? '/dashboard' : 'https://chatourtravel.com/'}" class="flex items-center gap-2 text-xl font-extrabold tracking-tight whitespace-nowrap"><img src="/logo-chatour.png" alt="Chatour Travel" class="h-9 w-9 object-contain" />Chatour <span class="text-red-700">Travel</span></a>
       <nav class="flex items-center gap-1 text-sm overflow-x-auto">${links}</nav>
     </div></header>`;
+}
+
+/** Form ganti password — dipakai di /admin (semua role admin) dan di
+    Pengaturan toko (merchant). Tombol mata memakai aksi global
+    toggle-password yang sudah ditangani app.js. */
+export function passwordForm() {
+  const pw = (name, extra) => `<div class="relative"><input required type="password" name="${name}" ${extra} class="${inputCls} pr-10" /><button type="button" data-action="toggle-password" aria-label="Lihat password" class="absolute right-2 top-1/2 -translate-y-1/2 text-lg leading-none">👁</button></div>`;
+  return `<form id="f-change-password" class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+    <h2 class="font-bold">Ganti Password</h2>
+    <div id="pw-err"></div>
+    ${field('Password saat ini *', pw('current_password', 'autocomplete="current-password"'))}
+    ${field('Password baru *', pw('new_password', 'minlength="6" autocomplete="new-password" placeholder="Minimal 6 karakter"'))}
+    ${field('Ulangi password baru *', pw('confirm_password', 'minlength="6" autocomplete="new-password"'))}
+    <button class="px-4 py-2 rounded-xl bg-red-700 text-white font-semibold text-sm">Ganti Password</button>
+  </form>`;
+}
+
+export function bindPasswordForm() {
+  const form = document.getElementById('f-change-password');
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = '1';
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('/api/auth/change-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) });
+      form.reset();
+      const ok = document.getElementById('pw-err');
+      if (ok) ok.innerHTML = `<div class="rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-2 text-sm">✓ Password berhasil diganti. Sesi di perangkat lain sudah dicabut.</div>`;
+    } catch (err) {
+      setErr('pw-err', err.message);
+    }
+  });
 }

@@ -2,7 +2,7 @@
 // tampilan di sini hanya menyembunyikan tombol yang memang tidak boleh dipakai.
 import { api, state } from '../api.js';
 import { esc, priceLabel, rupiah, STATUS_LABEL } from '../utils.js';
-import { errorBox, topbar } from '../ui.js';
+import { bindPasswordForm, errorBox, passwordForm, topbar } from '../ui.js';
 
 const ROLES = ['super_admin', 'admin', 'moderator', 'support', 'merchant'];
 const ROLE_LABEL = {
@@ -256,6 +256,7 @@ export async function viewAdmin() {
       <a href="https://chatourtravel.com/blog" target="_blank" rel="noopener" class="px-3 py-2 rounded-xl bg-white border text-sm font-semibold">Lihat Blog ↗</a>
     </div>
     <div id="admin-err"></div>
+    <div class="mt-6 max-w-2xl">${passwordForm()}</div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-5">${cards}</div>
     <div class="flex flex-wrap gap-2 mt-6">
       ${tabBtn('users', tab, `Users (${t.users})`)}
@@ -343,6 +344,7 @@ function settingsSection(s, isSuper) {
 
 /** Pasang listener ubah-role (change) bila select role ada di DOM. */
 export function bindAdmin() {
+  bindPasswordForm();
   const settingsForm = document.getElementById('f-admin-settings');
   if (settingsForm && !settingsForm.dataset.bound) {
     settingsForm.dataset.bound = '1';

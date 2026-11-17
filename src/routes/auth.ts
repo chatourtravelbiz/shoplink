@@ -142,6 +142,33 @@ authRoutes.post('/auth/logout', async (c) => {
   return c.json({ ok: true });
 });
 
+// POST /api/auth/change-password — ganti password akun yang sedang login.
+// Butuh password saat ini; sesi di perangkat lain dicabut, sesi ini tetap jalan.
+authRoutes.post('/auth/change-password', async (c) => {
+  const user = await getSessionUser(c.env, c.req.raw);
+  if (!user) return err(c, 401, 'Belum login.');
+  const body = await jsonBody(c);
+  const current = String(body?.current_password ?? '');
+  const next = String(body?.new_password ?? '');
+  const confirm = String(body?.confirm_password ?? '');
+  if (next.length < 6) return err(c, 400, 'Password baru minimal 6 karakter.');
+  if (next !== confirm) return err(c, 400, 'Konfirmasi password baru tidak cocok.');
+  if (next === current) return err(c, 400, 'Password baru sama dengan password saat ini.');
+  if (!(await verifyPassword(current, user.password_hash))) {
+    return err(c, 400, 'Password saat ini salah.');
+  }
+  await c.env.DB.prepare('UPDATE users SET password_hash = ?1 WHERE id = ?2')
+    .bind(await hashPassword(next), user.id)
+    .run();
+  const token = getSessionToken(c.req.raw);
+  if (token) {
+    await c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ?1 AND token != ?2')
+      .bind(user.id, token)
+      .run();
+  }
+  return c.json({ ok: true });
+});
+
 authRoutes.get('/auth/session', async (c) => {
   const user = await getSessionUser(c.env, c.req.raw);
   if (!user) return err(c, 401, 'Belum login.');
