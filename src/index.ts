@@ -6,7 +6,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import type { App } from './types';
-import { serveSpa, serveSpaForStore } from './lib/spa';
+import { serveSpa, serveSpaForStore, serveSpaWithStoreMeta } from './lib/spa';
 import { getStoreByCustomDomain } from './lib/db';
 import { profileRoutes } from './routes/profile';
 import { authRoutes } from './routes/auth';
@@ -88,9 +88,17 @@ app.notFound(async (c) => {
     return c.json({ error: 'Tidak ditemukan.' }, 404);
   }
   const customStore = c.get('customStore');
-  if (customStore && /^\/p\/[^/]+$/.test(path)) {
-    return serveSpaForStore(c, customStore);
+  if (customStore) {
+    const productMatch = /^\/p\/([^/]+)$/.exec(path);
+    if (productMatch) return serveSpaForStore(c, customStore, productMatch[1]);
+    if (path === '/') return serveSpaForStore(c, customStore);
   }
+  // /:username dan /:username/p/:id — shell SPA + meta Open Graph toko/produk
+  // (crawler WhatsApp/Telegram membaca meta ini; username bukan toko → shell polos).
+  const productMatch = /^\/([a-z0-9_]{3,30})\/p\/([^/]+)$/.exec(path);
+  if (productMatch) return serveSpaWithStoreMeta(c, productMatch[1], productMatch[2]);
+  const storeMatch = /^\/([a-z0-9_]{3,30})$/.exec(path);
+  if (storeMatch) return serveSpaWithStoreMeta(c, storeMatch[1]);
   return serveSpa(c);
 });
 
