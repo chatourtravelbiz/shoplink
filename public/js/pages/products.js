@@ -3,7 +3,7 @@
 // TIDAK ada data produk di dalam inline handler, jadi tidak ada risiko quote-breaking.
 import { api, apiForm, state } from '../api.js';
 import { esc, go, priceLabel } from '../utils.js';
-import { errorBox, field, inputCls, setErr, topbar } from '../ui.js';
+import { errorBox, field, inputCls, setErr, showToast, topbar } from '../ui.js';
 
 let currentProducts = [];
 let editingProduct = null;
@@ -124,6 +124,9 @@ export function bindShowcase(onRerender) {
   if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const btnLabel = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Menyimpan…'; }
     const fd = new FormData(form);
     let fileUrl = String(fd.get('file_url') || '').trim();
     let imageUrl = String(fd.get('image_url') || '').trim();
@@ -134,6 +137,7 @@ export function bindShowcase(onRerender) {
       try {
         fileUrl = (await apiForm('/api/uploads?kind=showcase', up)).url;
       } catch (err) {
+        if (btn) { btn.disabled = false; btn.textContent = btnLabel; }
         setErr('showcase-err', `Upload PDF gagal: ${err.message}`);
         return;
       }
@@ -145,6 +149,7 @@ export function bindShowcase(onRerender) {
       try {
         imageUrl = (await apiForm('/api/uploads', up)).url;
       } catch (err) {
+        if (btn) { btn.disabled = false; btn.textContent = btnLabel; }
         setErr('showcase-err', `Upload gambar gagal: ${err.message}`);
         return;
       }
@@ -161,8 +166,10 @@ export function bindShowcase(onRerender) {
       if (editingShowcase) await api(`/api/showcase/${editingShowcase.id}`, { method: 'PATCH', body: JSON.stringify(payload) });
       else await api('/api/showcase', { method: 'POST', body: JSON.stringify(payload) });
       editingShowcase = null;
+      showToast('Showcase tersimpan.');
       onRerender();
     } catch (err) {
+      if (btn) { btn.disabled = false; btn.textContent = btnLabel; }
       setErr('showcase-err', err.message);
     }
   });
@@ -230,6 +237,9 @@ export function bindProducts(onRerender) {
   if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const btnLabel = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Menyimpan…'; }
     const fd = new FormData(form);
     let imageUrl = String(fd.get('image_url') || '').trim();
     const file = document.getElementById('upload-file')?.files?.[0];
@@ -239,6 +249,7 @@ export function bindProducts(onRerender) {
       try {
         imageUrl = (await apiForm('/api/uploads', up)).url;
       } catch (err) {
+        if (btn) { btn.disabled = false; btn.textContent = btnLabel; }
         setErr('err', `Upload gagal: ${err.message} — produk tetap bisa disimpan dengan URL gambar di atas.`);
         return;
       }
@@ -256,8 +267,10 @@ export function bindProducts(onRerender) {
       if (editingProduct) await api(`/api/products/${editingProduct.id}`, { method: 'PATCH', body: JSON.stringify(payload) });
       else await api('/api/products', { method: 'POST', body: JSON.stringify(payload) });
       editingProduct = null;
+      showToast('Produk tersimpan.');
       onRerender();
     } catch (err) {
+      if (btn) { btn.disabled = false; btn.textContent = btnLabel; }
       setErr('err', err.message);
     }
   });

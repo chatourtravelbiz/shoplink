@@ -22,6 +22,18 @@ export function setErr(id, msg) {
   if (el) el.innerHTML = errorBox(msg);
 }
 
+/** Toast sukses kecil di bawah layar; ditempel ke <body> agar tidak hilang saat halaman di-render ulang. */
+export function showToast(msg) {
+  const old = document.getElementById('toast');
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.id = 'toast';
+  el.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold shadow-lg';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
 export function topbar(active) {
   const isAdmin = state.session && ['super_admin', 'admin', 'moderator', 'support'].includes(state.session.user.role);
   const links = state.session
