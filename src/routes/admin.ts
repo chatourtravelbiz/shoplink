@@ -3,17 +3,36 @@
 // role & tanpa hapus super_admin. moderator: lihat + suspend toko.
 // support: lihat saja. merchant: 403 di semua endpoint di sini.
 import { Hono } from 'hono';
-import type { App, OrderRow, StoreRow, UserRow } from '../types';
+import type { App, OrderRow, PostRow, StoreRow, UserRow } from '../types';
 import { dayStr, err, jsonBody } from '../lib/http';
-import { publicOrder, publicStore } from '../lib/db';
+import { publicOrder, publicPost, publicStore } from '../lib/db';
 import { logAudit, requireAdmin, type AdminRole } from '../lib/rbac';
-import { isRole, isStoreStatus, str } from '../lib/validation';
+import { isPostStatus, isRole, isSlug, isStoreStatus, str } from '../lib/validation';
+import { newId } from '../lib/crypto';
 
 export const adminRoutes: App = new Hono();
 
 const ALL_ADMIN: AdminRole[] = ['super_admin', 'admin', 'moderator', 'support'];
 const MANAGE: AdminRole[] = ['super_admin', 'admin', 'moderator'];
 const DELETE_ROLES: AdminRole[] = ['super_admin', 'admin'];
+const POST_MANAGE: AdminRole[] = ['super_admin', 'admin'];
+
+function parsePostInput(body: Record<string, unknown> | null) {
+  if (!body) return null;
+  const slug = str(body.slug, 120).toLowerCase();
+  const status = str(body.status, 20) || 'draft';
+  if (!isSlug(slug) || !isPostStatus(status)) return null;
+  return {
+    slug,
+    title: str(body.title, 200),
+    excerpt: str(body.excerpt, 500),
+    content: str(body.content, 100000),
+    cover_url: str(body.cover_url, 500),
+    category: str(body.category, 60) || 'Info',
+    status,
+    meta_description: str(body.meta_description, 300),
+  };
+}
 
 function publicAdminUser(u: UserRow) {
   return {
@@ -130,5 +149,71 @@ adminRoutes.delete('/admin/users/:id', async (c) => {
   }
   await c.env.DB.prepare('DELETE FROM users WHERE id = ?1').bind(id).run();
   await logAudit(c.env, me.id, 'user:delete', 'user', id);
+  return c.json({ ok: true });
+});
+
+// --- Blog / posts (dikelola admin, ditampilkan di company profile) ---
+adminRoutes.get('/admin/posts', async (c) => {
+  const me = await requireAdmin(c, ALL_ADMIN);
+  if (me instanceof Response) return me;
+  const rows = await c.env.DB.prepare(
+    'SELECT * FROM posts ORDER BY created_at DESC, id DESC LIMIT 200',
+  ).all<PostRow>();
+  return c.json({ posts: (rows.results ?? []).map(publicPost) });
+});
+
+adminRoutes.post('/admin/posts', async (c) => {
+  const me = await requireAdmin(c, POST_MANAGE);
+  if (me instanceof Response) return me;
+  const p = parsePostInput(await jsonBody(c));
+  if (!p || !p.title) return err(c, 400, 'Judul wajib diisi dan slug harus huruf kecil/angka/strip.');
+  const now = new Date().toISOString();
+  const id = newId('post');
+  try {
+    await c.env.DB.prepare(
+      `INSERT INTO posts (id, slug, title, excerpt, content, cover_url, category, status, author_id, meta_description, created_at, updated_at, published_at)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)`,
+    )
+      .bind(id, p.slug, p.title, p.excerpt, p.content, p.cover_url, p.category, p.status, me.id, p.meta_description, now, now, p.status === 'published' ? now : null)
+      .run();
+  } catch {
+    return err(c, 400, 'Slug sudah dipakai artikel lain.');
+  }
+  await logAudit(c.env, me.id, 'post:create', 'post', id);
+  const row = await c.env.DB.prepare('SELECT * FROM posts WHERE id = ?1').bind(id).first<PostRow>();
+  return c.json({ post: row ? publicPost(row) : null }, 201);
+});
+
+adminRoutes.patch('/admin/posts/:id', async (c) => {
+  const me = await requireAdmin(c, POST_MANAGE);
+  if (me instanceof Response) return me;
+  const p = parsePostInput(await jsonBody(c));
+  if (!p || !p.title) return err(c, 400, 'Judul wajib diisi dan slug harus huruf kecil/angka/strip.');
+  const id = c.req.param('id');
+  const existing = await c.env.DB.prepare('SELECT * FROM posts WHERE id = ?1').bind(id).first<PostRow>();
+  if (!existing) return err(c, 404, 'Artikel tidak ditemukan.');
+  const now = new Date().toISOString();
+  const publishedAt = p.status === 'published' ? (existing.published_at ?? now) : null;
+  try {
+    await c.env.DB.prepare(
+      `UPDATE posts SET slug = ?1, title = ?2, excerpt = ?3, content = ?4, cover_url = ?5,
+       category = ?6, status = ?7, meta_description = ?8, updated_at = ?9, published_at = ?10 WHERE id = ?11`,
+    )
+      .bind(p.slug, p.title, p.excerpt, p.content, p.cover_url, p.category, p.status, p.meta_description, now, publishedAt, id)
+      .run();
+  } catch {
+    return err(c, 400, 'Slug sudah dipakai artikel lain.');
+  }
+  await logAudit(c.env, me.id, 'post:update', 'post', id);
+  const row = await c.env.DB.prepare('SELECT * FROM posts WHERE id = ?1').bind(id).first<PostRow>();
+  return c.json({ post: row ? publicPost(row) : null });
+});
+
+adminRoutes.delete('/admin/posts/:id', async (c) => {
+  const me = await requireAdmin(c, POST_MANAGE);
+  if (me instanceof Response) return me;
+  const res = await c.env.DB.prepare('DELETE FROM posts WHERE id = ?1').bind(c.req.param('id')).run();
+  if ((res.meta?.changes ?? 0) === 0) return err(c, 404, 'Artikel tidak ditemukan.');
+  await logAudit(c.env, me.id, 'post:delete', 'post', c.req.param('id'));
   return c.json({ ok: true });
 });

@@ -1,4 +1,4 @@
-// Halaman publik: signup, login. (Shoplink tidak punya landing page.)
+// Halaman publik: signup, login. (Chatour Travel tidak punya landing page.)
 import { api, loadSession } from '../api.js';
 import { go } from '../utils.js';
 import { field, inputCls, setErr, topbar } from '../ui.js';
@@ -13,7 +13,7 @@ export function viewSignup() {
   return `${topbar()}
   <main class="max-w-md mx-auto px-4 py-10">
     <h1 class="text-2xl font-bold">Buat akun &amp; toko</h1>
-    <p class="text-sm text-stone-600 mt-1">Sudah punya akun? <a class="text-emerald-700 underline" href="/login">Masuk di sini</a></p>
+    <p class="text-sm text-stone-600 mt-1">Sudah punya akun? <a class="text-red-700 underline" href="/login">Masuk di sini</a></p>
     <form id="f-signup" class="mt-6 space-y-4 bg-white border border-stone-200 rounded-2xl p-5">
       <div id="err"></div>
       ${field('Email', `<input required type="email" name="email" class="${inputCls}" placeholder="kamu@email.com" />`)}
@@ -24,7 +24,7 @@ export function viewSignup() {
       </div>
       ${field('Nomor WhatsApp', `<input required name="whatsapp_number" class="${inputCls}" placeholder="0812xxxxxx" />`, 'Dipakai pembeli untuk konfirmasi order. Boleh diawali 0 atau 62.')}
       ${field('Password', passwordField('minlength="6" placeholder="Minimal 6 karakter"'))}
-      <button class="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold">Daftar &amp; Buat Toko</button>
+      <button class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Daftar &amp; Buat Toko</button>
     </form>
   </main>`;
 }
@@ -33,12 +33,12 @@ export function viewLogin() {
   return `${topbar()}
   <main class="max-w-md mx-auto px-4 py-10">
     <h1 class="text-2xl font-bold">Masuk ke dashboard</h1>
-    <p class="text-sm text-stone-600 mt-1">Belum punya akun? <a class="text-emerald-700 underline" href="/signup">Daftar di sini</a></p>
+    <p class="text-sm text-stone-600 mt-1">Belum punya akun? <a class="text-red-700 underline" href="/signup">Daftar di sini</a></p>
     <form id="f-login" class="mt-6 space-y-4 bg-white border border-stone-200 rounded-2xl p-5">
       <div id="err"></div>
       ${field('Email', `<input required type="email" name="email" class="${inputCls}" placeholder="kamu@email.com" />`)}
       ${field('Password', passwordField(''))}
-      <button class="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold">Masuk</button>
+      <button class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Masuk</button>
       <p class="text-xs text-stone-500 text-center">Akun demo: john@example.com / password123 — <a class="underline" href="/demo">lihat toko demo</a></p>
     </form>
   </main>`;

@@ -8,7 +8,7 @@ export async function viewProduct(username, productId) {
   try {
     data = await api(`/api/stores/${username}/products/${productId}`);
   } catch (e) {
-    return `${topbar()}<main class="max-w-3xl mx-auto px-4 py-10">${errorBox(e.message)}<a href="/${esc(username)}" class="text-emerald-700 underline text-sm">← Kembali ke toko</a></main>`;
+    return `${topbar()}<main class="max-w-3xl mx-auto px-4 py-10">${errorBox(e.message)}<a href="/${esc(username)}" class="text-red-700 underline text-sm">← Kembali ke toko</a></main>`;
   }
   const { store, product: p } = data;
   const t = themeOf(store.theme);

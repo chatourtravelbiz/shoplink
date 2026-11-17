@@ -28,7 +28,7 @@ export async function viewDashboard() {
   const bars = data.chart
     .map((d) => `<div class="flex-1 flex flex-col items-center gap-1">
       <div class="w-full flex items-end justify-center gap-1 h-24">
-        <div class="bar w-3 sm:w-5 rounded-t bg-emerald-500" style="height:${Math.max(4, Math.round((d.views / maxV) * 100))}%" title="Kunjungan: ${d.views}"></div>
+        <div class="bar w-3 sm:w-5 rounded-t bg-red-700" style="height:${Math.max(4, Math.round((d.views / maxV) * 100))}%" title="Kunjungan: ${d.views}"></div>
         <div class="bar w-3 sm:w-5 rounded-t bg-sky-400" style="height:${Math.max(4, Math.round((d.clicks / maxV) * 100))}%" title="Klik: ${d.clicks}"></div>
       </div>
       <div class="text-[11px] text-stone-500">${esc(d.label)}</div>
@@ -55,14 +55,14 @@ export async function viewDashboard() {
   <main class="max-w-5xl mx-auto px-4 py-8">
     <div class="flex flex-wrap items-end justify-between gap-3">
       <div><h1 class="text-2xl font-bold">Halo, ${esc(state.session.user.first_name || state.session.user.username)} 👋</h1>
-      <p class="text-sm text-stone-600">Toko <b>${esc(state.session.store?.store_name || '')}</b> · <a class="text-emerald-700 underline" href="/${esc(state.session.user.username)}">shoplink/${esc(state.session.user.username)}</a></p></div>
-      <a href="/products" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold">+ Tambah Produk</a>
+      <p class="text-sm text-stone-600">Toko <b>${esc(state.session.store?.store_name || '')}</b> · <a class="text-red-700 underline" href="/${esc(state.session.user.username)}">shop.chatourtravel.com/${esc(state.session.user.username)}</a></p></div>
+      <a href="/products" class="px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">+ Tambah Produk</a>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6">${cards}</div>
     <div class="grid sm:grid-cols-3 gap-4 mt-4">
       <div class="sm:col-span-2 bg-white border border-stone-200 rounded-2xl p-5">
         <h2 class="font-bold">Kunjungan 7 hari terakhir</h2>
-        <p class="text-xs text-stone-500"><span class="text-emerald-600">■</span> Kunjungan &nbsp; <span class="text-sky-500">■</span> Klik</p>
+        <p class="text-xs text-stone-500"><span class="text-red-700">■</span> Kunjungan &nbsp; <span class="text-sky-500">■</span> Klik</p>
         <div class="flex gap-1 mt-4">${bars}</div>
       </div>
       <div class="bg-white border border-stone-200 rounded-2xl p-5">

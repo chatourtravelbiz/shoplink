@@ -1,4 +1,4 @@
-// Shoplink D1 — bootstrap Hono saja. Semua route ada di src/routes/*,
+// Chatour Travel — bootstrap Hono saja. Semua route ada di src/routes/*,
 // semua helper ada di src/lib/*. Tanpa pembayaran online: order via
 // WhatsApp / COD / Transfer manual. Tanpa Stripe/Razorpay/billing.
 import { Hono } from 'hono';
@@ -13,6 +13,7 @@ import { settingsRoutes } from './routes/settings';
 import { storesRoutes } from './routes/stores';
 import { adminRoutes } from './routes/admin';
 import { analyticsRoutes } from './routes/analytics';
+import { showcaseRoutes } from './routes/showcase';
 import { uploadsRoutes } from './routes/uploads';
 
 const app: App = new Hono();
@@ -39,6 +40,7 @@ app.route('/api', settingsRoutes);
 app.route('/api', storesRoutes);
 app.route('/api', adminRoutes);
 app.route('/api', analyticsRoutes);
+app.route('/api', showcaseRoutes);
 app.route('/api', uploadsRoutes);
 
 // 404 JSON hanya untuk /api/* yang tidak dikenal. Path non-API (/, /demo,

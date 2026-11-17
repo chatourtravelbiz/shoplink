@@ -39,6 +39,9 @@ export type StoreRow = {
   store_bio: string | null;
   currency: string;
   theme: string | null;
+  button_style: string;
+  show_badge: number;
+  section_order: string;
   status: string;
   trust_badges_json: string | null;
   banners_json: string | null;
@@ -59,6 +62,34 @@ export type ProductRow = {
   collection_name: string | null;
   variants_json: string | null;
   highlights_json: string | null;
+};
+
+export type PostRow = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  cover_url: string;
+  category: string;
+  status: string;
+  author_id: string | null;
+  meta_description: string;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+};
+
+export type ShowcaseRow = {
+  id: string;
+  store_username: string;
+  title: string;
+  description: string;
+  image_url: string;
+  link_url: string;
+  file_url: string;
+  sort_order: number;
+  created_at: string;
 };
 
 export type OrderRow = {

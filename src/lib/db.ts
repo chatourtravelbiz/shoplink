@@ -1,7 +1,7 @@
 // Mapper baris D1 -> JSON publik + pencatat analitik.
 // Semua query memakai prepared statement .bind(); tidak ada interpolasi value
 // (bahkan nama kolom tidak diinterpolasi — view/click memakai dua statement terpisah).
-import type { Env, OrderRow, ProductRow, StoreRow, UserRow } from '../types';
+import type { Env, OrderRow, PostRow, ProductRow, ShowcaseRow, StoreRow, UserRow } from '../types';
 import { dayStr, parseJson } from './http';
 import { newId } from './crypto';
 
@@ -34,7 +34,10 @@ export function publicStore(s: StoreRow) {
     tagline: s.tagline,
     store_bio: s.store_bio ?? '',
     currency: s.currency,
-    theme: s.theme ?? 'emerald',
+    theme: s.theme ?? 'chatour',
+    button_style: s.button_style || 'rounded',
+    show_badge: s.show_badge === 0 ? 0 : 1,
+    section_order: s.section_order || 'products-first',
     status: s.status ?? 'active',
     trust_badges: parseJson(s.trust_badges_json, [] as Array<{ text: string }>),
     banners: parseJson(s.banners_json, [] as string[]),
@@ -57,6 +60,25 @@ export function publicProduct(p: ProductRow) {
     collection: p.collection_name ?? undefined,
     variants: parseJson(p.variants_json, [] as unknown[]),
     highlights: parseJson(p.highlights_json, [] as string[]),
+  };
+}
+
+export function publicPost(p: PostRow) {
+  return {
+    id: p.id, slug: p.slug, title: p.title, excerpt: p.excerpt ?? '',
+    content: p.content ?? '', cover_url: p.cover_url ?? '', category: p.category ?? 'Info',
+    status: p.status ?? 'draft', author_id: p.author_id ?? null,
+    meta_description: p.meta_description ?? '', created_at: p.created_at,
+    updated_at: p.updated_at, published_at: p.published_at ?? null,
+  };
+}
+
+export function publicShowcase(s: ShowcaseRow) {
+  return {
+    id: s.id, store_username: s.store_username, title: s.title,
+    description: s.description ?? '', image_url: s.image_url ?? '',
+    link_url: s.link_url ?? '', file_url: s.file_url ?? '',
+    sort_order: s.sort_order ?? 0, created_at: s.created_at,
   };
 }
 

@@ -18,8 +18,13 @@ export function clearStoreCache() {
   storeCache = null;
 }
 
+function btnRadius(store) {
+  return store.button_style === 'pill' ? '9999px' : store.button_style === 'square' ? '4px' : '16px';
+}
+
 function storeHeader(store) {
   const t = themeOf(store.theme);
+  const radius = btnRadius(store);
   const avatar = store.avatar_url || store.logo_url;
   return `<div class="text-center pt-2 pb-6">
     ${avatar
@@ -27,15 +32,33 @@ function storeHeader(store) {
       : `<img src="/logo-chatour.png" class="w-24 h-24 rounded-full object-contain mx-auto ring-4 ring-white shadow bg-white p-1" alt="Chatour Travel" />`}
     <h1 class="text-2xl font-extrabold mt-4 leading-tight">${esc(store.store_name)}</h1>
     <p class="text-stone-500 text-sm mt-0.5">@${esc(store.username)}</p>
-    <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold text-white" style="background:${t.main}">✈️ Agen Chatour Travel — Umroh &amp; Haji</span>
+    ${store.show_badge !== 0 ? `<span class="inline-block mt-2 px-3 py-1 text-xs font-semibold text-white" style="background:${t.main};border-radius:${radius}">✈️ Agen Chatour Travel — Umroh &amp; Haji</span>` : ''}
     ${store.tagline ? `<p class="font-medium mt-3">${esc(store.tagline)}</p>` : ''}
     ${store.store_bio ? `<p class="text-stone-600 text-sm mt-1 max-w-md mx-auto">${esc(store.store_bio)}</p>` : ''}
     <div class="max-w-md mx-auto mt-5 space-y-2">
-      <a href="https://wa.me/${esc(waDigits(store.whatsapp_number))}" target="_blank" rel="noopener" class="block w-full py-3 rounded-2xl text-white font-bold shadow" style="background:#25D366">💬 Chat WhatsApp Agen</a>
-      <button data-action="share-store" class="block w-full py-3 rounded-2xl bg-white border border-stone-300 font-semibold text-sm">🔗 Bagikan Toko Ini</button>
+      <a href="https://wa.me/${esc(waDigits(store.whatsapp_number))}" target="_blank" rel="noopener" class="block w-full py-3 text-white font-bold shadow" style="background:#25D366;border-radius:${radius}">💬 Chat WhatsApp Agen</a>
+      <button data-action="share-store" class="block w-full py-3 bg-white border border-stone-300 font-semibold text-sm" style="border-radius:${radius}">🔗 Bagikan Toko Ini</button>
     </div>
     ${(store.trust_badges || []).length ? `<div class="flex flex-wrap justify-center gap-2 mt-4">${store.trust_badges.map((b) => `<span class="px-3 py-1 rounded-full bg-white border text-xs">✓ ${esc(b.text)}</span>`).join('')}</div>` : ''}
   </div>`;
+}
+
+function showcaseCard(item, theme) {
+  const href = item.file_url || item.link_url;
+  return `<div class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3">
+    ${item.image_url ? `<img src="${esc(item.image_url)}" class="w-20 h-20 rounded-xl object-cover shrink-0" alt="" loading="lazy" />` : `<div class="w-20 h-20 rounded-xl shrink-0 flex items-center justify-center text-2xl" style="background:${theme.soft}">📄</div>`}
+    <div class="min-w-0 flex-1">
+      <h3 class="font-semibold leading-snug">${esc(item.title)}</h3>
+      ${item.description ? `<p class="text-xs text-stone-500 mt-0.5 line-clamp-2">${esc(item.description)}</p>` : ''}
+    </div>
+    ${href ? `<a href="${esc(href)}" target="_blank" rel="noopener" class="shrink-0 px-3 py-2 rounded-xl text-white text-xs font-semibold" style="background:${theme.main}">Lihat Brosur ↗</a>` : ''}
+  </div>`;
+}
+
+function showcaseSection(items, theme) {
+  if (!items.length) return '';
+  return `<h2 class="font-bold mt-8">Showcase / Brosur</h2>
+  <div class="space-y-3 mt-3">${items.map((it) => showcaseCard(it, theme)).join('')}</div>`;
 }
 
 function productCard(username, p, theme) {
@@ -55,7 +78,7 @@ export async function viewStore(username) {
   try {
     data = await loadStore(username);
   } catch (e) {
-    return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="https://chatourtravel.com/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold">Kunjungi Chatour Travel</a></div></main>`;
+    return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="https://chatourtravel.com/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">Kunjungi Chatour Travel</a></div></main>`;
   }
   const { store, products } = data;
   const t = themeOf(store.theme);
@@ -69,17 +92,27 @@ export async function viewStore(username) {
   const list = filtered.length
     ? filtered.map((p) => productCard(username, p, t)).join('')
     : `<p class="text-center text-stone-500 py-8">Tidak ada produk yang cocok. Coba kata kunci atau kategori lain.</p>`;
-  return `${topbar()}
-  <main class="max-w-xl mx-auto px-4 py-8">
-    ${storeHeader(store)}
-    <h2 class="font-bold mt-2">Paket &amp; Produk</h2>
+  let showcase = [];
+  try {
+    showcase = (await api(`/api/stores/${username}/showcase`)).items || [];
+  } catch {
+    showcase = [];
+  }
+  const productsSection = `<h2 class="font-bold mt-2">Paket &amp; Produk</h2>
     <div class="mt-3">
       <input id="store-search" data-username="${esc(username)}" value="${esc(q)}" placeholder="🔍 Cari paket / produk..." class="${inputCls} !mt-0" />
       <div class="flex flex-wrap gap-2 mt-3">
         ${cats.map((c) => `<button data-action="store-filter" data-username="${esc(username)}" data-cat="${esc(c)}" class="px-3 py-1.5 rounded-full text-sm border ${c === cat ? 'text-white font-semibold' : 'bg-white'}" style="${c === cat ? `background:${t.main};border-color:${t.main}` : ''}">${esc(c)}</button>`).join('')}
       </div>
     </div>
-    <div class="space-y-3 mt-4">${list}</div>
+    <div class="space-y-3 mt-4">${list}</div>`;
+  const sections = store.section_order === 'showcase-first'
+    ? showcaseSection(showcase, t) + productsSection
+    : productsSection + showcaseSection(showcase, t);
+  return `${topbar()}
+  <main class="max-w-xl mx-auto px-4 py-8">
+    ${storeHeader(store)}
+    ${sections}
     <div class="text-center mt-8">
       <img src="/logo-chatour.png" class="w-12 h-12 object-contain mx-auto" alt="Chatour Travel" />
       <p class="text-xs text-stone-400 mt-2">Chatour Travel — Biro Umroh &amp; Haji · Pembayaran manual via WhatsApp / COD / Transfer.</p>

@@ -7,20 +7,26 @@ export const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
 export const THEMES = {
-  emerald: { main: '#059669', soft: '#ecfdf5', dark: '#064e3b' },
-  rose: { main: '#e11d48', soft: '#fff1f2', dark: '#881337' },
-  amber: { main: '#d97706', soft: '#fffbeb', dark: '#78350f' },
-  sky: { main: '#0284c7', soft: '#f0f9ff', dark: '#0c4a6e' },
-  violet: { main: '#7c3aed', soft: '#f5f3ff', dark: '#4c1d95' },
+  chatour: { label: 'Chatour', main: '#b02a00', soft: '#fdeee8', dark: '#7e1e00' },
+  emerald: { label: 'Emerald', main: '#059669', soft: '#ecfdf5', dark: '#064e3b' },
+  ocean: { label: 'Ocean', main: '#0369a1', soft: '#e0f2fe', dark: '#0c4a6e' },
+  sunset: { label: 'Sunset', main: '#ea580c', soft: '#fff7ed', dark: '#7c2d12' },
+  rose: { label: 'Rose', main: '#e11d48', soft: '#fff1f2', dark: '#881337' },
+  dark: { label: 'Dark', main: '#18181b', soft: '#f4f4f5', dark: '#000000' },
+  light: { label: 'Light', main: '#78716c', soft: '#fafaf9', dark: '#292524' },
+  forest: { label: 'Forest', main: '#15803d', soft: '#f0fdf4', dark: '#14532d' },
+  amber: { label: 'Amber', main: '#d97706', soft: '#fffbeb', dark: '#78350f' },
+  sky: { label: 'Sky', main: '#0284c7', soft: '#f0f9ff', dark: '#0c4a6e' },
+  violet: { label: 'Violet', main: '#7c3aed', soft: '#f5f3ff', dark: '#4c1d95' },
 };
-export const themeOf = (name) => THEMES[name] || THEMES.emerald;
+export const themeOf = (name) => THEMES[name] || THEMES.chatour;
 
 export const PAYMENT_LABEL = { whatsapp: 'WhatsApp', cod: 'COD (bayar di tempat)', transfer: 'Transfer bank' };
 export const STATUS_LABEL = { pending: 'Menunggu', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan' };
 export const STATUS_CLASS = {
   pending: 'bg-amber-100 text-amber-800',
   confirmed: 'bg-sky-100 text-sky-800',
-  completed: 'bg-emerald-100 text-emerald-800',
+  completed: 'bg-red-100 text-red-800',
   cancelled: 'bg-rose-100 text-rose-800',
 };
 

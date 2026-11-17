@@ -2,7 +2,11 @@
 // yang diteruskan ke query D1 — selalu lewat .bind(), tidak pernah interpolasi.
 export const USERNAME_RE = /^[a-z0-9_]{3,30}$/;
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const THEMES = ['emerald', 'rose', 'amber', 'sky', 'violet'] as const;
+export const THEMES = ['chatour', 'emerald', 'ocean', 'sunset', 'rose', 'dark', 'light', 'forest', 'amber', 'sky', 'violet'] as const;
+export const BUTTON_STYLES = ['rounded', 'pill', 'square'] as const;
+export const SECTION_ORDERS = ['products-first', 'showcase-first'] as const;
+export const POST_STATUSES = ['draft', 'published'] as const;
+export const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const PAYMENT_METHODS = ['whatsapp', 'cod', 'transfer'] as const;
 export const ORDER_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled'] as const;
 export const PRODUCT_STATUSES = ['active', 'draft', 'archived'] as const;
@@ -58,6 +62,22 @@ export function isAdminRole(v: string | null | undefined): v is (typeof ADMIN_RO
 
 export function isStoreStatus(v: string): v is (typeof STORE_STATUSES)[number] {
   return (STORE_STATUSES as readonly string[]).includes(v);
+}
+
+export function isButtonStyle(v: string): v is (typeof BUTTON_STYLES)[number] {
+  return (BUTTON_STYLES as readonly string[]).includes(v);
+}
+
+export function isSectionOrder(v: string): v is (typeof SECTION_ORDERS)[number] {
+  return (SECTION_ORDERS as readonly string[]).includes(v);
+}
+
+export function isPostStatus(v: string): v is (typeof POST_STATUSES)[number] {
+  return (POST_STATUSES as readonly string[]).includes(v);
+}
+
+export function isSlug(v: string): boolean {
+  return SLUG_RE.test(v);
 }
 
 /** Harga valid: angka hingga, >= 0, maksimal Rp 1 miliar. */
