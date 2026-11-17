@@ -8,7 +8,7 @@ APP_URL = "http://localhost:8787"
 [[d1_databases]]
 binding = "DB"
 database_name = "shoplink-d1"
-database_id = "ganti-dengan-id-setelah-create"
+database_id = "ddec977c-de52-4e8b-8b1b-5117a3a37182"
 
 [[r2_buckets]]
 binding = "ASSETS"

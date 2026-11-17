@@ -1,8 +1,8 @@
 // Kriptografi untuk Cloudflare Workers: WebCrypto PBKDF2-SHA256, tanpa Node crypto.
 // Format password_hash: "<salt hex>:<hash hex>", salt 16 byte, hash 32 byte,
-// 120.000 iterasi — format yang sama dipakai scripts/make-seed.mjs (Node).
+// 100.000 iterasi — format yang sama dipakai scripts/make-seed.mjs (Node).
 
-const HASH_ITERATIONS = 120_000;
+const HASH_ITERATIONS = 100_000;
 
 function hex(bytes: Uint8Array): string {
   return [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');

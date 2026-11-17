@@ -37,7 +37,7 @@ delegation (`data-action`), bukan inline handler berisi data user.
 
 - **Landing** — penjelasan + tombol daftar / lihat toko demo.
 - **Auth** — signup (buat user + toko default), login, logout, session cookie
-  sendiri (PBKDF2-SHA256, 120.000 iterasi, WebCrypto; cookie HttpOnly,
+  sendiri (PBKDF2-SHA256, 100.000 iterasi, WebCrypto; cookie HttpOnly,
   SameSite=Lax, Secure saat HTTPS).
 - **Dashboard** — omzet, order, kunjungan, klik, produk; grafik 7 hari; order
   terbaru + ubah status (pending/confirmed/completed/cancelled); produk terlaris.
@@ -145,7 +145,7 @@ dan analitik.
 - `npm audit` di sandbox ini diblokir oleh kebijakan registry (HTTP 403
   `policy_denied` pada endpoint audit); sebagai gantinya semua 94 paket
   (langsung + transitif) diperiksa lewat OSV API — **0 kerentanan ditemukan**.
-- Password PBKDF2-SHA256 120k iterasi (WebCrypto di Worker, Node di seed
+- Password PBKDF2-SHA256 100k iterasi (WebCrypto di Worker, Node di seed
   script); tidak ada secret/password/token yang di-hardcode di kode.
 - Cookie session HttpOnly + SameSite=Lax + Secure saat HTTPS; error server
   tidak pernah mengekspos stack trace ke client (`onError` generik).

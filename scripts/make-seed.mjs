@@ -1,5 +1,5 @@
 // Generate migrations/0002_seed_demo.sql dengan hash password ASLI (PBKDF2-SHA256,
-// 120.000 iterasi, format salt:hash hex) — konsisten dengan verifikasi di src/auth.ts.
+// 100.000 iterasi, format salt:hash hex) — konsisten dengan verifikasi di src/auth.ts.
 // Jalankan:  node scripts/make-seed.mjs
 // Lalu:      npm run db:seed   (atau db:seed:remote)
 import { pbkdf2Sync, randomBytes } from 'node:crypto';
@@ -15,7 +15,7 @@ const salt = randomBytes(16).toString('hex');
 // PENTING: salt harus dipakai sebagai byte mentah (Buffer.from hex), bukan
 // sebagai string UTF-8 — agar cocok dengan WebCrypto di Worker (src/lib/crypto.ts),
 // yang derive dengan salt hasil unhex().
-const hash = pbkdf2Sync(PASSWORD, Buffer.from(salt, 'hex'), 120_000, 32, 'sha256').toString('hex');
+const hash = pbkdf2Sync(PASSWORD, Buffer.from(salt, 'hex'), 100_000, 32, 'sha256').toString('hex');
 const passwordHash = `${salt}:${hash}`;
 
 const q = (v) => `'${String(v ?? '').replace(/'/g, "''")}'`;
