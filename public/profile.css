@@ -135,6 +135,9 @@ img { max-width: 100%; }
 .footer a { color: #f3ece7; }
 .footer-nav { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 16px 0; }
 .muted { color: #b8a89e; font-size: 0.9rem; }
+.social-list a { display: inline-flex; align-items: center; gap: 6px; margin: 4px 8px; text-decoration: none; }
+.social-list svg { vertical-align: -3px; }
+.chip { display: inline-block; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); margin: 4px; font-size: 0.9rem; }
 
 @media (max-width: 640px) {
   .nav { display: none; }

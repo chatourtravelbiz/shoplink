@@ -5,6 +5,7 @@
 import { Hono } from 'hono';
 import type { App, AppContext, Env, PostRow } from '../types';
 import { serveAssetHtml, serveSpaForStore } from '../lib/spa';
+import { renderHome } from '../lib/profile-render';
 
 export const profileRoutes: App = new Hono();
 
@@ -64,6 +65,8 @@ function footer(c: ProfileContent): string {
       <a href="/blog">Blog</a><a href="/#kontak">Kontak</a>
       <a href="${esc(c.shopUrl || 'https://chatourtravel.com/demo')}" target="_blank" rel="noopener">Toko Agen</a>
     </nav>
+    <p class="muted">Situs Pusat: <a href="https://chatourtravel.id/" target="_blank" rel="noopener">chatourtravel.id</a></p>
+    <p class="muted"><a href="https://www.facebook.com/share/1Fw2HpRVqy/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a> · <a href="https://youtube.com/@chatourofficial" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.instagram.com/chatourtravelofficial" target="_blank" rel="noopener">Instagram</a> · <a href="https://tiktok.com/@chatour.official" target="_blank" rel="noopener">TikTok</a> · <a href="https://play.google.com/store/apps/details?id=com.chatour.jamaah.app" target="_blank" rel="noopener">Aplikasi Jamaah</a></p>
     <p class="muted">© ${new Date().getFullYear()} Chatour Travel. Semua hak dilindungi.</p>
   </div></footer>`;
 }
@@ -106,10 +109,13 @@ async function listPosts(env: Env): Promise<PostRow[]> {
 
 const siteOf = (c: AppContext): string => c.env.APP_URL || 'https://chatourtravel.com';
 
-// Beranda = company profile (file statis). Di host custom domain agen, / adalah tokonya.
+// Beranda = company profile, dirender di server agar isinya terbaca Google/curl.
+// Di host custom domain agen, / adalah tokonya.
 profileRoutes.get('/', async (c) => {
   const customStore = c.get('customStore');
   if (customStore) return serveSpaForStore(c, customStore);
+  const rendered = await renderHome(c.env);
+  if (rendered) return rendered;
   const res = await serveAssetHtml(c, 'profile.html');
   if (res) return res;
   return c.text('Halaman tidak ditemukan.', 404);
