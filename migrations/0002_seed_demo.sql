@@ -11,11 +11,4 @@ INSERT OR REPLACE INTO products (store_username, product_id, image_url, images_j
 INSERT OR REPLACE INTO orders (id, store_username, product_id, quantity, revenue, date, notes, status, customer_name, customer_phone, customer_address, payment_method) VALUES ('o_demo_1', 'demo', 'demo-tas-kulit', 1, 249000, '2026-11-15T04:00:00.000Z', 'Tolong packing rapi ya', 'completed', 'Ayu Lestari', '081234567890', 'Jl. Merdeka No. 12, Bandung', 'whatsapp');
 INSERT OR REPLACE INTO orders (id, store_username, product_id, quantity, revenue, date, notes, status, customer_name, customer_phone, customer_address, payment_method) VALUES ('o_demo_2', 'demo', 'demo-kopi-gayo', 2, 178000, '2026-11-16T07:00:00.000Z', '', 'confirmed', 'Budi Santoso', '082112345678', 'Jl. Sudirman No. 45, Jakarta', 'transfer');
 INSERT OR REPLACE INTO orders (id, store_username, product_id, quantity, revenue, date, notes, status, customer_name, customer_phone, customer_address, payment_method) VALUES ('o_demo_3', 'demo', 'demo-sneakers', 1, 399000, '2026-11-17T02:00:00.000Z', 'COD sore hari', 'pending', 'Citra Dewi', '085678901234', 'Jl. Diponegoro No. 8, Surabaya', 'cod');
-INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES ('demo', '2026-11-11', 42, 9);
-INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES ('demo', '2026-11-12', 35, 7);
-INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES ('demo', '2026-11-13', 51, 12);
-INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES ('demo', '2026-11-14', 28, 5);
-INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES ('demo', '2026-11-15', 63, 15);
-INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES ('demo', '2026-11-16', 47, 11);
-INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES ('demo', '2026-11-17', 58, 13);
 INSERT OR REPLACE INTO analytics_events (id, store_username, event_type, metric_date, source, referrer_host, page_path, created_at) VALUES ('ae_demo_seed', 'demo', 'view', '2026-11-17', 'instagram', 'instagram.com', '/s/demo', '2026-11-17T09:20:17.075Z');
