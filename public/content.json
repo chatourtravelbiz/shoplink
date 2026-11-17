@@ -16,7 +16,7 @@
   "biro": "Chatour Travel",
   "caraDaftar": [
     {
-      "isi": "Chat WhatsApp atau datang ke kantor kami di Gresik untuk konsultasi paket — gratis, tanpa kewajiban.",
+      "isi": "Chat WhatsApp atau datang ke kantor kami di Gresik — atau ke kantor agen di Badas, Kediri — untuk konsultasi paket, gratis, tanpa kewajiban.",
       "judul": "Hubungi Kami",
       "langkah": "1"
     },
@@ -253,7 +253,7 @@
   "tagline": "PERJALANAN SPIRITUAL DENGAN PENUH CERITA",
   "telLink": "tel:+6282224332700",
   "telepon": "0822 2433 2700",
-  "tentang": "Chatour Travel adalah biro perjalanan Umroh & Haji yang beroperasi sejak 2008. Kami mengurus seluruh kebutuhan perjalanan ibadah — dokumen, visa, tiket, hotel, hingga bimbingan manasik — agar jamaah dapat fokus beribadah dengan tenang. Layanan kami didukung sistem digital dan jaringan 400 agen resmi di seluruh Indonesia.",
+  "tentang": "Chatour Travel adalah biro perjalanan Umroh & Haji yang beroperasi sejak 2008. Kami mengurus seluruh kebutuhan perjalanan ibadah — dokumen, visa, tiket, hotel, hingga bimbingan manasik — agar jamaah dapat fokus beribadah dengan tenang. Layanan kami didukung sistem digital dan jaringan 400 agen resmi di seluruh Indonesia. Kantor agen kami di Badas, Kediri (Chatour Travel Kediri, Jl. Joko Sembung) melayani pendaftaran jamaah wilayah Kediri dan sekitarnya.",
   "testimoni": [
     {
       "isi": "Pelayanannya sangat baik, dari manasik sampai pulang semua diurus. Hotelnya dekat dan makanannya cocok. Insya Allah berangkat lagi bersama Chatour.",
@@ -270,5 +270,7 @@
   ],
   "testimoniNote": "Testimoni di bawah ini masih contoh — testimoni asli jamaah akan kami tampilkan setelah mendapat izin dari mereka.",
   "waLink": "https://wa.me/6282224332700",
-  "waNumber": "0822 2433 2700"
+  "waNumber": "0822 2433 2700",
+  "seoTitle": "Chatour Travel Kediri — Biro Umroh & Haji",
+  "seoDescription": "Chatour Travel Kediri — agen Umroh & Haji di Badas, Kediri. Biro resmi sejak 2008, berizin PPIU & PIHK. Hubungi agen kami: 0851 9912 4487 (Jl. Joko Sembung, Badas)."
 }

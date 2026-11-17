@@ -74,7 +74,10 @@ export async function renderHome(env: Env): Promise<Response | null> {
   const waText = "Assalamu'alaikum, saya ingin bertanya tentang paket Umroh & Haji Chatour Travel.";
   html = html
     .replace(/<h1 id="hero-title">[\s\S]*?<\/h1>/, `<h1 id="hero-title">${esc(c.heroTitle)}</h1>`)
-    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(c.biro)} — Biro Umroh &amp; Haji</title>`);
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(c.seoTitle || `${c.biro} — Biro Umroh & Haji`)}</title>`)
+    .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${esc(c.seoDescription || '')}" />`)
+    .replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${esc(c.seoTitle || '')}" />`)
+    .replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${esc(c.seoDescription || '')}" />`);
   html = fill(html, 'hero-sub', esc(c.heroSub));
   html = fill(html, 'tentang-text', esc(c.tentang));
   html = fill(html, 'footer-izin', esc(c.izin));
