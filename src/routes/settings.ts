@@ -5,6 +5,7 @@ import { err, jsonBody } from '../lib/http';
 import { getSessionUser } from '../lib/auth';
 import { getStoreByUsername, publicStore, publicUser } from '../lib/db';
 import { isButtonStyle, isSectionOrder, isTheme, str } from '../lib/validation';
+import { normalizeSocialLinks } from '../lib/social';
 
 export const settingsRoutes: App = new Hono();
 
@@ -36,11 +37,25 @@ settingsRoutes.put('/settings', async (c) => {
   if (!isTheme(theme)) return err(c, 400, 'Tema tidak valid.');
   if (!isButtonStyle(buttonStyle)) return err(c, 400, 'Bentuk tombol tidak valid.');
   if (!isSectionOrder(sectionOrder)) return err(c, 400, 'Urutan seksi tidak valid.');
+  let socialLinks = {};
+  try {
+    socialLinks = normalizeSocialLinks(
+      body.social_links ?? {
+        instagram: body.social_instagram,
+        facebook: body.social_facebook,
+        tiktok: body.social_tiktok,
+        youtube: body.social_youtube,
+      },
+    );
+  } catch (e) {
+    return err(c, 400, e instanceof Error ? e.message : 'Akun sosial tidak valid.');
+  }
   await c.env.DB.prepare(
     `UPDATE stores SET store_name = ?1, tagline = ?2, store_bio = ?3, whatsapp_number = ?4,
-       currency = ?5, theme = ?6, logo_url = ?7, button_style = ?8, show_badge = ?9, section_order = ?10 WHERE username = ?11`,
+       currency = ?5, theme = ?6, logo_url = ?7, button_style = ?8, show_badge = ?9, section_order = ?10,
+       social_links = ?11 WHERE username = ?12`,
   )
-    .bind(storeName, tagline, storeBio, whatsapp, currency, theme, logoUrl, buttonStyle, showBadge, sectionOrder, user.username)
+    .bind(storeName, tagline, storeBio, whatsapp, currency, theme, logoUrl, buttonStyle, showBadge, sectionOrder, JSON.stringify(socialLinks), user.username)
     .run();
   await c.env.DB.prepare('UPDATE users SET whatsapp_number = ?1 WHERE id = ?2').bind(whatsapp, user.id).run();
   const store = await getStoreByUsername(c.env, user.username);

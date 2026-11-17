@@ -3,7 +3,7 @@
 // lalu paket/produk sebagai kartu vertikal ala link-in-bio.
 import { api } from '../api.js';
 import { esc, go, rupiah, themeOf, waDigits } from '../utils.js';
-import { waIcon } from '../icons.js';
+import { icon, waIcon } from '../icons.js';
 import { errorBox, inputCls, topbar } from '../ui.js';
 
 let storeCache = null; // { username, store, products }
@@ -23,6 +23,21 @@ function btnRadius(store) {
   return store.button_style === 'pill' ? '9999px' : store.button_style === 'square' ? '4px' : '16px';
 }
 
+/** Baris ikon akun sosial agen (SVG) — hanya yang terisi; hilang bila kosong. */
+function socialRow(store, theme) {
+  const links = store.social_links || {};
+  const nets = [
+    ['instagram', 'Instagram agen'],
+    ['facebook', 'Facebook agen'],
+    ['tiktok', 'TikTok agen'],
+    ['youtube', 'YouTube agen'],
+  ].filter(([key]) => links[key]);
+  if (!nets.length) return '';
+  return `<div class="flex justify-center items-center gap-3 mt-4" style="color:${theme.main}">${nets
+    .map(([key, label]) => `<a href="${esc(links[key])}" target="_blank" rel="noopener" aria-label="${esc(label)}" class="hover:opacity-70 transition">${icon(key, 36)}</a>`)
+    .join('')}</div>`;
+}
+
 function storeHeader(store) {
   const t = themeOf(store.theme);
   const radius = btnRadius(store);
@@ -37,9 +52,10 @@ function storeHeader(store) {
     ${store.tagline ? `<p class="font-medium mt-3">${esc(store.tagline)}</p>` : ''}
     ${store.store_bio ? `<p class="text-stone-600 text-sm mt-1 max-w-md mx-auto">${esc(store.store_bio)}</p>` : ''}
     <div class="max-w-md mx-auto mt-5 space-y-2">
-      <a href="https://wa.me/${esc(waDigits(store.whatsapp_number))}" target="_blank" rel="noopener" class="block w-full py-3 text-white font-bold shadow" style="background:#25D366;border-radius:${radius}">${waIcon()}Chat WhatsApp Agen</a>
+      <a href="https://wa.me/${esc(waDigits(store.whatsapp_number))}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 w-full py-3 text-white font-bold shadow" style="background:#25D366;border-radius:${radius}">${waIcon()}Chat WhatsApp Agen</a>
       <button data-action="share-store" class="block w-full py-3 bg-white border border-stone-300 font-semibold text-sm" style="border-radius:${radius}">🔗 Bagikan Toko Ini</button>
     </div>
+    ${socialRow(store, t)}
     ${(store.trust_badges || []).length ? `<div class="flex flex-wrap justify-center gap-2 mt-4">${store.trust_badges.map((b) => `<span class="px-3 py-1 rounded-full bg-white border text-xs">✓ ${esc(b.text)}</span>`).join('')}</div>` : ''}
   </div>`;
 }

@@ -58,7 +58,8 @@ img { max-width: 100%; }
 
 /* Tombol */
 .btn {
-  display: inline-block; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none;
   padding: 12px 22px; border-radius: 999px;
   font-weight: 700; font-size: 0.95rem; border: none;
   cursor: pointer;
@@ -67,7 +68,7 @@ img { max-width: 100%; }
 .btn-primary:hover { background: var(--red-dark); }
 .btn-wa { background: var(--green); color: #fff; }
 .btn-wa:hover { filter: brightness(0.95); }
-.btn svg { vertical-align: -3px; margin-right: 6px; }
+.btn svg { flex-shrink: 0; }
 
 /* Hero */
 .hero {

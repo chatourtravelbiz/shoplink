@@ -3,6 +3,7 @@
 // (bahkan nama kolom tidak diinterpolasi — view/click memakai dua statement terpisah).
 import type { Env, OrderRow, PostRow, ProductRow, ShowcaseRow, StoreRow, UserRow } from '../types';
 import { dayStr, parseJson } from './http';
+import { parseSocialLinksJson } from './social';
 import { newId } from './crypto';
 
 export function publicUser(u: UserRow) {
@@ -39,6 +40,7 @@ export function publicStore(s: StoreRow) {
     show_badge: s.show_badge === 0 ? 0 : 1,
     section_order: s.section_order || 'products-first',
     status: s.status ?? 'active',
+    social_links: parseSocialLinksJson(s.social_links),
     trust_badges: parseJson(s.trust_badges_json, [] as Array<{ text: string }>),
     banners: parseJson(s.banners_json, [] as string[]),
   };

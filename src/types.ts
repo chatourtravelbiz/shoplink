@@ -44,6 +44,7 @@ export type StoreRow = {
   section_order: string;
   status: string;
   custom_domain: string | null;
+  social_links: string | null;
   trust_badges_json: string | null;
   banners_json: string | null;
 };

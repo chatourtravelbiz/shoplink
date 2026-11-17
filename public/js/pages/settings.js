@@ -1,7 +1,7 @@
 // Pengaturan toko merchant (auth) — termasuk pemilih tema ala Linktree.
 import { api, state } from '../api.js';
 import { THEMES, esc, go, themeOf } from '../utils.js';
-import { waIcon } from '../icons.js';
+import { icon, waIcon } from '../icons.js';
 import { field, inputCls, setErr, topbar } from '../ui.js';
 
 const BUTTON_STYLES = [
@@ -24,9 +24,15 @@ function themeSwatches(current) {
   <input type="hidden" name="theme" id="theme-input" value="${esc(current || 'chatour')}" />`;
 }
 
+function socialField(key, label, store) {
+  const val = store.social_links?.[key] || '';
+  return field(`${icon(key, 16)}${label}`, `<input name="social_${key}" value="${esc(val)}" class="${inputCls}" placeholder="username atau https://..." />`);
+}
+
 function themePreview(store) {
   const t = themeOf(store.theme || 'chatour');
   const radius = store.button_style === 'pill' ? '9999px' : store.button_style === 'square' ? '0px' : '16px';
+  const socials = ['instagram', 'facebook', 'tiktok', 'youtube'].filter((n) => store.social_links?.[n]);
   return `<div class="rounded-2xl border border-stone-200 p-4 bg-stone-50">
     <p class="text-xs font-semibold text-stone-500 mb-3">PRATINJAU TOKO</p>
     <div class="text-center">
@@ -34,9 +40,10 @@ function themePreview(store) {
       <p class="font-bold mt-2">${esc(store.store_name || 'Nama Toko')}</p>
       ${store.show_badge !== 0 ? `<span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-semibold text-white" style="background:${t.main};border-radius:${radius}">✈️ Agen Chatour Travel</span>` : ''}
       <div class="mt-3 space-y-2">
-        <span class="block w-full py-2 text-white text-sm font-bold" style="background:#25D366;border-radius:${radius}">${waIcon(16)}Chat WhatsApp Agen</span>
+        <span class="flex items-center justify-center gap-2 w-full py-2 text-white text-sm font-bold" style="background:#25D366;border-radius:${radius}">${waIcon(16)}Chat WhatsApp Agen</span>
         <span class="block w-full py-2 bg-white border text-sm font-semibold" style="border-radius:${radius}">Paket Umroh 9 Hari</span>
       </div>
+      ${socials.length ? `<div class="flex justify-center gap-2 mt-3" style="color:${t.main}">${socials.map((n) => icon(n, 24)).join('')}</div>` : ''}
     </div>
   </div>`;
 }
@@ -58,6 +65,16 @@ export function viewSettings() {
       ${field('Tagline', `<input name="tagline" value="${esc(s.tagline || '')}" class="${inputCls}" />`)}
       ${field('Bio toko', `<textarea name="store_bio" rows="3" class="${inputCls}">${esc(s.store_bio || '')}</textarea>`)}
       ${field('Nomor WhatsApp *', `<input required name="whatsapp_number" value="${esc(s.whatsapp_number || '')}" class="${inputCls}" />`, 'Pembeli akan diarahkan ke nomor ini untuk konfirmasi order.')}
+      <div>
+        <span class="text-sm font-medium text-stone-700">Akun Sosial</span>
+        <p class="text-xs text-stone-500 mt-0.5">Isi username atau tautan lengkap, kosongkan bila tidak punya.</p>
+        <div class="grid sm:grid-cols-2 gap-4 mt-1">
+          ${socialField('instagram', 'Instagram', s)}
+          ${socialField('facebook', 'Facebook', s)}
+          ${socialField('tiktok', 'TikTok', s)}
+          ${socialField('youtube', 'YouTube', s)}
+        </div>
+      </div>
       ${field('Logo (URL gambar)', `<input name="logo_url" value="${esc(s.logo_url || '')}" class="${inputCls}" placeholder="https://..." />`)}
       <div class="grid grid-cols-2 gap-4">
         ${field('Mata uang', `<input name="currency" value="${esc(s.currency || 'IDR')}" class="${inputCls}" />`)}
@@ -100,6 +117,13 @@ export function bindSettings() {
       const fd = new FormData(form);
       const payload = Object.fromEntries(fd);
       payload.show_badge = form.querySelector('[name="show_badge"]')?.checked ? 1 : 0;
+      payload.social_links = {
+        instagram: fd.get('social_instagram') || '',
+        facebook: fd.get('social_facebook') || '',
+        tiktok: fd.get('social_tiktok') || '',
+        youtube: fd.get('social_youtube') || '',
+      };
+      for (const k of ['social_instagram', 'social_facebook', 'social_tiktok', 'social_youtube']) delete payload[k];
       const r = await api('/api/settings', { method: 'PUT', body: JSON.stringify(payload) });
       state.session = { ...state.session, store: r.store };
       setErr('err', '');
