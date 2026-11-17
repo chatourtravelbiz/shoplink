@@ -46,9 +46,9 @@ img { max-width: 100%; }
   display: flex; align-items: center; gap: 16px;
   min-height: 64px;
 }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); flex: none; }
 .brand-logo { height: 44px; width: auto; }
-.brand-name { font-weight: 800; font-size: 1.15rem; }
+.brand-name { font-weight: 800; font-size: 1.15rem; white-space: nowrap; }
 .nav { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
 .nav a {
   color: var(--ink); text-decoration: none;
@@ -212,7 +212,15 @@ html.dark .faq-q { color: #fafaf9; }
   .hero-cta .btn { width: 100%; }
   .section { padding: 44px 0; }
   .contact-grid { grid-template-columns: 1fr; }
-  .topbar-inner .btn-wa { margin-left: auto; padding: 8px 14px; }
+  /* Header mobile: nama brand satu baris, logo & tombol mengecil, tombol
+     WhatsApp jadi ikon saja supaya muat. */
+  .topbar-inner { gap: 10px; min-height: 56px; }
+  .brand { gap: 8px; }
+  .brand-logo { height: 36px; }
+  .brand-name { font-size: 1rem; }
+  .theme-toggle { width: 36px; height: 36px; margin-left: 4px; }
+  .topbar .btn-wa-label { display: none; }
+  .topbar-inner .btn-wa { margin-left: auto; padding: 8px 10px; }
 }
 
 /* Blog — artikel server-rendered */

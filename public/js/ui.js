@@ -48,7 +48,7 @@ export function topbar(active) {
        <a href="/signup" class="px-3 py-2 rounded-lg bg-red-700 text-white font-semibold">Daftar Gratis</a>`;
   return `<header class="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-stone-200">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-      <a href="${state.session ? '/dashboard' : 'https://chatourtravel.com/'}" class="flex items-center gap-2 text-xl font-extrabold tracking-tight"><img src="/logo-chatour.png" alt="Chatour Travel" class="h-9 w-9 object-contain" />Chatour <span class="text-red-700">Travel</span></a>
+      <a href="${state.session ? '/dashboard' : 'https://chatourtravel.com/'}" class="flex items-center gap-2 text-xl font-extrabold tracking-tight whitespace-nowrap"><img src="/logo-chatour.png" alt="Chatour Travel" class="h-9 w-9 object-contain" />Chatour <span class="text-red-700">Travel</span></a>
       <nav class="flex items-center gap-1 text-sm overflow-x-auto">${links}</nav>
     </div></header>`;
 }

@@ -105,7 +105,7 @@ function productCard(username, p, theme) {
     <div class="min-w-0 flex-1">
       <h3 class="font-semibold leading-snug">${esc(p.name)}</h3>
       <p class="text-xs text-stone-500 mt-0.5 line-clamp-1">${esc(p.description)}</p>
-      <div class="flex items-center gap-2 mt-1.5 text-xs"><span class="px-2 py-0.5 rounded-full bg-stone-100">${esc(p.category)}</span><span class="${p.stock > 0 ? 'text-stone-500' : 'text-stone-400'}">${p.stock > 0 ? `Stok ${p.stock}` : 'Pre-order'}</span></div>
+      <div class="flex items-center gap-2 mt-1.5 text-xs"><span class="px-2 py-0.5 rounded-full bg-stone-100">${esc(p.category)}</span><span class="${p.stock > 0 ? 'text-stone-500' : 'text-stone-400'}">${p.stock > 0 ? `Kuota ${p.stock}` : 'Pre-order'}</span></div>
     </div>
     <div class="text-right shrink-0"><div class="font-extrabold whitespace-nowrap" style="color:${theme.main}">${priceLabel(p.price)}</div><span class="text-xs font-semibold text-stone-500">Lihat →</span></div>
   </a>`;

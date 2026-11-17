@@ -187,7 +187,7 @@ function productForm(p) {
       ${field('Nama produk *', `<input required name="name" value="${esc(v.name)}" class="${inputCls}" />`)}
       ${field('Harga (Rp) *', `<input required type="number" min="0" max="1000000000" name="price" value="${v.price}" class="${inputCls}" />`, 'Isi 0 bila harga tanya via WhatsApp (Tanya Harga).')}
       ${field('Kategori', `<input name="category" value="${esc(v.category)}" class="${inputCls}" />`)}
-      ${field('Stok', `<input type="number" min="0" max="1000000" name="stock" value="${v.stock}" class="${inputCls}" />`, 'Isi 0 bila stok tidak dibatasi (pre-order).')}
+      ${field('Kuota', `<input type="number" min="0" max="1000000" name="stock" value="${v.stock}" class="${inputCls}" />`, 'Isi 0 bila kuota tidak dibatasi (pre-order).')}
       ${field('Status', `<select name="status" class="${inputCls}">${statusOptions}</select>`)}
       ${field('Gambar (URL)', `<input name="image_url" value="${esc(v.image_url)}" class="${inputCls}" placeholder="https://images.unsplash.com/..." />`, 'Tempel link gambar (mis. Unsplash). Atau upload file di bawah — upload memakai R2 bila sudah diset.')}
     </div>

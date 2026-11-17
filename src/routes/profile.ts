@@ -46,7 +46,7 @@ function header(c: ProfileContent): string {
       <a href="/blog">Blog</a><a href="/#kontak">Kontak</a>
     </nav>
     <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Ganti mode gelap/terang">🌙</button>
-    <a class="btn btn-wa" href="${esc(c.waLink || '#')}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
+    <a class="btn btn-wa" href="${esc(c.waLink || '#')}" target="_blank" rel="noopener">${WA_SVG}<span class="btn-wa-label">WhatsApp</span></a>
   </div></header>`;
 }
 
