@@ -2,6 +2,9 @@
 export const rupiah = (n) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(n) || 0);
 
+/** Harga tampil: 0 = "Tanya Harga" (paket tanpa harga publik, mis. paket Umroh & Haji). */
+export const priceLabel = (n) => (Number(n) || 0) <= 0 ? 'Tanya Harga' : rupiah(n);
+
 /** Escape HTML — SEMUA data dari server/user WAJIB lewat ini sebelum masuk innerHTML. */
 export const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));

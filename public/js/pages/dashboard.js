@@ -1,6 +1,6 @@
 // Dashboard merchant: metrik, grafik 7 hari, order terbaru + ubah status.
 import { api, state } from '../api.js';
-import { PAYMENT_LABEL, STATUS_CLASS, STATUS_LABEL, esc, go, rupiah } from '../utils.js';
+import { PAYMENT_LABEL, STATUS_CLASS, STATUS_LABEL, esc, go, priceLabel, rupiah } from '../utils.js';
 import { errorBox, topbar } from '../ui.js';
 
 export async function viewDashboard() {
@@ -40,7 +40,7 @@ export async function viewDashboard() {
         .map((o) => `<tr class="border-t border-stone-100">
       <td class="py-2 pr-2"><div class="font-medium">${esc(o.product_name)}</div><div class="text-xs text-stone-500">${esc(o.customer_name)} · ${esc(o.customer_phone)}</div></td>
       <td class="py-2 pr-2 text-right">${o.quantity}×</td>
-      <td class="py-2 pr-2 text-right font-medium">${rupiah(o.revenue)}</td>
+      <td class="py-2 pr-2 text-right font-medium">${priceLabel(o.revenue)}</td>
       <td class="py-2 pr-2"><span class="text-xs px-2 py-1 rounded-full ${STATUS_CLASS[o.status] || ''}">${STATUS_LABEL[o.status] || o.status}</span><div class="text-xs text-stone-500 mt-1">${PAYMENT_LABEL[o.payment_method] || o.payment_method}</div></td>
       <td class="py-2"><select data-order-id="${esc(o.id)}" class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-1 bg-white text-sm">
         ${['pending', 'confirmed', 'completed', 'cancelled'].map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${STATUS_LABEL[s]}</option>`).join('')}
@@ -49,7 +49,7 @@ export async function viewDashboard() {
         .join('')
     : `<tr><td colspan="5" class="py-6 text-center text-stone-500 text-sm">Belum ada order. Bagikan link tokomu di bio Instagram!</td></tr>`;
   const top = data.top_products.length
-    ? data.top_products.map((p) => `<li class="flex justify-between py-2 border-t border-stone-100 text-sm"><span>${esc(p.product_name)} <span class="text-stone-400">(${p.quantity} terjual)</span></span><span class="font-medium">${rupiah(p.revenue)}</span></li>`).join('')
+    ? data.top_products.map((p) => `<li class="flex justify-between py-2 border-t border-stone-100 text-sm"><span>${esc(p.product_name)} <span class="text-stone-400">(${p.quantity} terjual)</span></span><span class="font-medium">${priceLabel(p.revenue)}</span></li>`).join('')
     : '<li class="py-2 text-sm text-stone-500">Belum ada penjualan.</li>';
   return `${topbar('dashboard')}
   <main class="max-w-5xl mx-auto px-4 py-8">

@@ -29,42 +29,35 @@ const daysAgo = (n, h = 10) => {
   return d;
 };
 
-const U = 'https://images.unsplash.com';
 const products = [
-  { id: 'demo-tas-kulit', name: 'Tas Selempang Kulit Asli', price: 249000, category: 'Tas', stock: 12, collection: 'Best Seller', img: `${U}/photo-1548036328-c9fa89d128fa?q=80&w=1200&auto=format&fit=crop`, desc: 'Tas selempang kulit asli dengan jahitan rapi, tali bisa diatur, dan cukup untuk dompet, HP, dan kunci.', highlights: ['Kulit asli', 'Tali adjustable', 'Jahitan rapi'] },
-  { id: 'demo-sneakers', name: 'Sneakers Putih Kasual', price: 399000, category: 'Sepatu', stock: 20, collection: 'Best Seller', img: `${U}/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop`, desc: 'Sneakers putih ringan dengan sol empuk, nyaman dipakai seharian untuk jalan maupun kerja.', highlights: ['Sol empuk', 'Ringan', 'Mudah dipadukan'] },
-  { id: 'demo-jam-tangan', name: 'Jam Tangan Klasik Kulit', price: 549000, category: 'Aksesoris', stock: 8, collection: 'Koleksi Baru', img: `${U}/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop`, desc: 'Jam tangan klasik tali kulit dengan tampilan minimalis, cocok untuk acara formal maupun santai.', highlights: ['Tali kulit', 'Tahan air (percikan)', 'Desain minimalis'] },
-  { id: 'demo-headphone', name: 'Headphone Bluetooth', price: 299000, category: 'Elektronik', stock: 15, collection: 'Koleksi Baru', img: `${U}/photo-1505740420928-5e560c06d30e?q=80&w=1200&auto=format&fit=crop`, desc: 'Headphone bluetooth dengan bass mantap dan baterai tahan sampai 20 jam. Cocok untuk kerja dan olahraga.', highlights: ['Baterai 20 jam', 'Bass mantap', 'Bluetooth 5.0'] },
-  { id: 'demo-kopi-gayo', name: 'Kopi Gayo Arabika 250g', price: 89000, category: 'Makanan & Minuman', stock: 30, collection: 'Umum', img: `${U}/photo-1447933601403-0c6688de566e?q=80&w=1200&auto=format&fit=crop`, desc: 'Biji kopi arabika Gayo asli Aceh, disangrai medium. Aroma fruity dan rasa bersih, cocok untuk V60 maupun tubruk.', highlights: ['Arabika Gayo asli', 'Roast medium', '250 gram'] },
-  { id: 'demo-kemeja-batik', name: 'Kemeja Batik Pria Lengan Panjang', price: 179000, category: 'Fashion', stock: 18, collection: 'Umum', img: `${U}/photo-1596755094514-f87e34085b2c?q=80&w=1200&auto=format&fit=crop`, desc: 'Kemeja batik katun adem dengan motif klasik, potongan rapi. Nyaman dipakai kerja maupun kondangan.', highlights: ['Katun adem', 'Motif klasik', 'Potongan rapi'] },
+  { id: 'demo-umroh-reguler', name: 'Umroh Reguler 9 Hari', price: 0, category: 'Umroh', stock: 20, collection: 'Umroh', img: '', desc: 'Paket Umroh 9 hari. Hotel bintang 4, tiket pesawat PP, visa Umroh, makan 3x sehari, pembimbing & manasik.', highlights: ['Hotel bintang 4', 'Tiket pesawat PP', 'Visa Umroh', 'Makan 3x sehari', 'Pembimbing & manasik'] },
+  { id: 'demo-umroh-plus-turki', name: 'Umroh Plus Turki 12 Hari', price: 0, category: 'Umroh', stock: 20, collection: 'Umroh', img: '', desc: 'Paket Umroh 12 hari plus city tour Turki. Hotel bintang 4, tiket pesawat PP, visa Umroh, makan 3x sehari, pembimbing & manasik.', highlights: ['Hotel bintang 4', 'Tiket pesawat PP', 'Visa Umroh', 'City tour Turki', 'Pembimbing & manasik'] },
+  { id: 'demo-umroh-ramadhan', name: 'Umroh Ramadhan 14 Hari', price: 0, category: 'Umroh', stock: 20, collection: 'Umroh', img: '', desc: 'Paket Umroh Ramadhan 14 hari. Hotel bintang 4, tiket pesawat PP, visa Umroh, I\'tikaf & buka puasa, pembimbing & manasik.', highlights: ['Hotel bintang 4', 'Tiket pesawat PP', 'Visa Umroh', 'I\'tikaf & buka puasa', 'Pembimbing & manasik'] },
+  { id: 'demo-haji-reguler', name: 'Haji Reguler', price: 0, category: 'Haji', stock: 20, collection: 'Haji', img: '', desc: 'Haji Reguler ±40 hari. Kuota resmi pemerintah, hotel di Makkah & Madinah, makan selama di Tanah Suci, pembimbing haji, manasik lengkap.', highlights: ['Kuota resmi pemerintah', 'Hotel di Makkah & Madinah', 'Makan selama di Tanah Suci', 'Pembimbing haji', 'Manasik lengkap'] },
+  { id: 'demo-haji-khusus', name: 'Haji Khusus (ONH Plus)', price: 0, category: 'Haji', stock: 20, collection: 'Haji', img: '', desc: 'Haji Khusus (ONH Plus) ±25 hari. Hotel bintang 5 dekat masjid, penerbangan langsung, makan 3x sehari, pembimbing haji, manasik lengkap.', highlights: ['Hotel bintang 5 dekat masjid', 'Penerbangan langsung', 'Makan 3x sehari', 'Pembimbing haji', 'Manasik lengkap'] },
+  { id: 'demo-tiket-umroh', name: 'Tiket Umroh PP', price: 0, category: 'Tiket', stock: 20, collection: 'Tiket', img: '', desc: 'Tiket pesawat pulang-pergi untuk perjalanan Umroh. Harga tanya via WhatsApp.', highlights: ['Penerbangan langsung', 'Tiket pesawat PP', 'Harga tanya via WhatsApp'] },
 ];
 
 const orders = [
-  { id: 'o_demo_1', product: products[0], qty: 1, date: daysAgo(2, 11), status: 'completed', name: 'Ayu Lestari', phone: '081234567890', address: 'Jl. Merdeka No. 12, Bandung', method: 'whatsapp', notes: 'Tolong packing rapi ya' },
-  { id: 'o_demo_2', product: products[4], qty: 2, date: daysAgo(1, 14), status: 'confirmed', name: 'Budi Santoso', phone: '082112345678', address: 'Jl. Sudirman No. 45, Jakarta', method: 'transfer', notes: '' },
-  { id: 'o_demo_3', product: products[1], qty: 1, date: daysAgo(0, 9), status: 'pending', name: 'Citra Dewi', phone: '085678901234', address: 'Jl. Diponegoro No. 8, Surabaya', method: 'cod', notes: 'COD sore hari' },
+  { id: 'o_demo_1', product: products[0], qty: 1, date: daysAgo(2, 11), status: 'completed', name: 'Ayu Lestari', phone: '081234567890', address: 'Jl. Merdeka No. 12, Bandung', method: 'transfer', notes: 'Mohon info jadwal keberangkatan' },
+  { id: 'o_demo_2', product: products[3], qty: 2, date: daysAgo(1, 14), status: 'confirmed', name: 'Budi Santoso', phone: '082112345678', address: 'Jl. Sudirman No. 45, Jakarta', method: 'transfer', notes: '' },
+  { id: 'o_demo_3', product: products[2], qty: 1, date: daysAgo(0, 9), status: 'pending', name: 'Citra Dewi', phone: '085678901234', address: 'Jl. Diponegoro No. 8, Surabaya', method: 'transfer', notes: 'Tanya harga & jadwal Ramadhan' },
 ];
 
 const lines = [];
 lines.push('-- Seed demo — dibuat otomatis oleh scripts/make-seed.mjs. JANGAN edit manual; jalankan ulang scriptnya.');
 lines.push('-- Akun demo: john@example.com / password123  (toko @demo, "Toko Demo")');
-lines.push(`INSERT OR REPLACE INTO users (id, email, username, password_hash, first_name, last_name, bio, whatsapp_number, avatar_url, created_at) VALUES (${q('u_demo_john')}, ${q('john@example.com')}, ${q('demo')}, ${q(passwordHash)}, ${q('John')}, ${q('Doe')}, ${q('Seller demo Chatour Travel')}, ${q('6281234567890')}, '', ${q(iso(today))});`);
-lines.push(`INSERT OR REPLACE INTO stores (username, user_id, email, first_name, last_name, user_bio, whatsapp_number, avatar_url, logo_url, store_name, tagline, store_bio, currency, theme, trust_badges_json, banners_json) VALUES (${q('demo')}, ${q('u_demo_john')}, ${q('john@example.com')}, ${q('John')}, ${q('Doe')}, ${q('Seller demo Chatour Travel')}, ${q('6281234567890')}, '', '', ${q('Toko Demo')}, ${q('Belanja lewat WhatsApp')}, ${q('Toko demo Chatour Travel — aneka fashion, kopi, dan aksesoris pilihan. Pesan mudah, konfirmasi langsung via WhatsApp.')}, ${q('IDR')}, ${q('chatour')}, ${q(JSON.stringify([{ text: 'Fast Respon via WhatsApp' }, { text: 'Pengiriman Aman' }, { text: 'Bisa COD' }]))}, ${q('[]')});`);
+lines.push(`INSERT OR REPLACE INTO users (id, email, username, password_hash, first_name, last_name, bio, whatsapp_number, avatar_url, created_at) VALUES (${q('u_demo_john')}, ${q('john@example.com')}, ${q('demo')}, ${q(passwordHash)}, ${q('John')}, ${q('Doe')}, ${q('Agen demo Chatour Travel')}, ${q('6281234567890')}, '', ${q(iso(today))});`);
+lines.push(`INSERT OR REPLACE INTO stores (username, user_id, email, first_name, last_name, user_bio, whatsapp_number, avatar_url, logo_url, store_name, tagline, store_bio, currency, theme, trust_badges_json, banners_json) VALUES (${q('demo')}, ${q('u_demo_john')}, ${q('john@example.com')}, ${q('John')}, ${q('Doe')}, ${q('Agen demo Chatour Travel')}, ${q('6281234567890')}, '', '', ${q('Toko Demo')}, ${q('Pesan paket lewat WhatsApp')}, ${q('Toko demo agen Chatour Travel — paket Umroh & Haji. Pesan mudah, konfirmasi langsung via WhatsApp.')}, ${q('IDR')}, ${q('chatour')}, ${q(JSON.stringify([{ text: 'Fast Respon via WhatsApp' }, { text: 'Berizin Resmi PPIU' }, { text: 'Pembimbing Bersertifikat BNSP' }]))}, ${q('[]')});`);
 
 for (const p of products) {
-  lines.push(`INSERT OR REPLACE INTO products (store_username, product_id, image_url, images_json, name, price, description, status, created_at, category, stock, collection_name, variants_json, highlights_json) VALUES (${q('demo')}, ${q(p.id)}, ${q(p.img)}, ${q(JSON.stringify([p.img]))}, ${q(p.name)}, ${p.price}, ${q(p.desc)}, ${q('active')}, ${q(iso(today))}, ${q(p.category)}, ${p.stock}, ${q(p.collection)}, ${q('[]')}, ${q(JSON.stringify(p.highlights))});`);
+  lines.push(`INSERT OR REPLACE INTO products (store_username, product_id, image_url, images_json, name, price, description, status, created_at, category, stock, collection_name, variants_json, highlights_json) VALUES (${q('demo')}, ${q(p.id)}, ${q(p.img)}, ${q(JSON.stringify(p.img ? [p.img] : []))}, ${q(p.name)}, ${p.price}, ${q(p.desc)}, ${q('active')}, ${q(iso(today))}, ${q(p.category)}, ${p.stock}, ${q(p.collection)}, ${q('[]')}, ${q(JSON.stringify(p.highlights))});`);
 }
 for (const o of orders) {
   lines.push(`INSERT OR REPLACE INTO orders (id, store_username, product_id, quantity, revenue, date, notes, status, customer_name, customer_phone, customer_address, payment_method) VALUES (${q(o.id)}, ${q('demo')}, ${q(o.product.id)}, ${o.qty}, ${o.product.price * o.qty}, ${q(iso(o.date))}, ${q(o.notes)}, ${q(o.status)}, ${q(o.name)}, ${q(o.phone)}, ${q(o.address)}, ${q(o.method)});`);
 }
-// Analitik 7 hari terakhir (agar grafik dashboard demo tidak kosong)
-const views = [42, 35, 51, 28, 63, 47, 58];
-const clicks = [9, 7, 12, 5, 15, 11, 13];
-for (let i = 6; i >= 0; i--) {
-  const d = daysAgo(i);
-  const idx = 6 - i;
-  lines.push(`INSERT OR REPLACE INTO analytics_daily (store_username, metric_date, views, clicks) VALUES (${q('demo')}, ${q(isoDate(d))}, ${views[idx]}, ${clicks[idx]});`);
-}
+// Analitik demo TIDAK di-seed (dashboard demo harus mulai dari 0 kunjungan/klik;
+// angka contoh lama sudah dihapus dari seed dan dari D1).
 lines.push(`INSERT OR REPLACE INTO analytics_events (id, store_username, event_type, metric_date, source, referrer_host, page_path, created_at) VALUES (${q('ae_demo_seed')}, ${q('demo')}, ${q('view')}, ${q(isoDate(today))}, ${q('instagram')}, ${q('instagram.com')}, ${q('/s/demo')}, ${q(iso(today))});`);
 
 writeFileSync(out, lines.join('\n') + '\n');

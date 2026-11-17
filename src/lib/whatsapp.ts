@@ -34,7 +34,7 @@ export function buildOrderWhatsAppUrl(
     '',
     `Produk: ${params.productName}`,
     `Jumlah: ${params.quantity}`,
-    `Total: ${rupiah.format(params.total)}`,
+    `Total: ${params.total > 0 ? rupiah.format(params.total) : 'Tanya Harga'}`,
     `Metode pembayaran: ${methodLabel}`,
     '',
     `Nama: ${params.customerName}`,

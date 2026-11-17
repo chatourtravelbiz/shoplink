@@ -1,6 +1,6 @@
 // Detail produk publik + form order (WhatsApp / COD / Transfer).
 import { api } from '../api.js';
-import { esc, go, rupiah, themeOf, waDigits } from '../utils.js';
+import { esc, go, priceLabel, themeOf, waDigits } from '../utils.js';
 import { waIcon } from '../icons.js';
 import { errorBox, field, inputCls, setErr, topbar } from '../ui.js';
 import { loadStore } from './storefront.js';
@@ -31,7 +31,7 @@ function otherCard(username, p, theme) {
     <div class="h-24 sm:h-28 shrink-0">${cover}</div>
     <div class="p-3 flex flex-col flex-1">
       <h3 class="font-semibold text-sm leading-snug line-clamp-2">${esc(p.name)}</h3>
-      <div class="mt-auto pt-2 flex items-center justify-between gap-2"><span class="font-extrabold text-sm" style="color:${theme.main}">${rupiah(p.price)}</span><span class="text-xs font-semibold text-stone-500">Lihat →</span></div>
+      <div class="mt-auto pt-2 flex items-center justify-between gap-2"><span class="font-extrabold text-sm" style="color:${theme.main}">${priceLabel(p.price)}</span><span class="text-xs font-semibold text-stone-500">Lihat →</span></div>
     </div>
   </a>`;
 }
@@ -80,7 +80,7 @@ export async function viewProduct(username, productId) {
     <div class="bg-white border border-stone-200 rounded-2xl overflow-hidden mt-4">
       ${cover}
       <div class="p-5">
-        <div class="flex flex-wrap items-start justify-between gap-2"><h1 class="text-2xl font-bold">${esc(p.name)}</h1><span class="text-2xl font-extrabold" style="color:${t.main}">${rupiah(p.price)}</span></div>
+        <div class="flex flex-wrap items-start justify-between gap-2"><h1 class="text-2xl font-bold">${esc(p.name)}</h1><span class="text-2xl font-extrabold" style="color:${t.main}">${priceLabel(p.price)}</span></div>
         <div class="flex gap-2 mt-2 text-xs"><span class="px-2 py-1 rounded-full bg-stone-100">${esc(p.category)}</span>${p.collection ? `<span class="px-2 py-1 rounded-full bg-stone-100">${esc(p.collection)}</span>` : ''}<span class="px-2 py-1 rounded-full bg-stone-100">${p.stock > 0 ? `Stok ${p.stock}` : 'Pre-order'}</span></div>
         <p class="text-stone-600 mt-3">${esc(p.description)}</p>
         ${(p.highlights || []).length ? `<ul class="mt-3 space-y-1 text-sm">${p.highlights.map((h) => `<li>✓ ${esc(h)}</li>`).join('')}</ul>` : ''}
@@ -99,7 +99,7 @@ export async function viewProduct(username, productId) {
       ${field('Alamat pengiriman *', `<textarea required name="customer_address" maxlength="500" rows="2" class="${inputCls}" placeholder="Jalan, RT/RW, kota"></textarea>`)}
       ${field('Metode pembayaran', `<select name="payment_method" class="${inputCls}"><option value="whatsapp">WhatsApp (konfirmasi manual)</option><option value="cod">COD — bayar di tempat</option><option value="transfer">Transfer bank</option></select>`)}
       ${field('Catatan (opsional)', `<input name="notes" maxlength="500" class="${inputCls}" placeholder="Contoh: warna biru, ukuran L" />`)}
-      <div class="flex items-center justify-between border-t border-stone-100 pt-3"><span class="text-sm text-stone-600">Total (<span id="qty-label">1</span> × ${rupiah(p.price)})</span><span id="total-label" class="text-xl font-extrabold">${rupiah(p.price)}</span></div>
+      <div class="flex items-center justify-between border-t border-stone-100 pt-3"><span class="text-sm text-stone-600">Total (<span id="qty-label">1</span> × ${priceLabel(p.price)})</span><span id="total-label" class="text-xl font-extrabold">${priceLabel(p.price)}</span></div>
       <button class="w-full py-3 rounded-xl text-white font-semibold" style="background:${t.main}">Pesan Sekarang</button>
       <p class="text-xs text-stone-500 text-center">Order dicatat di toko, lalu kamu konfirmasi ke penjual via WhatsApp. Tanpa pembayaran online.</p>
     </form>
@@ -133,7 +133,7 @@ export function bindProduct() {
   qty?.addEventListener('input', () => {
     const q = Math.max(1, Number(qty.value) || 1);
     document.getElementById('qty-label').textContent = String(q);
-    document.getElementById('total-label').textContent = rupiah(q * unit);
+    document.getElementById('total-label').textContent = priceLabel(q * unit);
   });
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

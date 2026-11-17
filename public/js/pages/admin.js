@@ -1,7 +1,7 @@
 // Admin platform — /admin. Data hanya dari /api/admin/* (RBAC di server);
 // tampilan di sini hanya menyembunyikan tombol yang memang tidak boleh dipakai.
 import { api, state } from '../api.js';
-import { esc, rupiah, STATUS_LABEL } from '../utils.js';
+import { esc, priceLabel, rupiah, STATUS_LABEL } from '../utils.js';
 import { errorBox, topbar } from '../ui.js';
 
 const ROLES = ['super_admin', 'admin', 'moderator', 'support', 'merchant'];
@@ -208,8 +208,8 @@ export async function adminRejectDomain(username, render) {
 function ordersTable(orders) {
   const rows = orders.map((o) => `<tr class="border-t border-stone-100">
     <td class="py-2 pr-2 pl-4"><div class="font-semibold">${esc(o.product_name)}</div><div class="text-xs text-stone-500">@${esc(o.store_username)} · ${esc(o.customer_name)}</div></td>
-    <td class="py-2 pr-2 text-sm">${o.quantity} × ${rupiah(o.revenue / Math.max(1, o.quantity))}</td>
-    <td class="py-2 pr-2 font-semibold">${rupiah(o.revenue)}</td>
+    <td class="py-2 pr-2 text-sm">${o.quantity} × ${priceLabel(o.revenue / Math.max(1, o.quantity))}</td>
+    <td class="py-2 pr-2 font-semibold">${priceLabel(o.revenue)}</td>
     <td class="py-2 pr-2 text-sm">${esc(STATUS_LABEL[o.status] || o.status)}</td>
     <td class="py-2 text-xs text-stone-500">${esc((o.date || '').slice(0, 10))}</td>
   </tr>`).join('');

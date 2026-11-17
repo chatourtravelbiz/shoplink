@@ -2,7 +2,7 @@
 // Aksi memakai data-action + data-id (event delegation di app.js) —
 // TIDAK ada data produk di dalam inline handler, jadi tidak ada risiko quote-breaking.
 import { api, apiForm, state } from '../api.js';
-import { esc, go, rupiah } from '../utils.js';
+import { esc, go, priceLabel } from '../utils.js';
 import { errorBox, field, inputCls, setErr, topbar } from '../ui.js';
 
 let currentProducts = [];
@@ -28,8 +28,8 @@ export async function viewProducts() {
   const rows = currentProducts.length
     ? currentProducts
         .map((p) => `<tr class="border-t border-stone-100">
-      <td class="py-2 pr-2"><div class="flex items-center gap-3"><img src="${esc(p.image_url)}" class="w-12 h-12 rounded-lg object-cover border" alt="" /><div><div class="font-medium">${esc(p.name)}</div><div class="text-xs text-stone-500">${esc(p.category)} · stok ${p.stock}</div></div></div></td>
-      <td class="py-2 pr-2 font-medium">${rupiah(p.price)}</td>
+      <td class="py-2 pr-2"><div class="flex items-center gap-3">${p.image_url ? `<img src="${esc(p.image_url)}" class="w-12 h-12 rounded-lg object-cover border" alt="" />` : `<div class="w-12 h-12 rounded-lg border bg-stone-100 flex items-center justify-center text-xl shrink-0">📦</div>`}<div><div class="font-medium">${esc(p.name)}</div><div class="text-xs text-stone-500">${esc(p.category)} · stok ${p.stock}</div></div></div></td>
+      <td class="py-2 pr-2 font-medium">${priceLabel(p.price)}</td>
       <td class="py-2 pr-2"><span class="text-xs px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-red-100 text-red-800' : 'bg-stone-100 text-stone-600'}">${p.status === 'active' ? 'Aktif' : p.status}</span></td>
       <td class="py-2"><div class="flex gap-2"><button data-action="edit-product" data-id="${esc(p.id)}" class="px-3 py-1.5 rounded-lg border text-sm">Edit</button><button data-action="delete-product" data-id="${esc(p.id)}" class="px-3 py-1.5 rounded-lg border border-rose-200 text-rose-700 text-sm">Hapus</button></div></td>
     </tr>`)
@@ -177,7 +177,7 @@ function productForm(p) {
     <h2 class="font-bold">${p ? 'Edit produk' : 'Tambah produk'}</h2><div id="err"></div>
     <div class="grid sm:grid-cols-2 gap-4">
       ${field('Nama produk *', `<input required name="name" value="${esc(v.name)}" class="${inputCls}" />`)}
-      ${field('Harga (Rp) *', `<input required type="number" min="0" max="1000000000" name="price" value="${v.price}" class="${inputCls}" />`)}
+      ${field('Harga (Rp) *', `<input required type="number" min="0" max="1000000000" name="price" value="${v.price}" class="${inputCls}" />`, 'Isi 0 bila harga tanya via WhatsApp (Tanya Harga).')}
       ${field('Kategori', `<input name="category" value="${esc(v.category)}" class="${inputCls}" />`)}
       ${field('Stok', `<input type="number" min="0" max="1000000" name="stock" value="${v.stock}" class="${inputCls}" />`, 'Isi 0 bila stok tidak dibatasi (pre-order).')}
       ${field('Status', `<select name="status" class="${inputCls}">${statusOptions}</select>`)}
