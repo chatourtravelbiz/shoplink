@@ -61,11 +61,14 @@ function footer(c: ProfileContent): string {
     <p class="muted">Situs Pusat: <a href="https://chatourtravel.id/" target="_blank" rel="noopener">chatourtravel.id</a></p>
     <p class="muted"><a href="https://www.facebook.com/share/1Fw2HpRVqy/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a> · <a href="https://youtube.com/@chatourofficial" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.instagram.com/chatourtravelofficial" target="_blank" rel="noopener">Instagram</a> · <a href="https://tiktok.com/@chatour.official" target="_blank" rel="noopener">TikTok</a> · <a href="https://play.google.com/store/apps/details?id=com.chatour.jamaah.app" target="_blank" rel="noopener">Aplikasi Jamaah</a></p>
     <p class="muted">© ${new Date().getFullYear()} Chatour Travel. Semua hak dilindungi.</p>
-  </div></footer>`;
+  </div></footer><button id="scroll-top" type="button" class="scroll-top" aria-label="Kembali ke atas">↑</button>`;
 }
 
 /** Saklar mode gelap halaman blog (beranda memakai profile.js). */
 const THEME_SCRIPT = `<script>(function(){var b=document.getElementById('theme-toggle');if(!b)return;var s=function(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙'};s();b.addEventListener('click',function(){var d=document.documentElement.classList.toggle('dark');try{localStorage.setItem('ct-theme',d?'dark':'light')}catch(e){}s();});})();</script>`;
+
+/** Tombol kembali ke atas halaman blog (beranda memakai profile.js). */
+const SCROLL_SCRIPT = `<script>(function(){var b=document.getElementById('scroll-top');if(!b)return;var t=function(){b.classList.toggle('show',window.scrollY>400)};t();window.addEventListener('scroll',t,{passive:true});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});})();</script>`;
 
 function page(site: string, opts: {
   title: string; description: string; canonical: string; ogImage?: string;
@@ -88,7 +91,7 @@ function page(site: string, opts: {
   <link rel="stylesheet" href="/profile.css" />
   <script>try{var t=localStorage.getItem('ct-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}</script>`;
   const ld = jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : '';
-  return new Response(`<!doctype html><html lang="id"><head>${meta}${ld}</head><body>${header(content)}<main>${body}</main>${footer(content)}${script || ''}${THEME_SCRIPT}</body></html>`, {
+  return new Response(`<!doctype html><html lang="id"><head>${meta}${ld}</head><body>${header(content)}<main>${body}</main>${footer(content)}${script || ''}${THEME_SCRIPT}${SCROLL_SCRIPT}</body></html>`, {
     headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' },
   });
 }

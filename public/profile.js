@@ -112,6 +112,16 @@ async function init() {
   });
 })();
 
+// Tombol kembali ke atas — muncul setelah scroll > 400px.
+(function () {
+  const btn = document.getElementById("scroll-top");
+  if (!btn) return;
+  const toggle = () => { btn.classList.toggle("show", window.scrollY > 400); };
+  toggle();
+  window.addEventListener("scroll", toggle, { passive: true });
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+})();
+
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-faq]");
   if (!btn) return;
