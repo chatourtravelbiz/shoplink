@@ -108,6 +108,8 @@ async function init() {
   document.getElementById("paket-haji").innerHTML = (c.paketHaji || []).map((p) => paketCard(p, c)).join("");
   document.getElementById("cara-daftar").innerHTML = (c.caraDaftar || []).map((s) =>
     `<article class="card"><span class="step-num">${esc(s.langkah)}</span><h3>${esc(s.judul)}</h3><p>${esc(s.isi)}</p></article>`).join("");
+  document.getElementById("testimoni").innerHTML = (c.testimoni || []).map((t) =>
+    `<article class="card"><p class="quote">&ldquo;${esc(t.isi)}&rdquo;</p><p class="quote-name">${esc(t.nama)}</p></article>`).join("");
   document.getElementById("faq-list").innerHTML = (c.faq || []).map((f, i) =>
     `<div class="faq-item">
       <button class="faq-q" type="button" aria-expanded="${i === 0}" data-faq="${i}">${esc(f.q)}<span aria-hidden="true">${i === 0 ? "−" : "+"}</span></button>

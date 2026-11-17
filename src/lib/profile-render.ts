@@ -97,6 +97,7 @@ export async function renderHome(env: Env): Promise<Response | null> {
   html = fill(html, 'paket-umroh', (c.paketUmroh || []).map((p: any) => paketCard(p, c)).join(''));
   html = fill(html, 'paket-haji', (c.paketHaji || []).map((p: any) => paketCard(p, c)).join(''));
   html = fill(html, 'cara-daftar', (c.caraDaftar || []).map((s: any) => `<article class="card"><span class="step-num">${esc(s.langkah)}</span><h3>${esc(s.judul)}</h3><p>${esc(s.isi)}</p></article>`).join(''));
+  html = fill(html, 'testimoni', (c.testimoni || []).map((t: any) => `<article class="card"><p class="quote">&ldquo;${esc(t.isi)}&rdquo;</p><p class="quote-name">${esc(t.nama)}</p></article>`).join(''));
   html = fill(html, 'faq-list', (c.faq || []).map((f: any, i: number) => `<div class="faq-item"><button class="faq-q" type="button" aria-expanded="${i === 0}" data-faq="${i}">${esc(f.q)}<span aria-hidden="true">${i === 0 ? '−' : '+'}</span></button><div class="faq-a" ${i === 0 ? '' : 'hidden'}>${esc(f.a)}</div></div>`).join(''));
   html = fillHrefText(html, 'kontak-wa', waHrefPusat(c), c.waNumber);
   html = fillHrefText(html, 'kontak-tel', c.telLink || '#', c.telepon);
