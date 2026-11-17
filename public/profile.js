@@ -27,11 +27,11 @@ const waHref = (c, text) => {
   return text ? `${base}${base.includes("?") ? "&" : "?"}text=${encodeURIComponent(text)}` : base;
 };
 
+// Harga & jadwal ditulis SEKALI di catatan seksi paket, bukan di tiap kartu.
 function paketCard(p, c) {
   return `<article class="card">
     <h3>${esc(p.nama)}</h3>
-    <p class="price">${esc(p.harga)}</p>
-    <p class="meta">${esc(p.durasi)} &middot; ${esc(p.berangkat)}</p>
+    <p class="meta">${esc(p.durasi)}</p>
     <ul>${(p.fasilitas || []).map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
     <a class="btn btn-wa" href="${esc(waHref(c, `Assalamu'alaikum, saya ingin bertanya tentang ${p.nama}.`))}" target="_blank" rel="noopener">Tanya Paket Ini</a>
   </article>`;
@@ -48,11 +48,11 @@ async function init() {
   document.title = `${c.biro} — Biro Umroh & Haji`;
   document.getElementById("hero-title").textContent = c.heroTitle;
   document.getElementById("hero-sub").textContent = c.heroSub;
-  document.getElementById("hero-izin").textContent = c.izin;
   document.getElementById("tentang-text").textContent = c.tentang;
   document.getElementById("footer-izin").textContent = c.izin;
+  document.getElementById("testimoni-note").textContent = c.testimoniNote || "";
 
-  for (const id of ["nav-wa", "hero-wa", "kontak-wa-btn"]) {
+  for (const id of ["nav-wa", "hero-wa", "kontak-wa-btn", "cta-wa"]) {
     document.getElementById(id).href = waHref(c, "Assalamu'alaikum, saya ingin bertanya tentang paket Umroh & Haji Chatour Travel.");
   }
   const waEl = document.getElementById("kontak-wa");
@@ -79,11 +79,14 @@ async function init() {
 
   document.getElementById("layanan-list").innerHTML = (c.layanan || []).map((l) =>
     `<span class="chip">${esc(l)}</span>`).join("");
-  document.getElementById("legalitas-list").innerHTML = (c.legalitas || []).map((l) =>
-    `<article class="card feature"><h3>${esc(l.judul)}</h3><p>${esc(l.isi)}</p></article>`).join("");
+  document.getElementById("trust-strip").innerHTML = (c.legalitas || []).map((l) =>
+    `<li><strong>${esc(l.judul)}</strong> — ${esc(l.isi)}</li>`).join("");
+  document.getElementById("statistik").innerHTML = (c.statistik || []).map((s) =>
+    `<div class="stat"><div class="stat-num">${esc(s.angka)}</div><div class="stat-label">${esc(s.label)}</div></div>`).join("");
 
-  document.getElementById("keunggulan").innerHTML = (c.keunggulan || []).map((k) =>
-    `<article class="card feature"><h3>${esc(k.judul)}</h3><p>${esc(k.isi)}</p></article>`).join("");
+  document.getElementById("keunggulan").innerHTML = (c.keunggulanGroups || []).map((g) =>
+    `<div class="group"><h3 class="group-title">${esc(g.judul)}</h3><p class="group-sub">${esc(g.sub)}</p><div class="grid">${(g.items || []).map((k) =>
+      `<article class="card feature"><h3>${esc(k.judul)}</h3><p>${esc(k.isi)}</p></article>`).join("")}</div></div>`).join("");
   document.getElementById("paket-umroh").innerHTML = (c.paketUmroh || []).map((p) => paketCard(p, c)).join("");
   document.getElementById("paket-haji").innerHTML = (c.paketHaji || []).map((p) => paketCard(p, c)).join("");
   document.getElementById("cara-daftar").innerHTML = (c.caraDaftar || []).map((s) =>

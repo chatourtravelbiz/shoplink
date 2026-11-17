@@ -66,36 +66,67 @@ img { max-width: 100%; }
 }
 .btn-primary { background: var(--red); color: #fff; }
 .btn-primary:hover { background: var(--red-dark); }
+.btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.85); }
+.btn-outline:hover { background: rgba(255, 255, 255, 0.14); }
 .btn-wa { background: var(--green); color: #fff; }
 .btn-wa:hover { filter: brightness(0.95); }
+.btn-lg { padding: 14px 28px; font-size: 1.05rem; }
 .btn svg { flex-shrink: 0; }
 
-/* Hero */
+/* Hero — gradasi merah bata ke merah gelap, teks putih.
+   Kontras putih di atas #b02a00 ≈ 6,6:1, di atas #7e1e00 lebih tinggi. */
 .hero {
-  background: linear-gradient(180deg, var(--red-soft), var(--bg));
-  padding: 64px 0 56px; text-align: center;
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+  color: #fff;
+  padding: 72px 0 64px; text-align: center;
 }
-.hero-logo { height: 120px; width: auto; }
+.hero-logo { height: 120px; width: auto; background: #fff; border-radius: 18px; padding: 12px 18px; }
 .eyebrow {
-  color: var(--red); font-weight: 800;
+  color: #ffd9cc; font-weight: 800;
   letter-spacing: 0.14em; text-transform: uppercase;
   font-size: 0.8rem; margin: 16px 0 8px;
 }
-.hero h1 { font-size: 2.2rem; max-width: 720px; margin: 0 auto 12px; }
-.hero-sub { color: var(--muted); max-width: 640px; margin: 0 auto 28px; }
+.hero h1 { font-size: 2.2rem; max-width: 720px; margin: 0 auto 12px; color: #fff; }
+.hero-sub { color: rgba(255, 255, 255, 0.92); max-width: 640px; margin: 0 auto 28px; }
 .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-.hero-note { margin-top: 20px; font-size: 0.85rem; color: var(--muted); }
+.hero-trust { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 28px 0 0; }
+.hero-trust span {
+  border: 1px solid rgba(255, 255, 255, 0.45); background: rgba(255, 255, 255, 0.12);
+  color: #fff; padding: 6px 14px; border-radius: 999px; font-size: 0.88rem; font-weight: 600;
+}
+
+/* Strip legalitas — baris kepercayaan di bawah hero, bukan kartu besar */
+.legal-strip { background: var(--red-dark); color: #fff; padding: 18px 0; }
+.legal-strip ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 10px 28px; justify-content: center;
+  font-size: 0.92rem;
+}
+.legal-strip li strong { color: #ffd9cc; }
 
 /* Seksi */
 .section { padding: 64px 0; }
 .section-alt { background: var(--red-soft); }
+.subhead { font-size: 1.3rem; color: var(--red-dark); margin: 36px 0 16px; }
+.subhead:first-of-type { margin-top: 28px; }
+
+/* Statistik tentang */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; max-width: 720px; margin: 36px auto 24px; }
+.stat { text-align: center; }
+.stat-num { font-size: 2.1rem; font-weight: 800; color: var(--red); line-height: 1.1; }
+.stat-label { color: var(--muted); font-size: 0.92rem; margin-top: 4px; }
+
+/* Kelompok keunggulan */
+.group { margin-top: 36px; }
+.group:first-child { margin-top: 8px; }
+.group-title { font-size: 1.25rem; color: var(--red-dark); text-align: left; margin: 0 0 4px; }
+.group-sub { color: var(--muted); margin: 0 0 16px; }
 .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .card {
   background: var(--white); border: 1px solid var(--line);
   border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);
 }
 .card h3 { font-size: 1.15rem; }
-.card .price { font-size: 1.35rem; font-weight: 800; color: var(--red); margin: 8px 0; }
 .card .meta { color: var(--muted); font-size: 0.9rem; margin: 4px 0 12px; }
 .card ul { margin: 0 0 16px; padding-left: 20px; }
 .card li { margin-bottom: 4px; }
@@ -123,6 +154,12 @@ img { max-width: 100%; }
 .faq-a { padding: 0 18px 16px; color: var(--muted); }
 .faq-a[hidden] { display: none; }
 
+/* CTA penutup */
+.cta-band { background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff; text-align: center; padding: 60px 0; }
+.cta-band h2 { color: #fff; }
+.cta-band h2::after { background: #fff; }
+.cta-band p { color: rgba(255, 255, 255, 0.92); max-width: 560px; margin: 0 auto 24px; }
+
 /* Kontak & footer */
 .contact-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; margin-bottom: 28px; }
 .contact-card {
@@ -131,7 +168,7 @@ img { max-width: 100%; }
 }
 .contact-card h3 { color: var(--red); margin-top: 12px; }
 .contact-card h3:first-child { margin-top: 0; }
-.footer { background: var(--ink); color: #f3ece7; padding: 40px 0; text-align: center; }
+.footer { background: var(--ink); color: #f3ece7; padding: 40px 0; text-align: center; border-top: 4px solid var(--red); }
 .footer-logo { height: 64px; width: auto; background: #fff; border-radius: 12px; padding: 6px; }
 .footer a { color: #f3ece7; }
 .footer-nav { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 16px 0; }
@@ -144,6 +181,8 @@ img { max-width: 100%; }
   .nav { display: none; }
   .hero h1 { font-size: 1.7rem; }
   .hero { padding: 44px 0 40px; }
+  .hero-cta { flex-direction: column; align-items: stretch; }
+  .hero-cta .btn { width: 100%; }
   .section { padding: 44px 0; }
   .contact-grid { grid-template-columns: 1fr; }
   .topbar-inner .btn-wa { margin-left: auto; padding: 8px 14px; }

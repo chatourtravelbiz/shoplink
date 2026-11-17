@@ -31,8 +31,21 @@ const socialLinks = (c: C): string =>
 const card = (judul: string, isi: string): string =>
   `<article class="card feature"><h3>${esc(judul)}</h3><p>${esc(isi)}</p></article>`;
 
+// Keunggulan berkelompok (3 kelompok, maks 8 kartu) dari content.json.
+const keunggulanGroups = (c: C): string =>
+  (c.keunggulanGroups || []).map((g: any) => `<div class="group"><h3 class="group-title">${esc(g.judul)}</h3><p class="group-sub">${esc(g.sub)}</p><div class="grid">${(g.items || []).map((k: any) => card(k.judul, k.isi)).join('')}</div></div>`).join('');
+
+// Strip legalitas: baris ringkas, bukan kartu besar.
+const trustStrip = (c: C): string =>
+  (c.legalitas || []).map((l: any) => `<li><strong>${esc(l.judul)}</strong> — ${esc(l.isi)}</li>`).join('');
+
+const stats = (c: C): string =>
+  (c.statistik || []).map((s: any) => `<div class="stat"><div class="stat-num">${esc(s.angka)}</div><div class="stat-label">${esc(s.label)}</div></div>`).join('');
+
+// Harga & jadwal ditulis SEKALI di catatan seksi paket, bukan di tiap kartu:
+// kartu hanya menampilkan durasi, fasilitas, dan CTA WhatsApp.
 const paketCard = (p: any, c: C): string =>
-  `<article class="card"><h3>${esc(p.nama)}</h3><p class="price">${esc(p.harga)}</p><p class="meta">${esc(p.durasi)} &middot; ${esc(p.berangkat)}</p><ul>${(p.fasilitas || []).map((f: string) => `<li>${esc(f)}</li>`).join('')}</ul><a class="btn btn-wa" href="${esc(waHref(c, `Assalamu'alaikum, saya ingin bertanya tentang ${p.nama}.`))}" target="_blank" rel="noopener">Tanya Paket Ini</a></article>`;
+  `<article class="card"><h3>${esc(p.nama)}</h3><p class="meta">${esc(p.durasi)}</p><ul>${(p.fasilitas || []).map((f: string) => `<li>${esc(f)}</li>`).join('')}</ul><a class="btn btn-wa" href="${esc(waHref(c, `Assalamu'alaikum, saya ingin bertanya tentang ${p.nama}.`))}" target="_blank" rel="noopener">Tanya Paket Ini</a></article>`;
 
 /** Ganti isi elemen ber-id di template dengan HTML yang dihitung. */
 const fill = (html: string, id: string, inner: string): string =>
@@ -63,12 +76,13 @@ export async function renderHome(env: Env): Promise<Response | null> {
     .replace(/<h1 id="hero-title">[\s\S]*?<\/h1>/, `<h1 id="hero-title">${esc(c.heroTitle)}</h1>`)
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(c.biro)} — Biro Umroh &amp; Haji</title>`);
   html = fill(html, 'hero-sub', esc(c.heroSub));
-  html = fill(html, 'hero-izin', esc(c.izin));
   html = fill(html, 'tentang-text', esc(c.tentang));
   html = fill(html, 'footer-izin', esc(c.izin));
   html = fill(html, 'layanan-list', (c.layanan || []).map((l: string) => `<span class="chip">${esc(l)}</span>`).join(''));
-  html = fill(html, 'keunggulan', (c.keunggulan || []).map((k: any) => card(k.judul, k.isi)).join(''));
-  html = fill(html, 'legalitas-list', (c.legalitas || []).map((l: any) => card(l.judul, l.isi)).join(''));
+  html = fill(html, 'keunggulan', keunggulanGroups(c));
+  html = fill(html, 'trust-strip', trustStrip(c));
+  html = fill(html, 'statistik', stats(c));
+  html = fill(html, 'testimoni-note', esc(c.testimoniNote || ''));
   html = fill(html, 'paket-umroh', (c.paketUmroh || []).map((p: any) => paketCard(p, c)).join(''));
   html = fill(html, 'paket-haji', (c.paketHaji || []).map((p: any) => paketCard(p, c)).join(''));
   html = fill(html, 'cara-daftar', (c.caraDaftar || []).map((s: any) => `<article class="card"><span class="step-num">${esc(s.langkah)}</span><h3>${esc(s.judul)}</h3><p>${esc(s.isi)}</p></article>`).join(''));
@@ -86,6 +100,6 @@ export async function renderHome(env: Env): Promise<Response | null> {
   html = fillHref(html, 'footer-pusat', c.pusatUrl || 'https://chatourtravel.id/');
   html = fill(html, 'footer-sosial', socialLinks(c));
   html = fillHref(html, 'footer-app', c.appUrl || '#');
-  for (const id of ['nav-wa', 'hero-wa', 'kontak-wa-btn']) html = fillHref(html, id, waHref(c, waText));
+  for (const id of ['nav-wa', 'hero-wa', 'kontak-wa-btn', 'cta-wa']) html = fillHref(html, id, waHref(c, waText));
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' } });
 }
