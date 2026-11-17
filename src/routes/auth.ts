@@ -45,7 +45,7 @@ authRoutes.post('/auth/signup', async (c) => {
     .bind(
       username, userId, email, firstName || null, lastName || null, '', whatsapp, '', '',
       username, 'Belanja lewat WhatsApp', '', 'IDR', 'emerald',
-      JSON.stringify([{ text: 'Fast Respon via WhatsApp' }, { text: 'Bisa COD' }]), '[]',
+      JSON.stringify([{ text: 'Fast Respon via WhatsApp' }, { text: 'Berizin Resmi PPIU' }, { text: 'Pembimbing Bersertifikat BNSP' }]), '[]',
     )
     .run();
 
