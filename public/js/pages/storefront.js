@@ -78,7 +78,7 @@ export function imgCover(theme, hidden = false) {
 function showcaseCard(item, theme) {
   const href = item.file_url || item.link_url;
   const cover = item.image_url
-    ? `<div class="w-full h-full relative">${pdfCover(theme, true)}<img src="${esc(item.image_url)}" class="w-full h-full object-cover absolute inset-0" alt="" loading="lazy" onerror="var f=this.previousElementSibling;if(f)f.style.display='flex';this.remove();" /></div>`
+    ? `<div class="w-full h-full relative">${pdfCover(theme, true)}<img src="${esc(item.image_url)}" class="w-full h-full object-cover absolute inset-0" alt="${esc(item.title)}" loading="lazy" onerror="var f=this.previousElementSibling;if(f)f.style.display='flex';this.remove();" /></div>`
     : pdfCover(theme);
   return `<article class="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col">
     <div class="h-24 sm:h-28 shrink-0">${cover}</div>

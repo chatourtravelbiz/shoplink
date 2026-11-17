@@ -25,7 +25,7 @@ function storeMiniHeader(store) {
 /** Kartu produk lain — pola sama dengan kartu showcase di storefront. */
 function otherCard(username, p, theme) {
   const cover = p.image_url
-    ? `<img src="${esc(p.image_url)}" class="w-full h-full object-cover" alt="" loading="lazy" />`
+    ? `<img src="${esc(p.image_url)}" class="w-full h-full object-cover" alt="${esc(p.name)}" loading="lazy" />`
     : imgCover(theme);
   return `<a href="${storePath(username, p.id)}" class="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition">
     <div class="h-24 sm:h-28 shrink-0">${cover}</div>

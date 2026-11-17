@@ -127,7 +127,7 @@ profileRoutes.get('/blog', async (c) => {
   const posts = await listPosts(c.env);
   const cards = posts.length
     ? posts.map((p) => `<article class="card">
-      ${p.cover_url ? `<img src="${esc(p.cover_url)}" alt="" style="width:100%;border-radius:12px;margin-bottom:12px" loading="lazy" />` : ''}
+      ${p.cover_url ? `<img src="${esc(p.cover_url)}" alt="${esc(p.title)}" style="width:100%;border-radius:12px;margin-bottom:12px" loading="lazy" />` : ''}
       <p class="meta">${esc(p.category)} · ${esc(fmtDate(p.published_at))}</p>
       <h3><a href="/blog/${esc(p.slug)}" style="color:inherit;text-decoration:none">${esc(p.title)}</a></h3>
       <p>${esc(p.excerpt)}</p>
@@ -175,7 +175,7 @@ profileRoutes.get('/blog/:slug', async (c) => {
       <p><a href="/blog">← Semua Artikel</a></p>
       <p class="meta">${esc(row.category)} · ${esc(fmtDate(row.published_at))}</p>
       <h1>${esc(row.title)}</h1>
-      ${row.cover_url ? `<img src="${esc(row.cover_url)}" alt="" style="width:100%;border-radius:12px;margin:16px 0" />` : ''}
+      ${row.cover_url ? `<img src="${esc(row.cover_url)}" alt="${esc(row.title)}" style="width:100%;border-radius:12px;margin:16px 0" />` : ''}
       ${tocHtml(toc)}
       <div class="article-body">${articleHtml}</div>
       <p class="note" style="margin-top:32px">Punya pertanyaan tentang paket Umroh &amp; Haji? <a href="${esc(content.waLink || '#')}" target="_blank" rel="noopener">Hubungi kami via WhatsApp</a>.</p>
