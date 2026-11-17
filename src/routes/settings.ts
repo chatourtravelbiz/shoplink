@@ -42,7 +42,7 @@ settingsRoutes.put('/settings', async (c) => {
         .filter(Boolean)
         .slice(0, 3)
         .map((text) => ({ text }))
-    : current?.trust_badges ?? [];
+    : current ? publicStore(current).trust_badges : [];
   if (!storeName) return err(c, 400, 'Nama toko wajib diisi.');
   if (!whatsapp) return err(c, 400, 'Nomor WhatsApp wajib diisi.');
   if (!isTheme(theme)) return err(c, 400, 'Tema tidak valid.');
