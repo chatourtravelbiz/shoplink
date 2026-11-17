@@ -60,11 +60,26 @@ function storeHeader(store) {
   </div>`;
 }
 
+/** Sampul brosur PDF (SVG, bukan emoji — emoji bisa tampil rusak di sebagian HP). */
+function pdfCover(theme, hidden = false) {
+  return `<div class="w-full h-full flex flex-col items-center justify-center gap-1" style="background:${theme.soft};color:${theme.main}${hidden ? ';display:none' : ''}">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+    <span class="text-[11px] font-bold tracking-widest">PDF</span>
+  </div>`;
+}
+
+/** Placeholder gambar produk (SVG, bukan emoji). */
+function imgCover(theme, hidden = false) {
+  return `<div class="w-full h-full flex items-center justify-center" style="background:${theme.soft};color:${theme.main}${hidden ? ';display:none' : ''}">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+  </div>`;
+}
+
 function showcaseCard(item, theme) {
   const href = item.file_url || item.link_url;
   const cover = item.image_url
-    ? `<img src="${esc(item.image_url)}" class="w-full h-full object-cover" alt="" loading="lazy" />`
-    : `<div class="w-full h-full flex items-center justify-center text-4xl" style="background:${theme.soft}">📄</div>`;
+    ? `<div class="w-full h-full relative">${pdfCover(theme, true)}<img src="${esc(item.image_url)}" class="w-full h-full object-cover absolute inset-0" alt="" loading="lazy" onerror="var f=this.previousElementSibling;if(f)f.style.display='flex';this.remove();" /></div>`
+    : pdfCover(theme);
   return `<article class="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col">
     <div class="h-24 sm:h-28 shrink-0">${cover}</div>
     <div class="p-3 flex flex-col flex-1">
@@ -83,8 +98,8 @@ function showcaseSection(items, theme) {
 
 function productCard(username, p, theme) {
   const cover = p.image_url
-    ? `<img src="${esc(p.image_url)}" class="w-20 h-20 rounded-xl object-cover shrink-0" alt="${esc(p.name)}" loading="lazy" />`
-    : `<div class="w-20 h-20 rounded-xl shrink-0 flex items-center justify-center text-2xl" style="background:${theme.soft}">📦</div>`;
+    ? `<span class="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative block">${imgCover(theme, true)}<img src="${esc(p.image_url)}" class="w-full h-full object-cover absolute inset-0" alt="${esc(p.name)}" loading="lazy" onerror="var f=this.previousElementSibling;if(f)f.style.display='flex';this.remove();" /></span>`
+    : `<span class="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative block">${imgCover(theme)}</span>`;
   return `<a href="/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:shadow-md transition">
     ${cover}
     <div class="min-w-0 flex-1">
