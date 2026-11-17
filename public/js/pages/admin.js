@@ -140,7 +140,7 @@ export function showDomainDns(username, domain, check) {
     <p class="text-sm text-stone-600 mt-1">Langkah 1 — agen memasang DNS di domainnya:</p>
     <div class="overflow-x-auto mt-2"><table class="w-full text-sm border border-stone-200 rounded-xl overflow-hidden"><thead><tr class="bg-stone-50 text-left text-stone-500"><th class="px-3 py-2">Tipe</th><th class="px-3 py-2">Nama / Host</th><th class="px-3 py-2">Target</th></tr></thead>
     <tbody><tr class="border-t"><td class="px-3 py-2 font-mono">CNAME</td><td class="px-3 py-2 font-mono">@</td><td class="px-3 py-2 font-mono">shoplink-d1.chatourtravelbiz.workers.dev</td></tr></tbody></table></div>
-    <p class="text-xs text-stone-500 mt-2">Untuk subdomain (mis. toko.agenku.com), isi Nama/Host dengan <code>toko</code> saja. Bila penyedia DNS tidak menerima CNAME di @, pakai CNAME di <code>www</code> lalu beri tahu Muse.</p>
+    <p class="text-xs text-stone-500 mt-2">Untuk subdomain (mis. toko.agenku.com), isi Nama/Host dengan <code>toko</code> saja. Bila penyedia DNS tidak menerima CNAME di @, pakai CNAME di <code>www</code>, lalu pasang juga hostname <code>www</code>-nya di Cloudflare.</p>
     <p class="text-sm text-stone-600 mt-3">Langkah 2 — <b>manual, oleh Muse</b>: aktifkan domain di Cloudflare (Workers Custom Domains). Setelah itu domain baru melayani toko.</p>
     <p class="text-sm text-stone-600 mt-1">Langkah 3 — tekan tombol di bawah untuk memeriksa apakah domain sudah menampilkan toko ini. Alamat lama <a class="text-red-700 underline" href="/${esc(username)}">chatourtravel.com/${esc(username)}</a> tetap jalan.</p>
     ${statusHtml}

@@ -66,7 +66,7 @@ function domainSection(s) {
     <h3 class="font-semibold text-sm mt-4">Cara memakai domain sendiri — 5 langkah</h3>
     <ol class="list-decimal pl-5 mt-1 space-y-1 text-sm text-stone-700">
       <li><b>Beli domain</b> di Hostinger, Niagahoster, atau Domainesia — mis. <code>tokoku.com</code> atau <code>agen-rahma.com</code>. Pilih nama yang pendek dan mudah diingat.</li>
-      <li><b>Atur DNS</b> di tempat kamu membeli domain: tambah record <b>CNAME</b>, Host <code>@</code>, target <code>shoplink-d1.chatourtravelbiz.workers.dev</code>. Kalau mau pakai <code>www.</code> juga, tambah CNAME <code>www</code> ke target yang sama.</li>
+      <li><b>Atur DNS</b> di tempat kamu membeli domain: tambah record <b>CNAME</b>, Host <code>@</code>, target <code>shoplink-d1.chatourtravelbiz.workers.dev</code>. Kalau mau pakai <code>www.</code> juga, tambah CNAME <code>www</code> ke target yang sama, lalu beri tahu admin supaya <code>www</code> ikut dipasang — domain www perlu dipasang terpisah, CNAME saja tidak cukup.</li>
       <li><b>Ajukan ke admin</b> lewat form di bawah ini — atau hubungi admin via WhatsApp kantor <a class="text-red-700 underline" href="https://wa.me/6282224332700" target="_blank" rel="noopener">0822 2433 2700</a>.</li>
       <li><b>Admin memasang domain</b> di Cloudflare. DNS butuh waktu menyebar, biasanya hitungan menit sampai beberapa jam.</li>
       <li><b>Cek sendiri</b>: buka domain itu di browser — bila sudah tampil tokomu, berarti aktif.</li>
