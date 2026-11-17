@@ -1,6 +1,7 @@
 // Detail produk publik + form order (WhatsApp / COD / Transfer).
 import { api } from '../api.js';
 import { esc, go, rupiah, themeOf } from '../utils.js';
+import { waIcon } from '../icons.js';
 import { errorBox, field, inputCls, setErr, topbar } from '../ui.js';
 
 export async function viewProduct(username, productId) {
@@ -19,7 +20,7 @@ export async function viewProduct(username, productId) {
     ? `<div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-5 mb-5">
       <h2 class="font-bold text-emerald-800">✅ Order kamu tercatat!</h2>
       <p class="text-sm text-emerald-700 mt-1">Langkah terakhir: konfirmasi order ke penjual lewat WhatsApp supaya segera diproses.</p>
-      ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener" class="inline-block mt-3 px-5 py-3 rounded-xl text-white font-semibold" style="background:#25D366">💬 Konfirmasi via WhatsApp</a>` : ''}
+      ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener" class="inline-block mt-3 px-5 py-3 rounded-xl text-white font-semibold" style="background:#25D366">${waIcon()}Konfirmasi via WhatsApp</a>` : ''}
       <a href="/${esc(username)}" class="inline-block mt-3 ml-2 px-4 py-3 rounded-xl border bg-white text-sm font-semibold">Kembali ke Toko</a>
     </div>`
     : '';

@@ -1,6 +1,7 @@
 // Pengaturan toko merchant (auth) — termasuk pemilih tema ala Linktree.
 import { api, state } from '../api.js';
 import { THEMES, esc, go, themeOf } from '../utils.js';
+import { waIcon } from '../icons.js';
 import { field, inputCls, setErr, topbar } from '../ui.js';
 
 const BUTTON_STYLES = [
@@ -33,7 +34,7 @@ function themePreview(store) {
       <p class="font-bold mt-2">${esc(store.store_name || 'Nama Toko')}</p>
       ${store.show_badge !== 0 ? `<span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-semibold text-white" style="background:${t.main};border-radius:${radius}">✈️ Agen Chatour Travel</span>` : ''}
       <div class="mt-3 space-y-2">
-        <span class="block w-full py-2 text-white text-sm font-bold" style="background:#25D366;border-radius:${radius}">💬 Chat WhatsApp Agen</span>
+        <span class="block w-full py-2 text-white text-sm font-bold" style="background:#25D366;border-radius:${radius}">${waIcon(16)}Chat WhatsApp Agen</span>
         <span class="block w-full py-2 bg-white border text-sm font-semibold" style="border-radius:${radius}">Paket Umroh 9 Hari</span>
       </div>
     </div>
