@@ -94,19 +94,87 @@ function usersTable(users, isSuper) {
 function storesTable(stores) {
   const canSuspend = ['super_admin', 'admin', 'moderator'].includes(roleOf());
   const canDelete = ['super_admin', 'admin'].includes(roleOf());
-  const rows = stores.map((s) => `<tr class="border-t border-stone-100">
-    <td class="py-2 pr-2 pl-4"><div class="font-semibold">${esc(s.store_name)}</div><div class="text-xs text-stone-500">@${esc(s.username)} · ${esc(s.email)}</div></td>
+  const canDomain = ['super_admin', 'admin'].includes(roleOf());
+  const rows = stores.map((s) => `<tr class="border-t border-stone-100 align-top">
+    <td class="py-2 pr-2 pl-4"><div class="font-semibold">${esc(s.store_name)}</div><div class="text-xs text-stone-500">@${esc(s.username)} · ${esc(s.email)}</div><a href="/${esc(s.username)}" class="text-xs text-red-700 underline">chatourtravel.com/${esc(s.username)}</a></td>
     <td class="py-2 pr-2">${s.status === 'suspended'
       ? '<span class="px-2 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-semibold">Suspended</span>'
       : '<span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">Aktif</span>'}</td>
+    <td class="py-2 pr-2">${s.custom_domain
+      ? `<a href="https://${esc(s.custom_domain)}" target="_blank" rel="noopener" class="text-sm font-semibold text-red-700 underline">${esc(s.custom_domain)}</a>`
+      : '<span class="text-sm text-stone-400">—</span>'}
+      ${canDomain ? `<div class="flex flex-wrap gap-1 mt-1">
+        <input data-domain-input="${esc(s.username)}" value="${esc(s.custom_domain || '')}" placeholder="agenku.com" class="w-40 rounded-lg border border-stone-300 px-2 py-1 text-sm" />
+        <button data-action="admin-domain-save" data-id="${esc(s.username)}" class="px-2 py-1 rounded-lg bg-red-700 text-white text-sm font-semibold">Simpan Domain</button>
+        ${s.custom_domain ? `<button data-action="admin-domain-check" data-id="${esc(s.username)}" class="px-2 py-1 rounded-lg bg-white border text-sm">Periksa Status</button>
+        <button data-action="admin-domain-dns" data-id="${esc(s.username)}" data-domain="${esc(s.custom_domain)}" class="px-2 py-1 rounded-lg bg-white border text-sm">Instruksi DNS</button>
+        <button data-action="admin-domain-remove" data-id="${esc(s.username)}" class="px-2 py-1 rounded-lg bg-rose-50 text-rose-700 text-sm">Lepas</button>` : ''}
+      </div>` : ''}</td>
     <td class="py-2 text-right whitespace-nowrap">
       ${canSuspend ? `<button data-action="admin-toggle-store" data-id="${esc(s.username)}" data-status="${esc(s.status)}" class="px-3 py-1 rounded-lg bg-white border text-sm">${s.status === 'suspended' ? 'Aktifkan' : 'Suspend'}</button>` : ''}
       <a href="/${esc(s.username)}" class="px-3 py-1 rounded-lg bg-white border text-sm inline-block">Lihat</a>
       ${canDelete ? `<button data-action="admin-delete-store" data-id="${esc(s.username)}" class="px-3 py-1 rounded-lg bg-rose-50 text-rose-700 text-sm">Hapus</button>` : ''}
     </td>
   </tr>`).join('');
-  return `<div class="bg-white border border-stone-200 rounded-2xl overflow-x-auto"><table class="w-full text-sm min-w-[560px]"><thead><tr class="text-left text-stone-500"><th class="py-2 pr-2 pl-4">Toko</th><th class="py-2 pr-2">Status</th><th></th></tr></thead><tbody>${rows || '<tr><td class="py-6 text-center text-stone-500" colspan="3">Belum ada toko.</td></tr>'}</tbody></table></div>
-  <p class="text-xs text-stone-500 mt-2">Toko yang di-suspend tidak tampil di storefront publik dan tidak bisa menerima order.</p>`;
+  return `<div class="bg-white border border-stone-200 rounded-2xl overflow-x-auto"><table class="w-full text-sm min-w-[720px]"><thead><tr class="text-left text-stone-500"><th class="py-2 pr-2 pl-4">Toko</th><th class="py-2 pr-2">Status</th><th class="py-2 pr-2">Domain Kustom</th><th></th></tr></thead><tbody>${rows || '<tr><td class="py-6 text-center text-stone-500" colspan="4">Belum ada toko.</td></tr>'}</tbody></table></div>
+  <div id="domain-panel" class="mt-4"></div>
+  <p class="text-xs text-stone-500 mt-2">Toko yang di-suspend tidak tampil di storefront publik dan tidak bisa menerima order. Domain kustom hanya bisa dipasang Super Admin / Admin; alamat chatourtravel.com/:username tetap jalan sebagai cadangan.</p>`;
+}
+
+/** Panel instruksi DNS + status untuk satu domain kustom. */
+export function showDomainDns(username, domain, check) {
+  const panel = document.getElementById('domain-panel');
+  if (!panel) return;
+  const statusHtml = check
+    ? `<p class="mt-3 text-sm font-semibold ${check.ok ? 'text-green-700' : 'text-amber-700'}">${esc(check.ok ? '✓ ' : '')}${esc(check.message)}</p>`
+    : '';
+  panel.innerHTML = `<div class="bg-white border border-stone-200 rounded-2xl p-5">
+    <h3 class="font-bold">Domain kustom @${esc(username)}: ${esc(domain)}</h3>
+    <p class="text-sm text-stone-600 mt-1">Langkah 1 — agen memasang DNS di domainnya:</p>
+    <div class="overflow-x-auto mt-2"><table class="w-full text-sm border border-stone-200 rounded-xl overflow-hidden"><thead><tr class="bg-stone-50 text-left text-stone-500"><th class="px-3 py-2">Tipe</th><th class="px-3 py-2">Nama / Host</th><th class="px-3 py-2">Target</th></tr></thead>
+    <tbody><tr class="border-t"><td class="px-3 py-2 font-mono">CNAME</td><td class="px-3 py-2 font-mono">@</td><td class="px-3 py-2 font-mono">shoplink-d1.chatourtravelbiz.workers.dev</td></tr></tbody></table></div>
+    <p class="text-xs text-stone-500 mt-2">Untuk subdomain (mis. toko.agenku.com), isi Nama/Host dengan <code>toko</code> saja. Bila penyedia DNS tidak menerima CNAME di @, pakai CNAME di <code>www</code> lalu beri tahu Muse.</p>
+    <p class="text-sm text-stone-600 mt-3">Langkah 2 — <b>manual, oleh Muse</b>: aktifkan domain di Cloudflare (Workers Custom Domains). Setelah itu domain baru melayani toko.</p>
+    <p class="text-sm text-stone-600 mt-1">Langkah 3 — tekan tombol di bawah untuk memeriksa apakah domain sudah menampilkan toko ini. Alamat lama <a class="text-red-700 underline" href="/${esc(username)}">chatourtravel.com/${esc(username)}</a> tetap jalan.</p>
+    ${statusHtml}
+    <div class="flex gap-2 mt-3"><button data-action="admin-domain-check" data-id="${esc(username)}" class="px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">Periksa Status</button></div>
+  </div>`;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+export async function adminSaveDomain(username, render) {
+  const input = document.querySelector(`[data-domain-input="${username}"]`);
+  const errEl = document.getElementById('admin-err');
+  try {
+    const res = await api(`/api/admin/stores/${username}/custom-domain`, {
+      method: 'PUT', body: JSON.stringify({ custom_domain: input?.value || '' }),
+    });
+    await render();
+    showDomainDns(username, res.custom_domain);
+  } catch (e) {
+    if (errEl) errEl.innerHTML = errorBox(e.message);
+  }
+}
+
+export async function adminRemoveDomain(username, render) {
+  if (!window.confirm(`Lepas domain kustom dari toko @${username}? Toko tetap jalan di chatourtravel.com/${username}.`)) return;
+  const errEl = document.getElementById('admin-err');
+  try {
+    await api(`/api/admin/stores/${username}/custom-domain`, { method: 'DELETE' });
+    await render();
+  } catch (e) {
+    if (errEl) errEl.innerHTML = errorBox(e.message);
+  }
+}
+
+export async function adminCheckDomain(username) {
+  const errEl = document.getElementById('admin-err');
+  try {
+    const res = await api(`/api/admin/stores/${username}/custom-domain/check`);
+    showDomainDns(username, res.domain, res);
+  } catch (e) {
+    if (errEl) errEl.innerHTML = errorBox(e.message);
+  }
 }
 
 function ordersTable(orders) {

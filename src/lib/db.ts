@@ -40,6 +40,7 @@ export function publicStore(s: StoreRow) {
     show_badge: s.show_badge === 0 ? 0 : 1,
     section_order: s.section_order || 'products-first',
     status: s.status ?? 'active',
+    custom_domain: s.custom_domain ?? '',
     social_links: parseSocialLinksJson(s.social_links),
     trust_badges: parseJson(s.trust_badges_json, [] as Array<{ text: string }>),
     banners: parseJson(s.banners_json, [] as string[]),

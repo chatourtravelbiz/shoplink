@@ -9,7 +9,7 @@ import { bindAuth, viewLogin, viewSignup } from './pages/auth.js';
 import { bindDashboard, viewDashboard } from './pages/dashboard.js';
 import { bindProducts, bindShowcase, cancelProductForm, cancelShowcaseForm, deleteProductById, deleteShowcaseById, openProductForm, openShowcaseForm, viewProducts } from './pages/products.js';
 import { bindSettings, pickTheme, viewSettings } from './pages/settings.js';
-import { adminDelete, adminToggleStore, bindAdmin, cancelPostForm, deletePostById, openPostForm, viewAdmin } from './pages/admin.js';
+import { adminCheckDomain, adminDelete, adminRemoveDomain, adminSaveDomain, adminToggleStore, bindAdmin, cancelPostForm, deletePostById, openPostForm, showDomainDns, viewAdmin } from './pages/admin.js';
 import { clearStoreCache, shareStore, storeFilter, trackClick, viewStore } from './pages/storefront.js';
 import { bindProduct, viewProduct } from './pages/product.js';
 
@@ -106,6 +106,14 @@ document.addEventListener('click', async (e) => {
     go(`/admin?tab=${encodeURIComponent(el.dataset.tab)}`);
   } else if (action === 'admin-toggle-store') {
     await adminToggleStore(el.dataset.id, el.dataset.status, render);
+  } else if (action === 'admin-domain-save') {
+    await adminSaveDomain(el.dataset.id, render);
+  } else if (action === 'admin-domain-remove') {
+    await adminRemoveDomain(el.dataset.id, render);
+  } else if (action === 'admin-domain-check') {
+    await adminCheckDomain(el.dataset.id);
+  } else if (action === 'admin-domain-dns') {
+    showDomainDns(el.dataset.id, el.dataset.domain);
   } else if (action === 'admin-delete-user') {
     await adminDelete('user', el.dataset.id, render);
   } else if (action === 'admin-delete-store') {
