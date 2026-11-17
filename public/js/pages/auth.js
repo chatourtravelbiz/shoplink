@@ -1,36 +1,26 @@
-// Halaman publik: landing, signup, login.
+// Halaman publik: masuk agen (minimal, tanpa landing), signup, login.
 import { api, loadSession } from '../api.js';
 import { go } from '../utils.js';
 import { field, inputCls, setErr, topbar } from '../ui.js';
 
-export function viewLanding() {
+// Halaman masuk agen — sangat minimal. Shoplink TIDAK punya landing page:
+// route / redirect ke company profile (lihat landingAction di router.js);
+// halaman ini hanya tampil bila Shoplink masih di root chatourtravel.com.
+export function viewAgentEntry() {
   return `${topbar()}
-  <main class="max-w-5xl mx-auto px-4 py-10">
-    <section class="text-center py-8">
-      <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight">Toko online kamu,<br/>cukup dari <span class="text-emerald-600">link di bio</span>.</h1>
-      <p class="mt-4 text-stone-600 max-w-xl mx-auto">Buat etalase produk, bagikan satu link di Instagram, dan terima order langsung lewat WhatsApp. Tanpa pembayaran online, tanpa ribet — pembeli bisa bayar via WhatsApp, COD, atau transfer manual.</p>
-      <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <a href="/signup" class="px-5 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow">Buat Tokoku — Gratis</a>
-        <a href="/demo" class="px-5 py-3 rounded-xl bg-white border border-stone-300 font-semibold">Lihat Toko Demo</a>
-      </div>
-      <p class="mt-3 text-xs text-stone-500">Akun demo: john@example.com / password123</p>
-    </section>
-    <section class="grid sm:grid-cols-3 gap-4 mt-6">
-      ${[
-        ['📱', 'Link-in-bio', 'Satu link untuk semua produkmu. Cocok dipasang di bio Instagram, TikTok, atau WhatsApp.'],
-        ['💬', 'Order via WhatsApp', 'Pembeli isi form, lalu konfirmasi order langsung ke WhatsApp kamu. Pesan order sudah terisi otomatis.'],
-        ['💵', 'Bayar manual, tanpa potongan', 'COD atau transfer bank langsung ke kamu. Tidak ada gateway pembayaran dan tidak ada biaya platform.'],
-      ]
-        .map(([icon, title, desc]) => `<div class="bg-white rounded-2xl border border-stone-200 p-5"><div class="text-2xl">${icon}</div><h3 class="font-bold mt-2">${title}</h3><p class="text-sm text-stone-600 mt-1">${desc}</p></div>`)
-        .join('')}
-    </section>
-    <section class="mt-8 bg-emerald-700 text-white rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div><h2 class="text-xl font-bold">Mulai jualan hari ini juga</h2><p class="text-emerald-100 text-sm mt-1">Daftar 1 menit, isi produk, bagikan link tokomu.</p></div>
-      <a href="/signup" class="px-5 py-3 rounded-xl bg-white text-emerald-700 font-semibold shrink-0">Daftar Sekarang →</a>
-    </section>
-  </main>
-  <footer class="max-w-5xl mx-auto px-4 pb-8 text-center text-xs text-stone-400">Shoplink D1 — berjalan di Cloudflare Workers + D1 + R2. Tanpa pembayaran online.</footer>`;
+  <main class="max-w-md mx-auto px-4 py-14 text-center">
+    <img src="/logo-chatour.png" class="w-20 h-20 object-contain mx-auto" alt="Chatour Travel" />
+    <p class="mt-3 text-sm font-semibold tracking-wide text-stone-500">CHATOUR TRAVEL · BIRO UMROH &amp; HAJI</p>
+    <h1 class="text-2xl font-extrabold mt-2">Shoplink Agen</h1>
+    <p class="text-sm text-stone-600 mt-2">Link-in-bio untuk para agen Chatour Travel. Masuk untuk mengelola tokomu, atau daftar sebagai agen baru.</p>
+    <div class="mt-6 space-y-3">
+      <a href="/login" class="block w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold">Masuk</a>
+      <a href="/signup" class="block w-full py-3 rounded-xl bg-white border border-stone-300 font-semibold">Daftar Agen</a>
+      <a href="https://chatourtravel.com/" class="block text-sm text-emerald-700 underline">Kunjungi Company Profile Chatour Travel</a>
+    </div>
+  </main>`;
 }
+
 
 /** Field password + tombol ikon mata (lihat/sembunyikan). Tombol type="button"
     agar tidak submit form; aria-label berubah sesuai state di toggle. */

@@ -11,6 +11,7 @@ import { productsRoutes } from './routes/products';
 import { ordersRoutes } from './routes/orders';
 import { settingsRoutes } from './routes/settings';
 import { storesRoutes } from './routes/stores';
+import { adminRoutes } from './routes/admin';
 import { analyticsRoutes } from './routes/analytics';
 import { uploadsRoutes } from './routes/uploads';
 
@@ -36,6 +37,7 @@ app.route('/api', productsRoutes);
 app.route('/api', ordersRoutes);
 app.route('/api', settingsRoutes);
 app.route('/api', storesRoutes);
+app.route('/api', adminRoutes);
 app.route('/api', analyticsRoutes);
 app.route('/api', uploadsRoutes);
 

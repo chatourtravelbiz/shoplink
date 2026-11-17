@@ -15,6 +15,7 @@ export function publicUser(u: UserRow) {
     bio: u.bio ?? '',
     whatsapp_number: u.whatsapp_number,
     avatar_url: u.avatar_url ?? '',
+    role: u.role ?? 'merchant',
   };
 }
 
@@ -34,6 +35,7 @@ export function publicStore(s: StoreRow) {
     store_bio: s.store_bio ?? '',
     currency: s.currency,
     theme: s.theme ?? 'emerald',
+    status: s.status ?? 'active',
     trust_badges: parseJson(s.trust_badges_json, [] as Array<{ text: string }>),
     banners: parseJson(s.banners_json, [] as string[]),
   };

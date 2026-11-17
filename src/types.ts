@@ -20,6 +20,7 @@ export type UserRow = {
   bio: string | null;
   whatsapp_number: string;
   avatar_url: string | null;
+  role: string;
   created_at: string;
 };
 
@@ -38,6 +39,7 @@ export type StoreRow = {
   store_bio: string | null;
   currency: string;
   theme: string | null;
+  status: string;
   trust_badges_json: string | null;
   banners_json: string | null;
 };

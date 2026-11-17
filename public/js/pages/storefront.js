@@ -1,4 +1,6 @@
-// Storefront publik: header toko, grid produk, filter kategori + cari.
+// Storefront publik — profil agen link-in-bio: header profil di tengah (avatar,
+// nama, @username, bio, badge Agen Chatour Travel, tombol WhatsApp + bagikan),
+// lalu paket/produk sebagai kartu vertikal ala link-in-bio.
 import { api } from '../api.js';
 import { esc, go, rupiah, themeOf, waDigits } from '../utils.js';
 import { errorBox, inputCls, topbar } from '../ui.js';
@@ -18,30 +20,34 @@ export function clearStoreCache() {
 
 function storeHeader(store) {
   const t = themeOf(store.theme);
-  return `<div class="rounded-2xl p-6 text-white" style="background:${t.main}">
-    <div class="flex items-start gap-4">
-      ${store.logo_url ? `<img src="${esc(store.logo_url)}" class="w-16 h-16 rounded-2xl object-cover bg-white" alt="" />` : `<div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-extrabold">${esc((store.store_name || '?')[0])}</div>`}
-      <div class="min-w-0">
-        <h1 class="text-2xl font-extrabold leading-tight">${esc(store.store_name)}</h1>
-        <p class="text-white/85 text-sm mt-0.5">${esc(store.tagline)}</p>
-        ${store.store_bio ? `<p class="text-white/75 text-sm mt-2">${esc(store.store_bio)}</p>` : ''}
-      </div>
+  const avatar = store.avatar_url || store.logo_url;
+  return `<div class="text-center pt-2 pb-6">
+    ${avatar
+      ? `<img src="${esc(avatar)}" class="w-24 h-24 rounded-full object-cover mx-auto ring-4 ring-white shadow" alt="${esc(store.store_name)}" />`
+      : `<img src="/logo-chatour.png" class="w-24 h-24 rounded-full object-contain mx-auto ring-4 ring-white shadow bg-white p-1" alt="Chatour Travel" />`}
+    <h1 class="text-2xl font-extrabold mt-4 leading-tight">${esc(store.store_name)}</h1>
+    <p class="text-stone-500 text-sm mt-0.5">@${esc(store.username)}</p>
+    <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold text-white" style="background:${t.main}">✈️ Agen Chatour Travel — Umroh &amp; Haji</span>
+    ${store.tagline ? `<p class="font-medium mt-3">${esc(store.tagline)}</p>` : ''}
+    ${store.store_bio ? `<p class="text-stone-600 text-sm mt-1 max-w-md mx-auto">${esc(store.store_bio)}</p>` : ''}
+    <div class="max-w-md mx-auto mt-5 space-y-2">
+      <a href="https://wa.me/${esc(waDigits(store.whatsapp_number))}" target="_blank" rel="noopener" class="block w-full py-3 rounded-2xl text-white font-bold shadow" style="background:#25D366">💬 Chat WhatsApp Agen</a>
+      <button data-action="share-store" class="block w-full py-3 rounded-2xl bg-white border border-stone-300 font-semibold text-sm">🔗 Bagikan Toko Ini</button>
     </div>
-    <div class="flex flex-wrap gap-2 mt-4">
-      <a href="https://wa.me/${esc(waDigits(store.whatsapp_number))}" target="_blank" rel="noopener" class="px-4 py-2 rounded-xl bg-white font-semibold text-sm" style="color:${t.dark}">💬 Chat WhatsApp</a>
-      ${(store.trust_badges || []).map((b) => `<span class="px-3 py-2 rounded-xl bg-white/15 text-xs">✓ ${esc(b.text)}</span>`).join('')}
-    </div>
+    ${(store.trust_badges || []).length ? `<div class="flex flex-wrap justify-center gap-2 mt-4">${store.trust_badges.map((b) => `<span class="px-3 py-1 rounded-full bg-white border text-xs">✓ ${esc(b.text)}</span>`).join('')}</div>` : ''}
   </div>`;
 }
 
 function productCard(username, p, theme) {
-  return `<a href="/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" class="bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-md transition block">
-    <img src="${esc(p.image_url)}" class="w-full h-44 object-cover" alt="${esc(p.name)}" loading="lazy" />
-    <div class="p-4">
-      <div class="flex items-start justify-between gap-2"><h3 class="font-semibold leading-snug">${esc(p.name)}</h3><span class="font-extrabold whitespace-nowrap" style="color:${theme.main}">${rupiah(p.price)}</span></div>
-      <p class="text-xs text-stone-500 mt-1 line-clamp-2">${esc(p.description)}</p>
-      <div class="flex items-center justify-between mt-3 text-xs"><span class="px-2 py-1 rounded-full bg-stone-100">${esc(p.category)}</span><span class="${p.stock > 0 ? 'text-stone-500' : 'text-stone-400'}">${p.stock > 0 ? `Stok ${p.stock}` : 'Pre-order'}</span></div>
-    </div></a>`;
+  return `<a href="/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:shadow-md transition">
+    <img src="${esc(p.image_url)}" class="w-20 h-20 rounded-xl object-cover shrink-0" alt="${esc(p.name)}" loading="lazy" />
+    <div class="min-w-0 flex-1">
+      <h3 class="font-semibold leading-snug">${esc(p.name)}</h3>
+      <p class="text-xs text-stone-500 mt-0.5 line-clamp-1">${esc(p.description)}</p>
+      <div class="flex items-center gap-2 mt-1.5 text-xs"><span class="px-2 py-0.5 rounded-full bg-stone-100">${esc(p.category)}</span><span class="${p.stock > 0 ? 'text-stone-500' : 'text-stone-400'}">${p.stock > 0 ? `Stok ${p.stock}` : 'Pre-order'}</span></div>
+    </div>
+    <div class="text-right shrink-0"><div class="font-extrabold whitespace-nowrap" style="color:${theme.main}">${rupiah(p.price)}</div><span class="text-xs font-semibold text-stone-500">Lihat →</span></div>
+  </a>`;
 }
 
 export async function viewStore(username) {
@@ -49,7 +55,7 @@ export async function viewStore(username) {
   try {
     data = await loadStore(username);
   } catch (e) {
-    return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold">Kembali ke Beranda</a></div></main>`;
+    return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="https://chatourtravel.com/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold">Kunjungi Chatour Travel</a></div></main>`;
   }
   const { store, products } = data;
   const t = themeOf(store.theme);
@@ -60,24 +66,49 @@ export async function viewStore(username) {
   const filtered = products.filter(
     (p) => (cat === 'Semua' || p.category === cat) && (!q || (p.name + ' ' + p.description).toLowerCase().includes(q.toLowerCase())),
   );
-  const grid = filtered.length
+  const list = filtered.length
     ? filtered.map((p) => productCard(username, p, t)).join('')
-    : `<p class="col-span-full text-center text-stone-500 py-8">Tidak ada produk yang cocok. Coba kata kunci atau kategori lain.</p>`;
+    : `<p class="text-center text-stone-500 py-8">Tidak ada produk yang cocok. Coba kata kunci atau kategori lain.</p>`;
   return `${topbar()}
-  <main class="max-w-5xl mx-auto px-4 py-8">
+  <main class="max-w-xl mx-auto px-4 py-8">
     ${storeHeader(store)}
-    <div class="flex flex-wrap gap-2 mt-5 items-center">
-      <input id="store-search" data-username="${esc(username)}" value="${esc(q)}" placeholder="🔍 Cari produk..." class="${inputCls} !mt-0 !w-56" />
-      ${cats.map((c) => `<button data-action="store-filter" data-username="${esc(username)}" data-cat="${esc(c)}" class="px-3 py-2 rounded-full text-sm border ${c === cat ? 'text-white font-semibold' : 'bg-white'}" style="${c === cat ? `background:${t.main};border-color:${t.main}` : ''}">${esc(c)}</button>`).join('')}
+    <h2 class="font-bold mt-2">Paket &amp; Produk</h2>
+    <div class="mt-3">
+      <input id="store-search" data-username="${esc(username)}" value="${esc(q)}" placeholder="🔍 Cari paket / produk..." class="${inputCls} !mt-0" />
+      <div class="flex flex-wrap gap-2 mt-3">
+        ${cats.map((c) => `<button data-action="store-filter" data-username="${esc(username)}" data-cat="${esc(c)}" class="px-3 py-1.5 rounded-full text-sm border ${c === cat ? 'text-white font-semibold' : 'bg-white'}" style="${c === cat ? `background:${t.main};border-color:${t.main}` : ''}">${esc(c)}</button>`).join('')}
+      </div>
     </div>
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-5">${grid}</div>
-    <p class="text-center text-xs text-stone-400 mt-8">Pembayaran manual via WhatsApp / COD / Transfer — tanpa pembayaran online.</p>
+    <div class="space-y-3 mt-4">${list}</div>
+    <div class="text-center mt-8">
+      <img src="/logo-chatour.png" class="w-12 h-12 object-contain mx-auto" alt="Chatour Travel" />
+      <p class="text-xs text-stone-400 mt-2">Chatour Travel — Biro Umroh &amp; Haji · Pembayaran manual via WhatsApp / COD / Transfer.</p>
+    </div>
   </main>`;
 }
 
 export function storeFilter(username, cat) {
   clearStoreCache();
   go(`/${username}${cat !== 'Semua' ? `?cat=${encodeURIComponent(cat)}` : ''}`);
+}
+
+/** Salin link toko ke clipboard; ubah label tombol sementara sebagai feedback. */
+export async function shareStore(button) {
+  const url = location.href;
+  let ok = false;
+  try {
+    await navigator.clipboard.writeText(url);
+    ok = true;
+  } catch {
+    ok = false;
+  }
+  if (!ok) {
+    window.prompt('Salin link toko ini:', url);
+    return;
+  }
+  const prev = button.textContent;
+  button.textContent = '✓ Link disalin!';
+  setTimeout(() => { button.textContent = prev; }, 2000);
 }
 
 export async function trackClick(username) {

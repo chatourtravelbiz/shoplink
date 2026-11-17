@@ -98,12 +98,29 @@ PBKDF2-SHA256 Node (format `salt:hash` yang sama dengan verifikasi WebCrypto di
 Worker) — **bukan** hash palsu / hardcode. Jalankan ulang scriptnya bila ingin
 seed baru; file `migrations/0002_seed_demo.sql` adalah hasil generate.
 
+## Admin platform (RBAC)
+
+Panel di `/admin`, API di `/api/admin/*`. Akun super admin
+`admin@chatourtravel.com` dibuat oleh `migrations/0003_admin_rbac.sql`
+(script `scripts/make-admin.mjs` — password awal ditampilkan sekali saat
+script dijalankan, **ganti setelah login pertama**).
+
+Role (dicek di server, bukan cuma di tampilan): `super_admin` (semua + atur
+role), `admin` (kelola user/toko/order, tanpa atur role), `moderator`
+(lihat + suspend toko), `support` (lihat saja), `merchant` (403 di admin).
+Toko berstatus `suspended` tidak tampil di storefront publik dan tidak bisa
+menerima order. Username `admin` (dan nama sistem lain) tidak bisa didaftar.
+
 ## Skema D1 (`migrations/0001_init.sql`)
 
 - `users` — id, email (UNIQUE), username (UNIQUE), password_hash, nama, bio,
-  whatsapp_number, avatar_url, created_at
+  whatsapp_number, avatar_url, created_at, role (`merchant` default;
+  migrasi 0003)
 - `stores` — username (PK, FK ke users), user_id (UNIQUE), data toko, currency
-  default `IDR`, theme default `emerald`, trust_badges/banners sebagai JSON TEXT
+  default `IDR`, theme default `emerald`, status (`active`/`suspended`;
+  migrasi 0003), trust_badges/banners sebagai JSON TEXT
+- `audit_log` — id, actor_id, action, target_type, target_id, created_at
+  (migrasi 0003)
 - `products` — PK (store_username, product_id), harga REAL, stok, kategori,
   collection, variants/highlights JSON TEXT
 - `sessions` — token (PK), user_id, expires_at

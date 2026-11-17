@@ -5,7 +5,7 @@ import { err, jsonBody } from '../lib/http';
 import { hashPassword, newId, verifyPassword } from '../lib/crypto';
 import { clearSessionCookie, createSession, getSessionToken, getSessionUser, isSecureRequest } from '../lib/auth';
 import { getStoreByUsername, publicStore, publicUser } from '../lib/db';
-import { isEmail, isUsername, str } from '../lib/validation';
+import { isEmail, isUsername, RESERVED_USERNAMES, str } from '../lib/validation';
 import { normalizeWaDigits } from '../lib/whatsapp';
 
 export const authRoutes: App = new Hono();
@@ -20,6 +20,7 @@ authRoutes.post('/auth/signup', async (c) => {
   const whatsapp = str(body?.whatsapp_number, 20);
   if (!isEmail(email)) return err(c, 400, 'Email tidak valid.');
   if (!isUsername(username)) return err(c, 400, 'Username harus 3–30 karakter, huruf kecil, angka, atau underscore.');
+  if (RESERVED_USERNAMES.has(username)) return err(c, 400, 'Username ini dipakai sistem, pilih yang lain.');
   if (password.length < 6 || password.length > 128) return err(c, 400, 'Password minimal 6 karakter.');
   if (!whatsapp) return err(c, 400, 'Nomor WhatsApp wajib diisi.');
   if (normalizeWaDigits(whatsapp).length < 9) return err(c, 400, 'Nomor WhatsApp tidak valid.');
@@ -80,7 +81,7 @@ authRoutes.get('/auth/session', async (c) => {
 
 authRoutes.get('/auth/check-username', async (c) => {
   const username = str(c.req.query('username'), 30).toLowerCase();
-  if (!isUsername(username)) {
+  if (!isUsername(username) || RESERVED_USERNAMES.has(username)) {
     return c.json({ available: false, error: 'Username harus 3–30 karakter (huruf kecil, angka, underscore).' });
   }
   const row = await c.env.DB.prepare('SELECT id FROM users WHERE username = ?1').bind(username).first();

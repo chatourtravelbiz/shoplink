@@ -14,7 +14,7 @@ export const storesRoutes: App = new Hono();
 storesRoutes.get('/stores/:username', async (c) => {
   const username = c.req.param('username').toLowerCase();
   const store = await getStoreByUsername(c.env, username);
-  if (!store) return err(c, 404, 'Toko tidak ditemukan.');
+  if (!store || (store.status ?? 'active') === 'suspended') return err(c, 404, 'Toko tidak ditemukan.');
   const rows = await c.env.DB.prepare(
     "SELECT * FROM products WHERE store_username = ?1 AND status = 'active' ORDER BY created_at DESC, product_id ASC",
   )
@@ -27,7 +27,7 @@ storesRoutes.get('/stores/:username', async (c) => {
 storesRoutes.get('/stores/:username/products/:id', async (c) => {
   const username = c.req.param('username').toLowerCase();
   const store = await getStoreByUsername(c.env, username);
-  if (!store) return err(c, 404, 'Toko tidak ditemukan.');
+  if (!store || (store.status ?? 'active') === 'suspended') return err(c, 404, 'Toko tidak ditemukan.');
   const product = await c.env.DB.prepare(
     "SELECT * FROM products WHERE store_username = ?1 AND product_id = ?2 AND status = 'active'",
   )
@@ -40,7 +40,7 @@ storesRoutes.get('/stores/:username/products/:id', async (c) => {
 storesRoutes.post('/stores/:username/orders', async (c) => {
   const username = c.req.param('username').toLowerCase();
   const store = await getStoreByUsername(c.env, username);
-  if (!store) return err(c, 404, 'Toko tidak ditemukan.');
+  if (!store || (store.status ?? 'active') === 'suspended') return err(c, 404, 'Toko tidak ditemukan.');
   const body = await jsonBody(c);
   const productId = str(body?.product_id, 60);
   const quantity = validQty(body?.quantity);

@@ -6,6 +6,7 @@ export const RESERVED = new Set([
   'dashboard',
   'products',
   'settings',
+  'admin',
   'api',
   'js',
   'index.html',
@@ -31,6 +32,7 @@ export function parsePath(pathname) {
   if (first === 'dashboard') return { kind: 'dashboard' };
   if (first === 'products') return { kind: 'products' };
   if (first === 'settings') return { kind: 'settings' };
+  if (first === 'admin') return { kind: 'admin' };
   if (parts.length === 3 && second === 'p' && third) {
     return { kind: 'product', username: first, productId: third };
   }
@@ -40,7 +42,18 @@ export function parsePath(pathname) {
   return { kind: 'notfound' };
 }
 
-/** Link internal SPA (bukan /api/*, bukan file statis) — layak di-intercept. */
+/** URL company profile Chatour Travel (Worker terpisah). Shoplink tidak punya
+    landing page: route / mengarah ke sini. */
+export const PROFILE_URL = 'https://chatourtravel.com/';
+
+/** Aksi untuk route /: redirect ke company profile, KECUALI bila sudah di
+    root chatourtravel.com (sebelum Shoplink pindah ke subdomain) — di sana
+    tampilkan halaman masuk agen yang minimal, supaya tidak redirect ke diri
+    sendiri. Fungsi murni atas hostname, mudah diuji. */
+export function landingAction(hostname) {
+  if (String(hostname || '').toLowerCase() === 'chatourtravel.com') return { page: 'entry' };
+  return { redirect: PROFILE_URL };
+}
 export function isInternalPath(href) {
   if (!href || !href.startsWith('/') || href.startsWith('//')) return false;
   const path = href.split('?')[0];

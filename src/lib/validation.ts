@@ -6,6 +6,15 @@ export const THEMES = ['emerald', 'rose', 'amber', 'sky', 'violet'] as const;
 export const PAYMENT_METHODS = ['whatsapp', 'cod', 'transfer'] as const;
 export const ORDER_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled'] as const;
 export const PRODUCT_STATUSES = ['active', 'draft', 'archived'] as const;
+export const ROLES = ['super_admin', 'admin', 'moderator', 'support', 'merchant'] as const;
+export const ADMIN_ROLES = ['super_admin', 'admin', 'moderator', 'support'] as const;
+export const STORE_STATUSES = ['active', 'suspended'] as const;
+
+/** Username yang tidak boleh didaftar — route sistem / panel admin. */
+export const RESERVED_USERNAMES = new Set([
+  'admin', 'api', 'app', 'www', 'mail', 'dashboard', 'settings', 'products',
+  'login', 'signup', 'support', 'help', 'chatour', 'shoplink',
+]);
 
 export const MAX_NAME_LEN = 120;
 export const MAX_TEXT_LEN = 2000;
@@ -37,6 +46,18 @@ export function isOrderStatus(v: string): v is (typeof ORDER_STATUSES)[number] {
 
 export function isProductStatus(v: string): v is (typeof PRODUCT_STATUSES)[number] {
   return (PRODUCT_STATUSES as readonly string[]).includes(v);
+}
+
+export function isRole(v: string): v is (typeof ROLES)[number] {
+  return (ROLES as readonly string[]).includes(v);
+}
+
+export function isAdminRole(v: string | null | undefined): v is (typeof ADMIN_ROLES)[number] {
+  return !!v && (ADMIN_ROLES as readonly string[]).includes(v);
+}
+
+export function isStoreStatus(v: string): v is (typeof STORE_STATUSES)[number] {
+  return (STORE_STATUSES as readonly string[]).includes(v);
 }
 
 /** Harga valid: angka hingga, >= 0, maksimal Rp 1 miliar. */
