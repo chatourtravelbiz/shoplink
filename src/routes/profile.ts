@@ -15,7 +15,7 @@ const WA_PATH =
 const WA_SVG =
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" focusable="false"><path d="${WA_PATH}"/></svg>`;
 
-type ProfileContent = { waLink?: string; shopUrl?: string; email?: string; agen?: { waLink?: string } };
+type ProfileContent = { waLink?: string; shopUrl?: string; email?: string; agen?: { waLink?: string }; faq?: { q: string; a: string }[] };
 
 const esc = (s: unknown): string =>
   String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] as string);
@@ -43,7 +43,7 @@ function header(c: ProfileContent): string {
     <a class="brand" href="/"><img src="/logo-chatour.png" alt="Logo Chatour Travel" class="brand-logo" /><span class="brand-name">Chatour Travel</span></a>
     <nav class="nav" aria-label="Navigasi utama">
       <a href="/#tentang">Tentang</a><a href="/#umroh">Paket Umroh</a><a href="/#haji">Paket Haji</a>
-      <a href="/blog">Blog</a><a href="/#kontak">Kontak</a>
+      <a href="/blog">Blog</a><a href="/#faq">FAQ</a><a href="/#kontak">Kontak</a>
     </nav>
     <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Ganti mode gelap/terang">🌙</button>
     <a class="btn btn-wa" href="${esc(c.agen?.waLink || c.waLink || '#')}" target="_blank" rel="noopener">${WA_SVG}<span class="btn-wa-label">WhatsApp</span></a>
@@ -69,6 +69,22 @@ const THEME_SCRIPT = `<script>(function(){var b=document.getElementById('theme-t
 
 /** Tombol kembali ke atas halaman blog (beranda memakai profile.js). */
 const SCROLL_SCRIPT = `<script>(function(){var b=document.getElementById('scroll-top');if(!b)return;var t=function(){b.classList.toggle('show',window.scrollY>400)};t();window.addEventListener('scroll',t,{passive:true});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});})();</script>`;
+
+// Akordeon FAQ (halaman blog) — logika sama dengan profile.js di beranda.
+const FAQ_SCRIPT = `<script>document.addEventListener('click',function(e){var b=e.target.closest('[data-faq]');if(!b)return;var a=b.closest('.faq-item').querySelector('.faq-a');var open=a.hasAttribute('hidden');a.toggleAttribute('hidden',!open);b.setAttribute('aria-expanded',String(open));b.querySelector('span').textContent=open?'−':'+';});</script>`;
+
+// Seksi FAQ — dipakai halaman blog (beranda punya versinya di profile.html).
+const faqSection = (c: ProfileContent): string => {
+  const items = c.faq || [];
+  if (!items.length) return '';
+  return `<section class="section section-alt" id="faq"><div class="wrap">
+    <h2>Masih Ragu? Ini Jawabannya</h2>
+    <p class="lead">Pertanyaan yang paling sering ditanyakan calon jamaah.</p>
+    <div id="faq-list">${items.map((f, i) => `<div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="${i === 0}" data-faq="${i}">${esc(f.q)}<span aria-hidden="true">${i === 0 ? '−' : '+'}</span></button>
+      <div class="faq-a" ${i === 0 ? '' : 'hidden'}>${esc(f.a)}</div>
+    </div>`).join('')}</div></div></section>`;
+};
 
 function page(site: string, opts: {
   title: string; description: string; canonical: string; ogImage?: string;
@@ -140,8 +156,9 @@ profileRoutes.get('/blog', async (c) => {
     canonical: `${site}/blog`,
     body: `<section class="section"><div class="wrap"><h2 style="text-align:center">Blog &amp; Berita</h2>
       <p class="lead">Info, panduan, dan berita terbaru seputar Umroh &amp; Haji.</p>
-      <div class="grid cards">${cards}</div></div></section>`,
+      <div class="grid cards">${cards}</div></div></section>${faqSection(content)}`,
     content,
+    script: FAQ_SCRIPT,
   });
 });
 
