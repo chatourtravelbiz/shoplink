@@ -23,8 +23,10 @@ import { uploadsRoutes } from './routes/uploads';
 
 const app: App = new Hono();
 
-// Host utama (profile + toko di /:username). Host lain dicocokkan dengan
-// stores.custom_domain — fondasi custom domain agen.
+// Host utama (profile + toko di /:username). Domain lain dicocokkan dengan
+// stores.custom_domain — fondasi custom domain agen — termasuk subdomain
+// chatourtravel.com (mis. demo.chatourtravel.com), yang dicadangkan untuk
+// platform dan dipasang langsung oleh admin, bukan lewat pengajuan agen.
 function isMainHost(host: string): boolean {
   const h = host.toLowerCase();
   return (
@@ -39,7 +41,8 @@ function isMainHost(host: string): boolean {
 
 app.use(async (c, next) => {
   const host = new URL(c.req.url).hostname;
-  if (!isMainHost(host)) {
+  const ownSubdomain = host.toLowerCase().endsWith('.chatourtravel.com');
+  if (!isMainHost(host) || ownSubdomain) {
     try {
       const store = await getStoreByCustomDomain(c.env, host);
       if (store) c.set('customStore', store.username);
