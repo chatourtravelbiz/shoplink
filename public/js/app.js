@@ -71,9 +71,9 @@ document.addEventListener('click', async (e) => {
   } else if (action === 'toggle-password') {
     togglePasswordVisibility(el);
   } else if (action === 'new-product') {
-    openProductForm(null);
+    openProductForm(null, render);
   } else if (action === 'edit-product') {
-    openProductForm(el.dataset.id);
+    openProductForm(el.dataset.id, render);
   } else if (action === 'delete-product') {
     await deleteProductById(el.dataset.id, render);
   } else if (action === 'cancel-product-form') {
@@ -89,9 +89,9 @@ document.addEventListener('click', async (e) => {
   } else if (action === 'domain-request-cancel') {
     await cancelDomainRequest();
   } else if (action === 'new-showcase') {
-    openShowcaseForm(null);
+    openShowcaseForm(null, render);
   } else if (action === 'edit-showcase') {
-    openShowcaseForm(el.dataset.id);
+    openShowcaseForm(el.dataset.id, render);
   } else if (action === 'delete-showcase') {
     await deleteShowcaseById(el.dataset.id, render);
   } else if (action === 'cancel-showcase-form') {

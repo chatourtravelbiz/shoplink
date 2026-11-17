@@ -91,13 +91,14 @@ function showcaseForm(s) {
   </form>`;
 }
 
-export function openShowcaseForm(id) {
+export function openShowcaseForm(id, onRerender) {
   editingShowcase = id ? currentShowcase.find((x) => x.id === id) || null : null;
   const wrap = document.getElementById('showcase-form-wrap');
   if (wrap) {
     wrap.innerHTML = showcaseForm(editingShowcase);
     wrap.scrollIntoView({ behavior: 'smooth' });
   }
+  if (onRerender) bindShowcase(onRerender);
 }
 
 export function cancelShowcaseForm() {
@@ -196,13 +197,14 @@ function productForm(p) {
   </form>`;
 }
 
-export function openProductForm(id) {
+export function openProductForm(id, onRerender) {
   editingProduct = id ? currentProducts.find((p) => p.id === id) || null : null;
   const wrap = document.getElementById('form-wrap');
   if (wrap) {
     wrap.innerHTML = productForm(editingProduct);
     wrap.scrollIntoView({ behavior: 'smooth' });
   }
+  if (onRerender) bindProducts(onRerender);
 }
 
 export function cancelProductForm() {
