@@ -16,6 +16,7 @@ analyticsRoutes.post('/analytics/track', async (c) => {
   }
   const store = await getStoreByUsername(c.env, storeUsername);
   if (!store) return err(c, 404, 'Toko tidak ditemukan.');
-  await trackEvent(c.env, storeUsername, eventType as 'view' | 'click', str(body?.page_path, 200), c.req.header('Referer'));
+  const productId = str(body?.product_id, 100) || null;
+  await trackEvent(c.env, storeUsername, eventType as 'view' | 'click', str(body?.page_path, 200), c.req.header('Referer'), productId);
   return c.json({ ok: true });
 });

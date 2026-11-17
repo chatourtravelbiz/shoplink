@@ -51,6 +51,12 @@ export async function viewDashboard() {
   const top = data.top_products.length
     ? data.top_products.map((p) => `<li class="flex justify-between py-2 border-t border-stone-100 text-sm"><span>${esc(p.product_name)} <span class="text-stone-400">(${p.quantity} terjual)</span></span><span class="font-medium">${priceLabel(p.revenue)}</span></li>`).join('')
     : '<li class="py-2 text-sm text-stone-500">Belum ada penjualan.</li>';
+  const topList = (items, empty, suffix) => items.length
+    ? items.map((p, i) => `<li class="flex justify-between items-center gap-2 py-2 border-t border-stone-100 text-sm"><span><span class="font-bold text-stone-400 mr-1">${i + 1}.</span>${esc(p.product_name)}</span><span class="font-medium whitespace-nowrap">${p.count}× ${suffix}</span></li>`).join('')
+    : `<li class="py-2 text-sm text-stone-500">${empty}</li>`;
+  const sources = data.top_sources.length
+    ? data.top_sources.map((s) => `<li class="flex justify-between py-2 border-t border-stone-100 text-sm"><span>${esc(s.host)}</span><span class="font-medium">${s.views} kunjungan</span></li>`).join('')
+    : '<li class="py-2 text-sm text-stone-500">Belum ada data kunjungan.</li>';
   return `${topbar('dashboard')}
   <main class="max-w-5xl mx-auto px-4 py-8">
     <div class="flex flex-wrap items-end justify-between gap-3">
@@ -68,6 +74,23 @@ export async function viewDashboard() {
       <div class="bg-white border border-stone-200 rounded-2xl p-5">
         <h2 class="font-bold">Produk terlaris</h2>
         <ul class="mt-2">${top}</ul>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-4 mt-4">
+      <div class="bg-white border border-stone-200 rounded-2xl p-5">
+        <h2 class="font-bold">Paket paling dilihat</h2>
+        <p class="text-xs text-stone-500">30 hari terakhir</p>
+        <ul class="mt-2">${topList(data.top_viewed || [], 'Belum ada yang melihat paketmu — bagikan link tokomu!', 'dilihat')}</ul>
+      </div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-5">
+        <h2 class="font-bold">Paket paling diklik</h2>
+        <p class="text-xs text-stone-500">30 hari terakhir · klik kartu dari toko</p>
+        <ul class="mt-2">${topList(data.top_clicked || [], 'Belum ada klik — bagikan link tokomu!', 'klik')}</ul>
+      </div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-5">
+        <h2 class="font-bold">Sumber kunjungan</h2>
+        <p class="text-xs text-stone-500">30 hari terakhir · dari mana pembeli datang</p>
+        <ul class="mt-2">${sources}</ul>
       </div>
     </div>
     <div class="bg-white border border-stone-200 rounded-2xl p-5 mt-4 overflow-x-auto">

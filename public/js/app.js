@@ -81,7 +81,7 @@ document.addEventListener('click', async (e) => {
   } else if (action === 'store-filter') {
     storeFilter(el.dataset.username, el.dataset.cat);
   } else if (action === 'product-click') {
-    trackClick(el.dataset.username);
+    trackClick(el.dataset.username, el.dataset.productId);
   } else if (action === 'share-store') {
     shareStore(el);
   } else if (action === 'theme-pick') {

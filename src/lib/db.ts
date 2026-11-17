@@ -124,6 +124,7 @@ export async function trackEvent(
   eventType: 'view' | 'click',
   pagePath?: string,
   referrer?: string | null,
+  productId?: string | null,
 ): Promise<void> {
   const today = dayStr(new Date());
   const now = new Date().toISOString();
@@ -152,10 +153,10 @@ export async function trackEvent(
       }
     }
     await env.DB.prepare(
-      `INSERT INTO analytics_events (id, store_username, event_type, metric_date, source, referrer_host, page_path, created_at)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`,
+      `INSERT INTO analytics_events (id, store_username, event_type, metric_date, source, referrer_host, page_path, product_id, created_at)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)`,
     )
-      .bind(newId('ae'), storeUsername, eventType, today, host, host, pagePath ?? null, now)
+      .bind(newId('ae'), storeUsername, eventType, today, host, host, pagePath ?? null, productId || null, now)
       .run();
   } catch {
     // Diam-diam abaikan: analitik tidak kritis.

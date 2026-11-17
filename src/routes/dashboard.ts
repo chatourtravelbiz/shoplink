@@ -72,6 +72,35 @@ dashboardRoutes.get('/dashboard', async (c) => {
     revenue: r.revenue,
   }));
 
+  // Analitik per produk & sumber kunjungan — 30 hari terakhir, dari events.
+  const since = dayStr(new Date(Date.now() - 29 * 86400000));
+  const topByEvent = async (eventType: 'view' | 'click') => {
+    const rows = await c.env.DB.prepare(
+      `SELECT e.product_id AS product_id, p.name AS product_name, COUNT(*) AS n
+       FROM analytics_events e LEFT JOIN products p ON p.store_username = e.store_username AND p.product_id = e.product_id
+       WHERE e.store_username = ?1 AND e.event_type = ?2 AND e.product_id IS NOT NULL AND e.metric_date >= ?3
+       GROUP BY e.product_id ORDER BY n DESC LIMIT 5`,
+    )
+      .bind(username, eventType, since)
+      .all<{ product_id: string; product_name: string | null; n: number }>();
+    return (rows.results ?? []).map((r) => ({
+      product_id: r.product_id,
+      product_name: r.product_name ?? r.product_id,
+      count: r.n,
+    }));
+  };
+  const top_viewed = await topByEvent('view');
+  const top_clicked = await topByEvent('click');
+  const sourceRows = await c.env.DB.prepare(
+    `SELECT COALESCE(referrer_host, 'direct') AS host, COUNT(*) AS n
+     FROM analytics_events
+     WHERE store_username = ?1 AND event_type = 'view' AND metric_date >= ?2
+     GROUP BY referrer_host ORDER BY n DESC LIMIT 5`,
+  )
+    .bind(username, since)
+    .all<{ host: string; n: number }>();
+  const top_sources = (sourceRows.results ?? []).map((r) => ({ host: r.host, views: r.n }));
+
   return c.json({
     totals: {
       revenue: totals?.revenue ?? 0,
@@ -83,5 +112,8 @@ dashboardRoutes.get('/dashboard', async (c) => {
     chart,
     recent_orders,
     top_products,
+    top_viewed,
+    top_clicked,
+    top_sources,
   });
 });

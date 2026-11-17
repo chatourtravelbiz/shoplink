@@ -100,7 +100,7 @@ function productCard(username, p, theme) {
   const cover = p.image_url
     ? `<span class="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative block">${imgCover(theme, true)}<img src="${esc(p.image_url)}" class="w-full h-full object-cover absolute inset-0" alt="${esc(p.name)}" loading="lazy" onerror="var f=this.previousElementSibling;if(f)f.style.display='flex';this.remove();" /></span>`
     : `<span class="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative block">${imgCover(theme)}</span>`;
-  return `<a href="/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:shadow-md transition">
+  return `<a href="/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" data-product-id="${esc(p.id)}" class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:shadow-md transition">
     ${cover}
     <div class="min-w-0 flex-1">
       <h3 class="font-semibold leading-snug">${esc(p.name)}</h3>
@@ -182,9 +182,17 @@ export async function shareStore(button) {
   setTimeout(() => { button.textContent = prev; }, 2000);
 }
 
-export async function trackClick(username) {
+export async function trackClick(username, productId) {
   try {
-    await api('/api/analytics/track', { method: 'POST', body: JSON.stringify({ store_username: username, event_type: 'click', page_path: `/${username}` }) });
+    await api('/api/analytics/track', {
+      method: 'POST',
+      body: JSON.stringify({
+        store_username: username,
+        event_type: 'click',
+        page_path: productId ? `/${username}/p/${productId}` : `/${username}`,
+        product_id: productId || undefined,
+      }),
+    });
   } catch {
     // Analitik gagal: abaikan.
   }

@@ -34,6 +34,7 @@ storesRoutes.get('/stores/:username/products/:id', async (c) => {
     .bind(username, c.req.param('id'))
     .first<ProductRow>();
   if (!product) return err(c, 404, 'Produk tidak ditemukan.');
+  await trackEvent(c.env, username, 'view', `/${username}/p/${c.req.param('id')}`, c.req.header('Referer'), c.req.param('id'));
   return c.json({ store: publicStore(store), product: publicProduct(product) });
 });
 
