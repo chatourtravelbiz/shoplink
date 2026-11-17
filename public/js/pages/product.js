@@ -1,9 +1,9 @@
-// Detail produk publik + form order (WhatsApp / Transfer).
+// Detail produk publik + form order (WhatsApp / COD / Transfer).
 import { api } from '../api.js';
 import { esc, go, priceLabel, storePath, themeOf, waDigits } from '../utils.js';
 import { waIcon } from '../icons.js';
-import { errorBox, field, inputCls, setErr, topbar } from '../ui.js';
-import { imgCover, loadStore } from './storefront.js';
+import { errorBox, field, inputCls, setErr } from '../ui.js';
+import { imgCover, loadStore, storeFooter } from './storefront.js';
 
 /** Header toko mini: avatar/logo + nama + badge + kembali ke toko. */
 function storeMiniHeader(store) {
@@ -48,7 +48,7 @@ export async function viewProduct(username, productId) {
   try {
     data = await api(`/api/stores/${username}/products/${productId}`);
   } catch (e) {
-    return `${topbar()}<main class="max-w-3xl mx-auto px-4 py-10">${errorBox(e.message)}<a href="${storePath(username)}" class="text-red-700 underline text-sm">← Kembali ke toko</a></main>`;
+    return `<main class="max-w-3xl mx-auto px-4 py-10">${errorBox(e.message)}<a href="${storePath(username)}" class="text-red-700 underline text-sm">← Kembali ke toko</a></main>`;
   }
   const { store, product: p } = data;
   const t = themeOf(store.theme);
@@ -75,8 +75,7 @@ export async function viewProduct(username, productId) {
     : `<div class="w-full h-72 relative">${imgCover(t)}<span class="absolute inset-x-0 bottom-4 text-center text-sm text-stone-500">Tidak ada foto produk</span></div>`;
   // Tombol WA membawa pesan yang sudah menyebut nama paket.
   const waInquiry = `https://wa.me/${esc(waDigits(store.whatsapp_number))}?text=${encodeURIComponent(`Halo, saya mau tanya paket ${p.name} di ${store.store_name}.`)}`;
-  return `${topbar()}
-  <main class="max-w-3xl mx-auto px-4 py-8">
+  return `<main class="max-w-3xl mx-auto px-4 py-8">
     ${storeMiniHeader(store)}
     ${success}
     <div class="bg-white border border-stone-200 rounded-2xl overflow-hidden mt-4">
@@ -99,13 +98,14 @@ export async function viewProduct(username, productId) {
       ${field('Nama kamu *', `<input required name="customer_name" maxlength="120" class="${inputCls}" placeholder="Nama lengkap" />`)}
       ${field('No. WhatsApp kamu *', `<input required name="customer_phone" maxlength="20" class="${inputCls}" placeholder="0812xxxxxx" />`)}
       ${field('Alamat domisili *', `<textarea required name="customer_address" maxlength="500" rows="2" class="${inputCls}" placeholder="Kota domisili, mis. Gresik, Jawa Timur"></textarea>`)}
-      ${field('Metode pembayaran', `<select name="payment_method" class="${inputCls}"><option value="whatsapp">WhatsApp (konfirmasi manual)</option><option value="transfer">Transfer bank</option></select>`)}
+      ${field('Metode pembayaran', `<select name="payment_method" class="${inputCls}"><option value="whatsapp">WhatsApp (konfirmasi manual)</option><option value="transfer">Transfer bank</option><option value="cod">COD (Bayar di Tempat)</option></select>`)}
       ${field('Catatan (opsional)', `<input name="notes" maxlength="500" class="${inputCls}" placeholder="Contoh: berangkat berdua dengan istri" />`)}
       <div class="flex items-center justify-between border-t border-stone-100 pt-3"><span class="text-sm text-stone-600">Total (<span id="qty-label">1</span> × ${priceLabel(p.price)})</span><span id="total-label" class="text-xl font-extrabold">${priceLabel(p.price)}</span></div>
       <button class="w-full py-3 rounded-xl text-white font-semibold" style="background:${t.main}">Pesan Sekarang</button>
       <p class="text-xs text-stone-500 text-center">Order dicatat di toko, lalu kamu konfirmasi ke penjual via WhatsApp. Tanpa pembayaran online.</p>
     </form>
     ${others}
+    ${storeFooter(store)}
   </main>`;
 }
 

@@ -1,10 +1,10 @@
 // Storefront publik — profil agen link-in-bio: header profil di tengah (avatar,
 // nama, @username, bio, badge Agen Chatour Travel, tombol WhatsApp + bagikan),
 // lalu paket/produk sebagai kartu vertikal ala link-in-bio.
-import { api } from '../api.js';
+import { api, state } from '../api.js';
 import { esc, go, priceLabel, storePath, themeOf, waDigits } from '../utils.js';
 import { icon, waIcon } from '../icons.js';
-import { errorBox, inputCls, topbar } from '../ui.js';
+import { errorBox, inputCls } from '../ui.js';
 
 let storeCache = null; // { username, store, products }
 
@@ -111,12 +111,25 @@ function productCard(username, p, theme) {
   </a>`;
 }
 
+/** Footer toko (bio link): logo + info pembayaran manual. Halaman toko
+    sengaja tanpa header nav (topbar) supaya bersih seperti link-in-bio.
+    Bila yang melihat adalah pemilik toko, tampilkan tautan kecil ke
+    dashboard sebagai jalan kembali — pengunjung tidak melihatnya. */
+export function storeFooter(store) {
+  const owner = state.session?.user?.username && state.session.user.username === store.username;
+  return `<div class="text-center mt-8">
+    <img src="/logo-chatour.png" class="w-12 h-12 object-contain mx-auto" alt="Chatour Travel" />
+    <p class="text-xs text-stone-400 mt-2">Chatour Travel — Biro Umroh &amp; Haji · Pembayaran manual via WhatsApp / COD / Transfer.</p>
+    ${owner ? `<a href="/dashboard" class="inline-block mt-2 text-xs text-red-700 underline">Kelola Toko →</a>` : ''}
+  </div>`;
+}
+
 export async function viewStore(username) {
   let data;
   try {
     data = await loadStore(username);
   } catch (e) {
-    return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="https://chatourtravel.com/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">Kunjungi Chatour Travel</a></div></main>`;
+    return `<main class="max-w-5xl mx-auto px-4 py-10"><div class="bg-white border rounded-2xl p-8 text-center"><h1 class="text-xl font-bold">Toko tidak ditemukan</h1><p class="text-stone-600 text-sm mt-2">${esc(e.message)}</p><a href="https://chatourtravel.com/" class="inline-block mt-4 px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">Kunjungi Chatour Travel</a></div></main>`;
   }
   const { store, products } = data;
   const t = themeOf(store.theme);
@@ -147,14 +160,10 @@ export async function viewStore(username) {
   const sections = store.section_order === 'showcase-first'
     ? showcaseSection(showcase, t) + productsSection
     : productsSection + showcaseSection(showcase, t);
-  return `${topbar()}
-  <main class="max-w-xl mx-auto px-4 py-8">
+  return `<main class="max-w-xl mx-auto px-4 py-8">
     ${storeHeader(store)}
     ${sections}
-    <div class="text-center mt-8">
-      <img src="/logo-chatour.png" class="w-12 h-12 object-contain mx-auto" alt="Chatour Travel" />
-      <p class="text-xs text-stone-400 mt-2">Chatour Travel — Biro Umroh &amp; Haji · Pembayaran manual via WhatsApp / COD / Transfer.</p>
-    </div>
+    ${storeFooter(store)}
   </main>`;
 }
 
