@@ -1,10 +1,14 @@
 // Chatour Travel — bootstrap Hono saja. Semua route ada di src/routes/*,
-// semua helper ada di src/lib/*. Tanpa pembayaran online: order via
-// WhatsApp / COD / Transfer manual. Tanpa Stripe/Razorpay/billing.
+// semua helper ada di src/lib/*. Satu Worker di root chatourtravel.com:
+// company profile (/) + blog (/blog) + toko agen (/:username) + /api/*.
+// Tanpa pembayaran online: order via WhatsApp / COD / Transfer manual.
+// Tanpa Stripe/Razorpay/billing.
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import type { App } from './types';
-import { serveSpa } from './lib/spa';
+import { serveSpa, serveSpaForStore } from './lib/spa';
+import { getStoreByCustomDomain } from './lib/db';
+import { profileRoutes } from './routes/profile';
 import { authRoutes } from './routes/auth';
 import { dashboardRoutes } from './routes/dashboard';
 import { productsRoutes } from './routes/products';
@@ -17,6 +21,33 @@ import { showcaseRoutes } from './routes/showcase';
 import { uploadsRoutes } from './routes/uploads';
 
 const app: App = new Hono();
+
+// Host utama (profile + toko di /:username). Host lain dicocokkan dengan
+// stores.custom_domain — fondasi custom domain agen.
+function isMainHost(host: string): boolean {
+  const h = host.toLowerCase();
+  return (
+    h === 'chatourtravel.com' ||
+    h.endsWith('.chatourtravel.com') ||
+    h.endsWith('.workers.dev') ||
+    h === 'localhost' ||
+    h.endsWith('.localhost') ||
+    h === '127.0.0.1'
+  );
+}
+
+app.use(async (c, next) => {
+  const host = new URL(c.req.url).hostname;
+  if (!isMainHost(host)) {
+    try {
+      const store = await getStoreByCustomDomain(c.env, host);
+      if (store) c.set('customStore', store.username);
+    } catch {
+      // DB belum punya kolom custom_domain (dev lokal lama): abaikan, lanjut normal.
+    }
+  }
+  await next();
+});
 
 // Header keamanan dasar untuk semua respons API.
 app.use('/api/*', async (c, next) => {
@@ -32,6 +63,9 @@ app.use('/api/*', cors({ origin: (o) => o, credentials: true }));
 
 app.get('/api/health', (c) => c.json({ ok: true, service: 'shoplink-d1', time: new Date().toISOString() }));
 
+// Company profile (/) + blog (/blog, /blog/:slug) + sitemap/robots.
+app.route('/', profileRoutes);
+
 app.route('/api', authRoutes);
 app.route('/api', dashboardRoutes);
 app.route('/api', productsRoutes);
@@ -43,13 +77,17 @@ app.route('/api', analyticsRoutes);
 app.route('/api', showcaseRoutes);
 app.route('/api', uploadsRoutes);
 
-// 404 JSON hanya untuk /api/* yang tidak dikenal. Path non-API (/, /demo,
-// /dashboard, ...) adalah route SPA: layani index.html via binding Assets.
-// Path file statis yang hilang (ada ekstensi) tetap 404 JSON, bukan HTML.
+// 404 JSON hanya untuk /api/* yang tidak dikenal. Path non-API adalah route SPA:
+// /login, /dashboard, /:username, /:username/p/:id, ... — layani spa.html.
+// Di host custom domain agen, /p/:id adalah produk toko itu sendiri.
 app.notFound(async (c) => {
   const path = c.req.path;
   if (path.startsWith('/api/') || /\.[a-z0-9]+$/i.test(path)) {
     return c.json({ error: 'Tidak ditemukan.' }, 404);
+  }
+  const customStore = c.get('customStore');
+  if (customStore && /^\/p\/[^/]+$/.test(path)) {
+    return serveSpaForStore(c, customStore);
   }
   return serveSpa(c);
 });

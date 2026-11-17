@@ -17,11 +17,18 @@ const $app = document.getElementById('app');
 let searchTimer = null;
 
 async function render() {
-  const route = parsePath(location.pathname);
+  // Di host custom domain agen, / dan /p/:id adalah toko itu sendiri
+  // (username disuntik server sebagai window.__CUSTOM_STORE__).
+  const bootStore = window.__CUSTOM_STORE__;
+  let route = parsePath(location.pathname);
+  if (bootStore && location.pathname === '/') route = { kind: 'store', username: bootStore };
+  else if (bootStore && /^\/p\/[^/]+$/.test(location.pathname)) {
+    route = { kind: 'product', username: bootStore, productId: location.pathname.split('/')[2] };
+  }
   let html = '';
   try {
-    // Chatour Travel tidak punya landing page: / bukan route (parsePath mengembalikan
-    // 'notfound' dan jatuh ke halaman 404 di bawah). Tanpa redirect.
+    // / adalah company profile (dirender server, bukan SPA) — SPA hanya
+    // menanganinya bila ini host custom domain agen (lihat bootStore di atas).
     if (route.kind === 'signup') html = viewSignup();
     else if (route.kind === 'login') html = viewLogin();
     else if (route.kind === 'dashboard') html = await viewDashboard();

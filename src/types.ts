@@ -7,8 +7,8 @@ export type Env = {
   APP_URL?: string;
 };
 
-export type App = Hono<{ Bindings: Env }>;
-export type AppContext = Context<{ Bindings: Env }>;
+export type App = Hono<{ Bindings: Env; Variables: { customStore?: string } }>;
+export type AppContext = Context<{ Bindings: Env; Variables: { customStore?: string } }>;
 
 export type UserRow = {
   id: string;
@@ -43,6 +43,7 @@ export type StoreRow = {
   show_badge: number;
   section_order: string;
   status: string;
+  custom_domain: string | null;
   trust_badges_json: string | null;
   banners_json: string | null;
 };

@@ -3,7 +3,7 @@ compatibility_date = "2025-01-01"
 main = "src/index.ts"
 
 [vars]
-APP_URL = "https://shop.chatourtravel.com"
+APP_URL = "https://chatourtravel.com"
 
 [[d1_databases]]
 binding = "DB"

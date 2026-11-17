@@ -11,10 +11,11 @@ manual**.
 ## Arsitektur
 
 ```
-Browser (SPA statis, hash routing)
-  └─ public/index.html + public/js/*        (Tailwind via CDN, Bahasa Indonesia)
-Cloudflare Workers (Hono, TypeScript)
+Browser (SPA statis, path routing bersih)
+  └─ public/spa.html + public/js/*         (Tailwind via CDN, Bahasa Indonesia)
+Cloudflare Workers (Hono, TypeScript) — SATU Worker di root chatourtravel.com
   ├─ src/index.ts                            bootstrap + middleware + mount route
+  ├─ src/routes/profile.ts                   company profile (/) + blog (/blog) + sitemap/robots
   ├─ src/routes/auth.ts                      signup / login / logout / session
   ├─ src/routes/dashboard.ts                 ringkasan merchant + grafik 7 hari
   ├─ src/routes/products.ts                  CRUD produk milik toko sendiri
@@ -23,10 +24,15 @@ Cloudflare Workers (Hono, TypeScript)
   ├─ src/routes/stores.ts                    storefront publik + order publik
   ├─ src/routes/analytics.ts                 POST /api/analytics/track
   ├─ src/routes/uploads.ts                   upload foto -> R2, serve /api/files/*
-  └─ src/lib/{db,auth,crypto,validation,whatsapp,http}.ts
+  └─ src/lib/{db,auth,crypto,validation,whatsapp,http,spa,rbac}.ts
 Cloudflare D1 (SQLite) — binding `DB`
 Cloudflare R2 (foto produk) — binding `ASSETS`
 ```
+
+Satu Worker melayani semuanya di root `chatourtravel.com`: company profile `/`,
+blog `/blog`, toko agen `/:username`, dan API `/api/*`. Toko agen juga bisa
+dilayani dari domainnya sendiri (fondasi: kolom `stores.custom_domain`,
+lookup by Host — pemasangan domain agen via API adalah langkah berikutnya).
 
 Semua file kode dijaga tipis (< 250 baris, mayoritas < 130 baris). Semua query D1
 memakai prepared statement `.bind()` — tidak ada interpolasi value ke SQL.

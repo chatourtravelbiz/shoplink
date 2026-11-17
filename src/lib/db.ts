@@ -104,6 +104,15 @@ export async function getStoreByUsername(env: Env, username: string): Promise<St
   return (await env.DB.prepare('SELECT * FROM stores WHERE username = ?1').bind(username).first<StoreRow>()) ?? null;
 }
 
+/** Fondasi custom domain agen: cari toko aktif dari hostname-nya. */
+export async function getStoreByCustomDomain(env: Env, host: string): Promise<StoreRow | null> {
+  const row = await env.DB.prepare('SELECT * FROM stores WHERE custom_domain = ?1')
+    .bind(host.toLowerCase())
+    .first<StoreRow>();
+  if (!row || (row.status ?? 'active') === 'suspended') return null;
+  return row;
+}
+
 /** Catat view/click. Gagal analitik tidak boleh menggagalkan request utama. */
 export async function trackEvent(
   env: Env,

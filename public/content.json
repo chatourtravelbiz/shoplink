@@ -1,0 +1,162 @@
+{
+    "alamat": "Alamat kantor: — (isi alamat lengkap)",
+    "biro": "Chatour Travel",
+    "caraDaftar": [
+        {
+            "isi": "Chat WhatsApp atau datang ke kantor untuk konsultasi paket.",
+            "judul": "Hubungi Kami",
+            "langkah": "1"
+        },
+        {
+            "isi": "Pilih paket yang sesuai, siapkan paspor dan dokumen yang diperlukan.",
+            "judul": "Pilih Paket & Lengkapi Dokumen",
+            "langkah": "2"
+        },
+        {
+            "isi": "Ikuti bimbingan manasik, lalu berangkat dengan rombongan.",
+            "judul": "Ikuti Manasik & Berangkat",
+            "langkah": "3"
+        }
+    ],
+    "email": "info@chatourtravel.com",
+    "faq": [
+        {
+            "a": "Paspor yang masih berlaku minimal 7 bulan, KTP, KK, dan pas foto. Tim kami akan membantu melengkapi dokumen lainnya.",
+            "q": "Apa saja syarat daftar Umroh?"
+        },
+        {
+            "a": "Harga paket sudah termasuk tiket pesawat, visa, hotel, dan makan sesuai fasilitas paket. Biaya pribadi di luar paket tidak termasuk.",
+            "q": "Apakah harga sudah termasuk semua biaya?"
+        },
+        {
+            "a": "Jadwal keberangkatan menyesuaikan kuota dan musim. Silakan hubungi kami via WhatsApp untuk jadwal terbaru.",
+            "q": "Kapan keberangkatan terdekat?"
+        },
+        {
+            "a": "Ya, setiap rombongan didampingi pembimbing dan ustadz yang berpengalaman.",
+            "q": "Apakah ada pembimbing selama perjalanan?"
+        },
+        {
+            "a": "Pembayaran dapat dilakukan bertahap melalui transfer bank atau datang langsung ke kantor. Detail pembayaran akan dijelaskan saat pendaftaran.",
+            "q": "Bagaimana cara pembayaran?"
+        }
+    ],
+    "heroSub": "Chatour Travel mendampingi setiap langkah perjalanan ibadah Anda — keberangkatan yang jelas, penginapan yang nyaman, dan pembimbing berpengalaman.",
+    "heroTitle": "Umroh & Haji dengan Tenang, Terjamin, dan Penuh Berkah",
+    "izin": "Nomor izin PPIU: — (belum diisi)",
+    "jam": "Senin–Sabtu, 08.00–17.00 WIB",
+    "keunggulan": [
+        {
+            "isi": "Terdaftar dan berizin sebagai penyelenggara perjalanan ibadah Umroh & Haji.",
+            "judul": "Izin Resmi"
+        },
+        {
+            "isi": "Ustadz pembimbing yang mendampingi jamaah di setiap tahapan manasik.",
+            "judul": "Pembimbing Berpengalaman"
+        },
+        {
+            "isi": "Penginapan yang nyaman dan mudah dijangkau dari Masjidil Haram dan Masjid Nabawi.",
+            "judul": "Hotel Dekat Masjid"
+        },
+        {
+            "isi": "Biaya jelas di awal, tanpa biaya tersembunyi di kemudian hari.",
+            "judul": "Harga Transparan"
+        },
+        {
+            "isi": "Tim layanan siap membantu jamaah selama perjalanan berlangsung.",
+            "judul": "Layanan Jamaah 24 Jam"
+        },
+        {
+            "isi": "Pembekalan manasik agar jamaah memahami setiap rangkaian ibadah.",
+            "judul": "Manasik Sebelum Berangkat"
+        }
+    ],
+    "paketHaji": [
+        {
+            "berangkat": "Keberangkatan: musim haji (jadwal menyusul)",
+            "durasi": "± 40 hari",
+            "fasilitas": [
+                "Kuota resmi pemerintah",
+                "Hotel di Makkah & Madinah",
+                "Makan selama di Tanah Suci",
+                "Pembimbing haji",
+                "Manasik lengkap"
+            ],
+            "harga": "Mulai Rp — (sesuai kuota & ketentuan)",
+            "nama": "Haji Reguler"
+        },
+        {
+            "berangkat": "Keberangkatan: musim haji (jadwal menyusul)",
+            "durasi": "± 25 hari",
+            "fasilitas": [
+                "Hotel bintang 5 dekat masjid",
+                "Penerbangan langsung",
+                "Makan 3x sehari",
+                "Pembimbing haji",
+                "Manasik lengkap"
+            ],
+            "harga": "Mulai Rp — (sesuai kuota & ketentuan)",
+            "nama": "Haji Khusus (ONH Plus)"
+        }
+    ],
+    "paketUmroh": [
+        {
+            "berangkat": "Keberangkatan: setiap bulan (jadwal menyusul)",
+            "durasi": "9 hari",
+            "fasilitas": [
+                "Hotel bintang 4",
+                "Tiket pesawat PP",
+                "Visa Umroh",
+                "Makan 3x sehari",
+                "Pembimbing & manasik"
+            ],
+            "harga": "Mulai Rp 28.500.000",
+            "nama": "Umroh Reguler 9 Hari"
+        },
+        {
+            "berangkat": "Keberangkatan: jadwal menyusul",
+            "durasi": "12 hari",
+            "fasilitas": [
+                "Hotel bintang 4",
+                "Tiket pesawat PP",
+                "Visa Umroh",
+                "City tour Turki",
+                "Pembimbing & manasik"
+            ],
+            "harga": "Mulai Rp 38.500.000",
+            "nama": "Umroh Plus Turki 12 Hari"
+        },
+        {
+            "berangkat": "Keberangkatan: Ramadhan (jadwal menyusul)",
+            "durasi": "14 hari",
+            "fasilitas": [
+                "Hotel bintang 4",
+                "Tiket pesawat PP",
+                "Visa Umroh",
+                "I'tikaf & buka puasa",
+                "Pembimbing & manasik"
+            ],
+            "harga": "Mulai Rp 45.000.000",
+            "nama": "Umroh Ramadhan 14 Hari"
+        }
+    ],
+    "shopUrl": "https://chatourtravel.com/demo",
+    "tagline": "Biro Umroh & Haji Terpercaya — Melayani dengan Amanah, Sejak Keberangkatan hingga Kepulangan",
+    "tentang": "Chatour Travel adalah biro perjalanan Umroh & Haji yang melayani jamaah dengan sepenuh hati. Kami mengurus seluruh kebutuhan perjalanan ibadah — dari dokumen, visa, tiket, hotel, hingga bimbingan manasik — agar jamaah dapat fokus beribadah dengan tenang.",
+    "testimoni": [
+        {
+            "isi": "Pelayanannya sangat baik, dari manasik sampai pulang semua diurus. Hotelnya dekat dan makanannya cocok. Insya Allah berangkat lagi bersama Chatour.",
+            "nama": "H. Ahmad — Jamaah Umroh 2025"
+        },
+        {
+            "isi": "Pembimbingnya sabar dan selalu mendampingi, terutama untuk jamaah lansia seperti saya. Perjalanan jadi tenang dan nyaman.",
+            "nama": "Hj. Siti — Jamaah Umroh 2025"
+        },
+        {
+            "isi": "Semua jadwal jelas, tidak ada yang ditutup-tutupi. Tim di lapangan sigap membantu. Terima kasih Chatour Travel.",
+            "nama": "Bpk. Budi — Jamaah Haji 2025"
+        }
+    ],
+    "waLink": "https://wa.me/62812XXXXXXXX",
+    "waNumber": "62812-XXXX-XXXX"
+}
