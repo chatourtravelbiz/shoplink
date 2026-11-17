@@ -24,6 +24,8 @@ ARTICLES = [
      "Panduan Umroh Pertama Kali", "Persiapan, Dokumen, dan Tips"),
     ("umroh-reguler-vs-umroh-plus.png",
      "Umroh Reguler vs Umroh Plus", "Mana yang Cocok untukmu?"),
+    ("tips-memilih-travel-umroh-aman-berizin-resmi.png",
+     "Tips Memilih Travel Umroh", "yang Aman & Berizin Resmi"),
 ]
 
 def gradient():
