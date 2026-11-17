@@ -1,0 +1,22 @@
+name = "shoplink-d1"
+compatibility_date = "2025-01-01"
+main = "src/index.ts"
+
+[vars]
+APP_URL = "http://localhost:8787"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shoplink-d1"
+database_id = "ganti-dengan-id-setelah-create"
+
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "shoplink-d1-assets"
+
+# Frontend statis (public/) diserve oleh Workers Assets.
+# binding "STATIC" dipakai agar tidak bentrok dengan binding R2 "ASSETS".
+[assets]
+directory = "./public"
+binding = "STATIC"
+not_found_handling = "single-page-application"
