@@ -168,6 +168,9 @@ img { max-width: 100%; }
 }
 .contact-card h3 { color: var(--red); margin-top: 12px; }
 .contact-card h3:first-child { margin-top: 0; }
+/* Kartu agen (Sifa, Badas Kediri) — ditekankan: selebar grid + aksen merah. */
+.contact-card--agent { grid-column: 1 / -1; border: 2px solid var(--red); background: var(--red-soft); }
+.agent-tag { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red); margin: 0 0 4px; }
 .footer { background: var(--ink); color: #f3ece7; padding: 40px 0; text-align: center; border-top: 4px solid var(--red); }
 .footer-logo { height: 64px; width: auto; background: #fff; border-radius: 12px; padding: 6px; }
 .footer a { color: #f3ece7; }

@@ -67,6 +67,18 @@ async function init() {
   document.getElementById("kontak-email-note").textContent = c.emailNote || "";
   document.getElementById("kontak-alamat").textContent = c.alamat;
   document.getElementById("kontak-jam").textContent = c.jam;
+  // Kartu agen (Sifa, Badas Kediri).
+  const ag = c.agen || {};
+  document.getElementById("agen-nama").textContent = ag.nama || "";
+  const agWa = document.getElementById("agen-wa");
+  agWa.href = ag.waLink || "#";
+  agWa.textContent = ag.waNumber || "";
+  const agTel = document.getElementById("agen-tel");
+  agTel.href = ag.telLink || "#";
+  agTel.textContent = ag.telepon || "";
+  document.getElementById("agen-alamat").textContent = ag.alamat || "";
+  document.getElementById("agen-jam").textContent = ag.jam || "";
+  document.getElementById("agen-maps").href = ag.mapsUrl || "#";
   document.getElementById("sosial-list").innerHTML = socialLinks(c);
   const appEl = document.getElementById("kontak-app");
   appEl.href = c.appUrl || "#";

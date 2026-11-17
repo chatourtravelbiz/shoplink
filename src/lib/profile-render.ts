@@ -94,6 +94,14 @@ export async function renderHome(env: Env): Promise<Response | null> {
   html = fill(html, 'kontak-email-note', esc(c.emailNote || ''));
   html = fill(html, 'kontak-alamat', esc(c.alamat));
   html = fill(html, 'kontak-jam', esc(c.jam));
+  // Kartu agen (Sifa, Badas Kediri) — kontak pusat tetap tampil di bawahnya.
+  const a = c.agen || {};
+  html = fill(html, 'agen-nama', esc(a.nama || ''));
+  html = fillHrefText(html, 'agen-wa', a.waLink || '#', a.waNumber || '');
+  html = fillHrefText(html, 'agen-tel', a.telLink || '#', a.telepon || '');
+  html = fill(html, 'agen-alamat', esc(a.alamat || ''));
+  html = fill(html, 'agen-jam', esc(a.jam || ''));
+  html = fillHref(html, 'agen-maps', a.mapsUrl || '#');
   html = fill(html, 'sosial-list', socialLinks(c));
   html = fillHrefText(html, 'kontak-app', c.appUrl || '#', `${c.appName || 'Aplikasi Jamaah'} (Play Store)`);
   html = fillHref(html, 'footer-pusat', c.pusatUrl || 'https://chatourtravel.id/');
