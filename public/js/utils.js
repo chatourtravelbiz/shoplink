@@ -39,6 +39,16 @@ export function go(path) {
   window.dispatchEvent(new Event('popstate'));
 }
 
+/** Path toko/produk: di host custom domain agen (window.__CUSTOM_STORE__)
+    pakai bentuk pendek / dan /p/:id; di domain utama pakai /:username(/p/:id).
+    Mencegah URL /:username/p/:id muncul di subdomain agen. */
+export function storePath(username, productId) {
+  if (typeof window !== 'undefined' && window.__CUSTOM_STORE__ && window.__CUSTOM_STORE__ === username) {
+    return productId ? `/p/${productId}` : '/';
+  }
+  return productId ? `/${username}/p/${productId}` : `/${username}`;
+}
+
 /** Toggle lihat/sembunyikan password pada field di sekitar tombol. */
 export function togglePasswordVisibility(button) {
   const input = button.closest('div')?.querySelector('input');

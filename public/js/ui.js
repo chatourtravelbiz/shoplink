@@ -1,6 +1,6 @@
 // Komponen UI bersama (topbar, field form, kotak error). Semua teks dinamis
 // yang berasal dari user/server sudah di-escape oleh pemanggil via esc().
-import { esc, isDark } from './utils.js';
+import { esc, isDark, storePath } from './utils.js';
 import { state } from './api.js';
 
 export const inputCls = 'mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 bg-white';
@@ -42,7 +42,7 @@ export function topbar(active) {
        <a href="/products" class="px-3 py-2 rounded-lg ${active === 'products' ? 'bg-red-100 text-red-800 font-semibold' : 'hover:bg-stone-100'}">Produk</a>
        <a href="/settings" class="px-3 py-2 rounded-lg ${active === 'settings' ? 'bg-red-100 text-red-800 font-semibold' : 'hover:bg-stone-100'}">Pengaturan</a>
        ${isAdmin ? `<a href="/admin" class="px-3 py-2 rounded-lg ${active === 'admin' ? 'bg-red-100 text-red-800 font-semibold' : 'hover:bg-stone-100'}">Admin</a>` : ''}
-       <a href="/${esc(state.session.user.username)}" class="px-3 py-2 rounded-lg hover:bg-stone-100">Lihat Tokoku ↗</a>
+       <a href="${storePath(state.session.user.username)}" class="px-3 py-2 rounded-lg hover:bg-stone-100">Lihat Tokoku ↗</a>
        <button data-action="logout" class="px-3 py-2 rounded-lg hover:bg-rose-50 text-rose-700">Keluar</button>`
     : `${themeBtn}<a href="/login" class="px-3 py-2 rounded-lg hover:bg-stone-100">Masuk</a>
        <a href="/signup" class="px-3 py-2 rounded-lg bg-red-700 text-white font-semibold">Daftar Gratis</a>`;

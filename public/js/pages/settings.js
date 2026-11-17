@@ -1,6 +1,6 @@
 // Pengaturan toko merchant (auth) — termasuk pemilih tema ala Linktree.
 import { api, state } from '../api.js';
-import { THEMES, esc, go, themeOf } from '../utils.js';
+import { THEMES, esc, go, storePath, themeOf } from '../utils.js';
 import { icon, waIcon } from '../icons.js';
 import { field, inputCls, setErr, showToast, topbar } from '../ui.js';
 
@@ -89,7 +89,7 @@ export function viewSettings() {
   return `${topbar('settings')}
   <main class="max-w-2xl mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold">Pengaturan toko</h1>
-    <p class="text-sm text-stone-600 mt-1">Perubahan langsung terlihat di toko publikmu: <a class="text-red-700 underline" href="/${esc(state.session.user.username)}">/${esc(state.session.user.username)}</a></p>
+    <p class="text-sm text-stone-600 mt-1">Perubahan langsung terlihat di toko publikmu: <a class="text-red-700 underline" href="${storePath(state.session.user.username)}">${storePath(state.session.user.username)}</a></p>
     <form id="f-settings" class="mt-6 space-y-4 bg-white border border-stone-200 rounded-2xl p-5">
       <div id="err"></div>
       ${field('Nama toko *', `<input required name="store_name" value="${esc(s.store_name || '')}" class="${inputCls}" />`)}

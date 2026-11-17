@@ -2,7 +2,7 @@
 // nama, @username, bio, badge Agen Chatour Travel, tombol WhatsApp + bagikan),
 // lalu paket/produk sebagai kartu vertikal ala link-in-bio.
 import { api } from '../api.js';
-import { esc, go, priceLabel, themeOf, waDigits } from '../utils.js';
+import { esc, go, priceLabel, storePath, themeOf, waDigits } from '../utils.js';
 import { icon, waIcon } from '../icons.js';
 import { errorBox, inputCls, topbar } from '../ui.js';
 
@@ -69,7 +69,7 @@ function pdfCover(theme, hidden = false) {
 }
 
 /** Placeholder gambar produk (SVG, bukan emoji). */
-function imgCover(theme, hidden = false) {
+export function imgCover(theme, hidden = false) {
   return `<div class="w-full h-full flex items-center justify-center" style="background:${theme.soft};color:${theme.main}${hidden ? ';display:none' : ''}">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
   </div>`;
@@ -100,7 +100,7 @@ function productCard(username, p, theme) {
   const cover = p.image_url
     ? `<span class="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative block">${imgCover(theme, true)}<img src="${esc(p.image_url)}" class="w-full h-full object-cover absolute inset-0" alt="${esc(p.name)}" loading="lazy" onerror="var f=this.previousElementSibling;if(f)f.style.display='flex';this.remove();" /></span>`
     : `<span class="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative block">${imgCover(theme)}</span>`;
-  return `<a href="/${esc(username)}/p/${esc(p.id)}" data-action="product-click" data-username="${esc(username)}" data-product-id="${esc(p.id)}" class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:shadow-md transition">
+  return `<a href="${storePath(username, p.id)}" data-action="product-click" data-username="${esc(username)}" data-product-id="${esc(p.id)}" class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:shadow-md transition">
     ${cover}
     <div class="min-w-0 flex-1">
       <h3 class="font-semibold leading-snug">${esc(p.name)}</h3>
