@@ -63,7 +63,6 @@ function footer(c: ProfileContent): string {
     <nav class="footer-nav">
       <a href="/#tentang">Tentang</a><a href="/#umroh">Paket Umroh</a><a href="/#haji">Paket Haji</a>
       <a href="/blog">Blog</a><a href="/#kontak">Kontak</a>
-      <a href="${esc(c.shopUrl || 'https://chatourtravel.com/demo')}" target="_blank" rel="noopener">Toko Agen</a>
     </nav>
     <p class="muted">Situs Pusat: <a href="https://chatourtravel.id/" target="_blank" rel="noopener">chatourtravel.id</a></p>
     <p class="muted"><a href="https://www.facebook.com/share/1Fw2HpRVqy/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a> · <a href="https://youtube.com/@chatourofficial" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.instagram.com/chatourtravelofficial" target="_blank" rel="noopener">Instagram</a> · <a href="https://tiktok.com/@chatour.official" target="_blank" rel="noopener">TikTok</a> · <a href="https://play.google.com/store/apps/details?id=com.chatour.jamaah.app" target="_blank" rel="noopener">Aplikasi Jamaah</a></p>

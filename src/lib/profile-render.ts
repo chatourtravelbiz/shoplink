@@ -96,7 +96,6 @@ export async function renderHome(env: Env): Promise<Response | null> {
   html = fill(html, 'kontak-jam', esc(c.jam));
   html = fill(html, 'sosial-list', socialLinks(c));
   html = fillHrefText(html, 'kontak-app', c.appUrl || '#', `${c.appName || 'Aplikasi Jamaah'} (Play Store)`);
-  html = fillHref(html, 'footer-shop', c.shopUrl || 'https://chatourtravel.com/demo');
   html = fillHref(html, 'footer-pusat', c.pusatUrl || 'https://chatourtravel.id/');
   html = fill(html, 'footer-sosial', socialLinks(c));
   html = fillHref(html, 'footer-app', c.appUrl || '#');

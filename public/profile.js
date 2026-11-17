@@ -71,8 +71,6 @@ async function init() {
   const appEl = document.getElementById("kontak-app");
   appEl.href = c.appUrl || "#";
   appEl.textContent = `${c.appName || "Aplikasi Jamaah"} (Play Store)`;
-  // Toko agen kini di root chatourtravel.com/:username (shopUrl di content.json).
-  document.getElementById("footer-shop").href = c.shopUrl;
   document.getElementById("footer-pusat").href = c.pusatUrl || "https://chatourtravel.id/";
   document.getElementById("footer-sosial").innerHTML = socialLinks(c);
   document.getElementById("footer-app").href = c.appUrl || "#";
