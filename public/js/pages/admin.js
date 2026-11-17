@@ -256,14 +256,13 @@ export async function viewAdmin() {
       <a href="https://chatourtravel.com/blog" target="_blank" rel="noopener" class="px-3 py-2 rounded-xl bg-white border text-sm font-semibold">Lihat Blog ↗</a>
     </div>
     <div id="admin-err"></div>
-    <div class="mt-6 max-w-2xl">${passwordForm()}</div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-5">${cards}</div>
     <div class="flex flex-wrap gap-2 mt-6">
       ${tabBtn('users', tab, `Users (${t.users})`)}
       ${tabBtn('stores', tab, `Toko (${t.stores})`)}
       ${tabBtn('orders', tab, `Order (${t.orders})`)}
       ${tabBtn('posts', tab, `Blog (${currentPosts.length})`)}
-      ${isSuper ? tabBtn('settings', tab, 'Pengaturan') : ''}
+      ${tabBtn('settings', tab, 'Pengaturan')}
     </div>
     <div class="mt-4">${body}</div>
   </main>`;
@@ -324,11 +323,13 @@ export function bindPostForm(render) {
   });
 }
 
-/** Tab Pengaturan (hanya Super Admin): kunci API Resend untuk email verifikasi. */
+/** Tab Pengaturan: kunci API Resend (hanya Super Admin) + Ganti Password (semua role admin). */
 function settingsSection(s, isSuper) {
-  if (!isSuper) return '<p class="text-sm text-stone-600">Hanya Super Admin yang bisa mengubah pengaturan platform.</p>';
+  const pw = passwordForm();
+  if (!isSuper) return `<div class="max-w-2xl">${pw}</div>`;
   const st = s || { configured: false, key_masked: '', from: '' };
-  return `<form id="f-admin-settings" class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4 max-w-2xl">
+  return `<div class="max-w-2xl space-y-6">
+  <form id="f-admin-settings" class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
     <h2 class="font-bold">Pengaturan Platform</h2>
     <div id="settings-msg"></div>
     <p class="text-sm ${st.configured ? 'text-emerald-700' : 'text-amber-700'}">${st.configured ? `✓ Kunci Resend terpasang (${esc(st.key_masked)}). Email verifikasi akan dikirim.` : '⚠ Belum ada kunci Resend — email verifikasi tidak akan terkirim sampai kunci diisi.'}</p>
@@ -339,7 +340,9 @@ function settingsSection(s, isSuper) {
       <input name="resend_from" value="${esc(st.from || 'Chatour Travel <noreply@chatourtravel.com>')}" class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
       <span class="text-xs text-stone-500">Domain pengirim harus sudah terverifikasi di Resend (Settings → Domains) — tanpa itu Resend menolak pengiriman.</span></div>
     <button class="px-4 py-2 rounded-xl bg-red-700 text-white font-semibold text-sm">Simpan Pengaturan</button>
-  </form>`;
+  </form>
+  ${pw}
+  </div>`;
 }
 
 /** Pasang listener ubah-role (change) bila select role ada di DOM. */
