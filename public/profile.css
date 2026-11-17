@@ -218,9 +218,12 @@ html.dark .faq-q { color: #fafaf9; }
   .brand { gap: 8px; }
   .brand-logo { height: 36px; }
   .brand-name { font-size: 1rem; }
-  .theme-toggle { width: 36px; height: 36px; margin-left: 4px; }
+  /* Saklar tema menempel ke kanan (berkelompok dengan tombol WA), bukan
+     menempel ke nama brand — nav tersembunyi di HP sehingga tanpa ini
+     tombol 🌙/☀️ duduk tepat di sebelah brand. */
+  .theme-toggle { width: 36px; height: 36px; margin-left: auto; }
   .topbar .btn-wa-label { display: none; }
-  .topbar-inner .btn-wa { margin-left: auto; padding: 8px 10px; }
+  .topbar-inner .btn-wa { margin-left: 0; padding: 8px 10px; }
 }
 
 /* Blog — artikel server-rendered */
