@@ -119,7 +119,7 @@ export function storeFooter(store) {
   const owner = state.session?.user?.username && state.session.user.username === store.username;
   return `<div class="text-center mt-8">
     <img src="/logo-chatour.png" class="w-12 h-12 object-contain mx-auto" alt="Chatour Travel" />
-    <p class="text-xs text-stone-400 mt-2">Chatour Travel — Biro Umroh &amp; Haji · Pembayaran manual via WhatsApp / COD / Transfer.</p>
+    <p class="text-xs text-stone-400 mt-2">Chatour Travel — Biro Umroh &amp; Haji · Berizin Resmi PPIU</p>
     ${owner ? `<a href="/dashboard" class="inline-block mt-2 text-xs text-red-700 underline">Kelola Toko →</a>` : ''}
   </div>`;
 }
