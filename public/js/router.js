@@ -25,7 +25,7 @@ export function parsePath(pathname) {
         return p;
       }
     });
-  if (parts.length === 0) return { kind: 'landing' };
+  if (parts.length === 0) return { kind: 'notfound' };
   const [first, second, third] = parts;
   if (first === 'signup') return { kind: 'signup' };
   if (first === 'login') return { kind: 'login' };
@@ -42,18 +42,6 @@ export function parsePath(pathname) {
   return { kind: 'notfound' };
 }
 
-/** URL company profile Chatour Travel (Worker terpisah). Shoplink tidak punya
-    landing page: route / mengarah ke sini. */
-export const PROFILE_URL = 'https://chatourtravel.com/';
-
-/** Aksi untuk route /: redirect ke company profile, KECUALI bila sudah di
-    root chatourtravel.com (sebelum Shoplink pindah ke subdomain) — di sana
-    tampilkan halaman masuk agen yang minimal, supaya tidak redirect ke diri
-    sendiri. Fungsi murni atas hostname, mudah diuji. */
-export function landingAction(hostname) {
-  if (String(hostname || '').toLowerCase() === 'chatourtravel.com') return { page: 'entry' };
-  return { redirect: PROFILE_URL };
-}
 export function isInternalPath(href) {
   if (!href || !href.startsWith('/') || href.startsWith('//')) return false;
   const path = href.split('?')[0];

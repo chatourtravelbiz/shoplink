@@ -3,9 +3,9 @@
 // output di-escape (esc()).
 import { loadSession, logout } from './api.js';
 import { go, togglePasswordVisibility } from './utils.js';
-import { isInternalPath, landingAction, parsePath } from './router.js';
+import { isInternalPath, parsePath } from './router.js';
 import { errorBox, topbar } from './ui.js';
-import { bindAuth, viewAgentEntry, viewLogin, viewSignup } from './pages/auth.js';
+import { bindAuth, viewLogin, viewSignup } from './pages/auth.js';
 import { bindDashboard, viewDashboard } from './pages/dashboard.js';
 import { bindProducts, cancelProductForm, deleteProductById, openProductForm, viewProducts } from './pages/products.js';
 import { bindSettings, viewSettings } from './pages/settings.js';
@@ -20,17 +20,9 @@ async function render() {
   const route = parsePath(location.pathname);
   let html = '';
   try {
-    // Shoplink tidak punya landing page: / redirect ke company profile.
-    // Bila masih di root chatourtravel.com, tampilkan halaman masuk agen
-    // yang minimal (bukan landing) supaya tidak redirect ke diri sendiri.
-    if (route.kind === 'landing') {
-      const act = landingAction(location.hostname);
-      if (act.redirect) {
-        location.replace(act.redirect);
-        return;
-      }
-      html = viewAgentEntry();
-    } else if (route.kind === 'signup') html = viewSignup();
+    // Shoplink tidak punya landing page: / bukan route (parsePath mengembalikan
+    // 'notfound' dan jatuh ke halaman 404 di bawah). Tanpa redirect.
+    if (route.kind === 'signup') html = viewSignup();
     else if (route.kind === 'login') html = viewLogin();
     else if (route.kind === 'dashboard') html = await viewDashboard();
     else if (route.kind === 'products') html = await viewProducts();

@@ -1,26 +1,7 @@
-// Halaman publik: masuk agen (minimal, tanpa landing), signup, login.
+// Halaman publik: signup, login. (Shoplink tidak punya landing page.)
 import { api, loadSession } from '../api.js';
 import { go } from '../utils.js';
 import { field, inputCls, setErr, topbar } from '../ui.js';
-
-// Halaman masuk agen — sangat minimal. Shoplink TIDAK punya landing page:
-// route / redirect ke company profile (lihat landingAction di router.js);
-// halaman ini hanya tampil bila Shoplink masih di root chatourtravel.com.
-export function viewAgentEntry() {
-  return `${topbar()}
-  <main class="max-w-md mx-auto px-4 py-14 text-center">
-    <img src="/logo-chatour.png" class="w-20 h-20 object-contain mx-auto" alt="Chatour Travel" />
-    <p class="mt-3 text-sm font-semibold tracking-wide text-stone-500">CHATOUR TRAVEL · BIRO UMROH &amp; HAJI</p>
-    <h1 class="text-2xl font-extrabold mt-2">Shoplink Agen</h1>
-    <p class="text-sm text-stone-600 mt-2">Link-in-bio untuk para agen Chatour Travel. Masuk untuk mengelola tokomu, atau daftar sebagai agen baru.</p>
-    <div class="mt-6 space-y-3">
-      <a href="/login" class="block w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold">Masuk</a>
-      <a href="/signup" class="block w-full py-3 rounded-xl bg-white border border-stone-300 font-semibold">Daftar Agen</a>
-      <a href="https://chatourtravel.com/" class="block text-sm text-emerald-700 underline">Kunjungi Company Profile Chatour Travel</a>
-    </div>
-  </main>`;
-}
-
 
 /** Field password + tombol ikon mata (lihat/sembunyikan). Tombol type="button"
     agar tidak submit form; aria-label berubah sesuai state di toggle. */
