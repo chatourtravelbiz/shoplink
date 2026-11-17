@@ -31,8 +31,18 @@ settingsRoutes.put('/settings', async (c) => {
   const theme = str(body.theme, 20) || 'chatour';
   const buttonStyle = str(body.button_style, 20) || 'rounded';
   const showBadge = body.show_badge === 1 || body.show_badge === '1' || body.show_badge === true ? 1 : 0;
-  const sectionOrder = str(body.section_order, 20) || 'products-first';
+  const sectionOrder = str(body.section_order, 20) || 'showcase-first';
   const logoUrl = str(body.logo_url, 500);
+  const current = await getStoreByUsername(c.env, user.username);
+  // Badge kepercayaan: maks 3, masing-masing maks 40 karakter, yang kosong dibuang.
+  // Bila klien lama tidak mengirim field ini, pakai nilai yang sudah tersimpan.
+  const trustBadges = Array.isArray(body.trust_badges)
+    ? body.trust_badges
+        .map((b) => str(typeof b === 'string' ? b : b?.text, 40))
+        .filter(Boolean)
+        .slice(0, 3)
+        .map((text) => ({ text }))
+    : current?.trust_badges ?? [];
   if (!storeName) return err(c, 400, 'Nama toko wajib diisi.');
   if (!whatsapp) return err(c, 400, 'Nomor WhatsApp wajib diisi.');
   if (!isTheme(theme)) return err(c, 400, 'Tema tidak valid.');
@@ -54,9 +64,9 @@ settingsRoutes.put('/settings', async (c) => {
   await c.env.DB.prepare(
     `UPDATE stores SET store_name = ?1, tagline = ?2, store_bio = ?3, whatsapp_number = ?4,
        currency = ?5, theme = ?6, logo_url = ?7, button_style = ?8, show_badge = ?9, section_order = ?10,
-       social_links = ?11 WHERE username = ?12`,
+       social_links = ?11, trust_badges_json = ?12 WHERE username = ?13`,
   )
-    .bind(storeName, tagline, storeBio, whatsapp, currency, theme, logoUrl, buttonStyle, showBadge, sectionOrder, JSON.stringify(socialLinks), user.username)
+    .bind(storeName, tagline, storeBio, whatsapp, currency, theme, logoUrl, buttonStyle, showBadge, sectionOrder, JSON.stringify(socialLinks), JSON.stringify(trustBadges), user.username)
     .run();
   await c.env.DB.prepare('UPDATE users SET whatsapp_number = ?1 WHERE id = ?2').bind(whatsapp, user.id).run();
   const store = await getStoreByUsername(c.env, user.username);

@@ -2,7 +2,7 @@
 import { api, state } from '../api.js';
 import { THEMES, esc, go, themeOf } from '../utils.js';
 import { icon, waIcon } from '../icons.js';
-import { field, inputCls, setErr, topbar } from '../ui.js';
+import { field, inputCls, setErr, showToast, topbar } from '../ui.js';
 
 const BUTTON_STYLES = [
   ['rounded', 'Membulat'],
@@ -44,6 +44,7 @@ function themePreview(store) {
         <span class="block w-full py-2 bg-white border text-sm font-semibold" style="border-radius:${radius}">Paket Umroh 9 Hari</span>
       </div>
       ${socials.length ? `<div class="flex justify-center gap-2 mt-3" style="color:${t.main}">${socials.map((n) => icon(n, 24)).join('')}</div>` : ''}
+      ${(store.trust_badges || []).length ? `<div class="flex flex-wrap justify-center gap-1 mt-3">${store.trust_badges.map((b) => `<span class="px-2 py-0.5 rounded-full bg-white border text-[11px]">✓ ${esc(b.text)}</span>`).join('')}</div>` : ''}
     </div>
   </div>`;
 }
@@ -116,9 +117,16 @@ export function viewSettings() {
       <div id="theme-preview">${themePreview(s)}</div>
       <div class="grid sm:grid-cols-2 gap-4">
         ${field('Bentuk tombol', `<select name="button_style" class="${inputCls}">${BUTTON_STYLES.map(([v, l]) => `<option value="${v}"${(s.button_style || 'rounded') === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`)}
-        ${field('Urutan seksi', `<select name="section_order" class="${inputCls}">${SECTION_ORDERS.map(([v, l]) => `<option value="${v}"${(s.section_order || 'products-first') === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`)}
+        ${field('Urutan seksi', `<select name="section_order" class="${inputCls}">${SECTION_ORDERS.map(([v, l]) => `<option value="${v}"${(s.section_order || 'showcase-first') === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`)}
       </div>
       <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="show_badge" ${s.show_badge !== 0 ? 'checked' : ''} class="w-4 h-4" /> Tampilkan badge "Agen Chatour Travel" di toko</label>
+      <div>
+        <span class="text-sm font-medium text-stone-700">Badge Kepercayaan</span>
+        <p class="text-xs text-stone-500 mt-0.5">Maksimal 3 badge, masing-masing maksimal 40 karakter. Yang dikosongkan tidak ditampilkan di toko.</p>
+        <div class="space-y-2 mt-1">
+          ${[0, 1, 2].map((i) => `<input name="trust_badge" value="${esc(s.trust_badges?.[i]?.text || '')}" maxlength="40" class="${inputCls}" placeholder="Badge ${i + 1} — contoh: Fast Respon via WhatsApp" />`).join('')}
+        </div>
+      </div>
       <button class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Simpan Pengaturan</button>
     </form>
     ${domainSection(s)}
@@ -149,6 +157,8 @@ export function bindSettings() {
         const fd = new FormData(form);
         const payload = Object.fromEntries(fd);
         payload.show_badge = form.querySelector('[name="show_badge"]')?.checked ? 1 : 0;
+        payload.trust_badges = fd.getAll('trust_badge');
+        delete payload.trust_badge;
         payload.social_links = {
           instagram: fd.get('social_instagram') || '',
           facebook: fd.get('social_facebook') || '',
@@ -159,7 +169,7 @@ export function bindSettings() {
         const r = await api('/api/settings', { method: 'PUT', body: JSON.stringify(payload) });
         state.session = { ...state.session, store: r.store };
         setErr('err', '');
-        alert('Pengaturan tersimpan.');
+        showToast('Pengaturan tersimpan.');
       } catch (err) {
         setErr('err', err.message);
       }

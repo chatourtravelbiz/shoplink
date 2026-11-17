@@ -39,12 +39,12 @@ authRoutes.post('/auth/signup', async (c) => {
     .bind(userId, email, username, await hashPassword(password), firstName || null, lastName || null, '', whatsapp, '', now)
     .run();
   await c.env.DB.prepare(
-    `INSERT INTO stores (username, user_id, email, first_name, last_name, user_bio, whatsapp_number, avatar_url, logo_url, store_name, tagline, store_bio, currency, theme, trust_badges_json, banners_json)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16)`,
+    `INSERT INTO stores (username, user_id, email, first_name, last_name, user_bio, whatsapp_number, avatar_url, logo_url, store_name, tagline, store_bio, currency, theme, section_order, trust_badges_json, banners_json)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17)`,
   )
     .bind(
       username, userId, email, firstName || null, lastName || null, '', whatsapp, '', '',
-      username, 'Belanja lewat WhatsApp', '', 'IDR', 'emerald',
+      username, 'Belanja lewat WhatsApp', '', 'IDR', 'emerald', 'showcase-first',
       JSON.stringify([{ text: 'Fast Respon via WhatsApp' }, { text: 'Berizin Resmi PPIU' }, { text: 'Pembimbing Bersertifikat BNSP' }]), '[]',
     )
     .run();

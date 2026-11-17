@@ -38,7 +38,7 @@ export function publicStore(s: StoreRow) {
     theme: s.theme ?? 'chatour',
     button_style: s.button_style || 'rounded',
     show_badge: s.show_badge === 0 ? 0 : 1,
-    section_order: s.section_order || 'products-first',
+    section_order: s.section_order || 'showcase-first',
     status: s.status ?? 'active',
     custom_domain: s.custom_domain ?? '',
     custom_domain_request: s.custom_domain_request ?? '',
