@@ -39,7 +39,7 @@ function otherCard(username, p, theme) {
 function othersSection(username, products, currentId, theme) {
   const others = products.filter((p) => p.id !== currentId).slice(0, 6);
   if (!others.length) return '';
-  return `<h2 class="font-bold mt-8">Produk lain dari toko ini</h2>
+  return `<h2 class="font-bold mt-8">Produk lain dari agen ini</h2>
   <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">${others.map((p) => otherCard(username, p, theme)).join('')}</div>`;
 }
 
