@@ -18,7 +18,11 @@ function postPreviewHtml(content) {
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean)
-    .map((p) => `<p>${esc(p)}</p>`)
+    .map((p) => {
+      const head = p.match(/^(#{2,3})\s+(.+)$/);
+      if (head) return `<h3 class="font-bold mt-3">${esc(head[2].trim())}</h3>`;
+      return `<p>${esc(p)}</p>`;
+    })
     .join('');
 }
 
@@ -35,7 +39,7 @@ function postForm(p) {
     <div><label class="text-sm font-medium text-stone-700">Gambar sampul (URL)</label><input name="cover_url" value="${esc(v.cover_url)}" placeholder="https://..." class="mt-1 w-full rounded-xl border border-stone-300 px-3 py-2 text-sm" /></div>
     <div><label class="text-sm font-medium text-stone-700">Ringkasan (excerpt)</label><textarea name="excerpt" rows="2" class="mt-1 w-full rounded-xl border border-stone-300 px-3 py-2 text-sm">${esc(v.excerpt)}</textarea></div>
     <div><label class="text-sm font-medium text-stone-700">Meta description (SEO)</label><input name="meta_description" value="${esc(v.meta_description)}" class="mt-1 w-full rounded-xl border border-stone-300 px-3 py-2 text-sm" /></div>
-    <div><label class="text-sm font-medium text-stone-700">Isi artikel *</label><textarea required name="content" rows="10" class="mt-1 w-full rounded-xl border border-stone-300 px-3 py-2 text-sm">${esc(v.content)}</textarea><span class="text-xs text-stone-500">Satu paragraf per blok — pisahkan paragraf dengan baris kosong.</span></div>
+    <div><label class="text-sm font-medium text-stone-700">Isi artikel *</label><textarea required name="content" rows="10" class="mt-1 w-full rounded-xl border border-stone-300 px-3 py-2 text-sm">${esc(v.content)}</textarea><span class="text-xs text-stone-500">Satu paragraf per blok — pisahkan paragraf dengan baris kosong. Baris diawali <code>##</code> jadi subjudul (muncul di Daftar Isi).</span></div>
     <div><span class="text-sm font-medium text-stone-700">Pratinjau isi</span><div id="post-preview" class="mt-1 rounded-xl border border-stone-200 bg-stone-50 p-4 text-sm space-y-3">${postPreviewHtml(v.content)}</div></div>
     <div class="flex gap-2">
       <button class="px-4 py-2 rounded-xl bg-red-700 text-white font-semibold">${p ? 'Simpan Perubahan' : 'Simpan Artikel'}</button>

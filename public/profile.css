@@ -192,3 +192,26 @@ img { max-width: 100%; }
 .article-body p { margin: 0 0 16px; line-height: 1.8; color: #292524; }
 .article-body p:first-of-type { font-size: 1.1rem; }
 .meta { color: var(--muted); font-size: 0.9rem; }
+.article-body h2, .article-body h3 {
+  text-align: left; scroll-margin-top: 84px;
+}
+.article-body h2 { font-size: 1.4rem; margin: 32px 0 12px; }
+.article-body h2::after { display: none; }
+.article-body h3 { font-size: 1.15rem; margin: 24px 0 10px; }
+
+/* Daftar Isi (TOC) artikel */
+.toc {
+  background: var(--red-soft);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--red);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 24px 0;
+}
+.toc-title { font-weight: 800; color: var(--red); margin: 0 0 8px; }
+.toc-list { margin: 0; padding-left: 22px; }
+.toc-list li { margin: 6px 0; }
+.toc-list li.toc-sub { margin-left: 16px; list-style-type: disc; }
+.toc-list a { color: var(--ink); text-decoration: none; }
+.toc-list a:hover { color: var(--red); text-decoration: underline; }
+.toc-list a.active { color: var(--red); font-weight: 700; }

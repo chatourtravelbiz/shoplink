@@ -6,6 +6,7 @@ import { Hono } from 'hono';
 import type { App, AppContext, Env, PostRow } from '../types';
 import { serveAssetHtml, serveSpaForStore } from '../lib/spa';
 import { renderHome } from '../lib/profile-render';
+import { renderArticle, tocHtml, TOC_SCRIPT } from '../lib/toc';
 
 export const profileRoutes: App = new Hono();
 
@@ -26,14 +27,6 @@ const fmtDate = (iso: string | null): string => {
     return '';
   }
 };
-
-const paragraphs = (content: string): string =>
-  String(content || '')
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((p) => `<p>${esc(p)}</p>`)
-    .join('\n');
 
 async function getContent(env: Env): Promise<ProfileContent> {
   try {
@@ -72,9 +65,9 @@ function footer(c: ProfileContent): string {
 
 function page(site: string, opts: {
   title: string; description: string; canonical: string; ogImage?: string;
-  jsonLd?: object; body: string; content: ProfileContent;
+  jsonLd?: object; body: string; content: ProfileContent; script?: string;
 }): Response {
-  const { title, description, canonical, ogImage, jsonLd, body, content } = opts;
+  const { title, description, canonical, ogImage, jsonLd, body, content, script } = opts;
   const meta = `<meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${esc(title)}</title>
@@ -90,7 +83,7 @@ function page(site: string, opts: {
   <link rel="icon" type="image/png" href="/logo-chatour.png" />
   <link rel="stylesheet" href="/profile.css" />`;
   const ld = jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : '';
-  return new Response(`<!doctype html><html lang="id"><head>${meta}${ld}</head><body>${header(content)}<main>${body}</main>${footer(content)}</body></html>`, {
+  return new Response(`<!doctype html><html lang="id"><head>${meta}${ld}</head><body>${header(content)}<main>${body}</main>${footer(content)}${script || ''}</body></html>`, {
     headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' },
   });
 }
@@ -166,15 +159,17 @@ profileRoutes.get('/blog/:slug', async (c) => {
     author: { '@type': 'Organization', name: 'Chatour Travel', url: site },
     publisher: { '@type': 'Organization', name: 'Chatour Travel', url: site },
   };
+  const { html: articleHtml, toc } = renderArticle(row.content);
   return page(site, {
     title: `${row.title} | Chatour Travel`,
-    description: desc, canonical, ogImage: cover, jsonLd,
+    description: desc, canonical, ogImage: cover, jsonLd, script: toc.length >= 2 ? TOC_SCRIPT : undefined,
     body: `<section class="section"><div class="wrap" style="max-width:760px">
       <p><a href="/blog">← Semua Artikel</a></p>
       <p class="meta">${esc(row.category)} · ${esc(fmtDate(row.published_at))}</p>
       <h1>${esc(row.title)}</h1>
       ${row.cover_url ? `<img src="${esc(row.cover_url)}" alt="" style="width:100%;border-radius:12px;margin:16px 0" />` : ''}
-      <div class="article-body">${paragraphs(row.content)}</div>
+      ${tocHtml(toc)}
+      <div class="article-body">${articleHtml}</div>
       <p class="note" style="margin-top:32px">Punya pertanyaan tentang paket Umroh &amp; Haji? <a href="${esc(content.waLink || '#')}" target="_blank" rel="noopener">Hubungi kami via WhatsApp</a>.</p>
     </div></section>`,
     content,
