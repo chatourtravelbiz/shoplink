@@ -41,6 +41,7 @@ export function publicStore(s: StoreRow) {
     section_order: s.section_order || 'products-first',
     status: s.status ?? 'active',
     custom_domain: s.custom_domain ?? '',
+    custom_domain_request: s.custom_domain_request ?? '',
     social_links: parseSocialLinksJson(s.social_links),
     trust_badges: parseJson(s.trust_badges_json, [] as Array<{ text: string }>),
     banners: parseJson(s.banners_json, [] as string[]),

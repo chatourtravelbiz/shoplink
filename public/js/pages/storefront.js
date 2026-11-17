@@ -62,20 +62,23 @@ function storeHeader(store) {
 
 function showcaseCard(item, theme) {
   const href = item.file_url || item.link_url;
-  return `<div class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3">
-    ${item.image_url ? `<img src="${esc(item.image_url)}" class="w-20 h-20 rounded-xl object-cover shrink-0" alt="" loading="lazy" />` : `<div class="w-20 h-20 rounded-xl shrink-0 flex items-center justify-center text-2xl" style="background:${theme.soft}">📄</div>`}
-    <div class="min-w-0 flex-1">
-      <h3 class="font-semibold leading-snug">${esc(item.title)}</h3>
-      ${item.description ? `<p class="text-xs text-stone-500 mt-0.5 line-clamp-2">${esc(item.description)}</p>` : ''}
+  const cover = item.image_url
+    ? `<img src="${esc(item.image_url)}" class="w-full h-full object-cover" alt="" loading="lazy" />`
+    : `<div class="w-full h-full flex items-center justify-center text-4xl" style="background:${theme.soft}">📄</div>`;
+  return `<article class="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col">
+    <div class="h-24 sm:h-28 shrink-0">${cover}</div>
+    <div class="p-3 flex flex-col flex-1">
+      <h3 class="font-semibold text-sm leading-snug line-clamp-2">${esc(item.title)}</h3>
+      ${item.description ? `<p class="text-xs text-stone-500 mt-1 line-clamp-2">${esc(item.description)}</p>` : ''}
+      ${href ? `<a href="${esc(href)}" target="_blank" rel="noopener" class="mt-auto pt-3"><span class="block text-center px-3 py-2 rounded-xl text-white text-xs font-semibold" style="background:${theme.main}">Lihat Brosur ↗</span></a>` : ''}
     </div>
-    ${href ? `<a href="${esc(href)}" target="_blank" rel="noopener" class="shrink-0 px-3 py-2 rounded-xl text-white text-xs font-semibold" style="background:${theme.main}">Lihat Brosur ↗</a>` : ''}
-  </div>`;
+  </article>`;
 }
 
 function showcaseSection(items, theme) {
   if (!items.length) return '';
   return `<h2 class="font-bold mt-8">Showcase / Brosur</h2>
-  <div class="space-y-3 mt-3">${items.map((it) => showcaseCard(it, theme)).join('')}</div>`;
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">${items.map((it) => showcaseCard(it, theme)).join('')}</div>`;
 }
 
 function productCard(username, p, theme) {

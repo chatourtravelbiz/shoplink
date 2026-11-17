@@ -103,6 +103,13 @@ function storesTable(stores) {
     <td class="py-2 pr-2">${s.custom_domain
       ? `<a href="https://${esc(s.custom_domain)}" target="_blank" rel="noopener" class="text-sm font-semibold text-red-700 underline">${esc(s.custom_domain)}</a>`
       : '<span class="text-sm text-stone-400">—</span>'}
+      ${s.custom_domain_request ? `<div class="mt-2 rounded-lg bg-amber-50 border border-amber-200 px-2 py-1 text-sm">
+        <span class="font-semibold">Diajukan:</span> ${esc(s.custom_domain_request)}
+        ${canDomain ? `<span class="inline-flex gap-1 ml-1">
+          <button data-action="admin-domain-approve" data-id="${esc(s.username)}" class="px-2 py-0.5 rounded bg-red-700 text-white text-xs font-semibold">Pasang</button>
+          <button data-action="admin-domain-reject" data-id="${esc(s.username)}" class="px-2 py-0.5 rounded bg-white border text-xs">Tolak</button>
+        </span>` : ''}
+      </div>` : ''}
       ${canDomain ? `<div class="flex flex-wrap gap-1 mt-1">
         <input data-domain-input="${esc(s.username)}" value="${esc(s.custom_domain || '')}" placeholder="agenku.com" class="w-40 rounded-lg border border-stone-300 px-2 py-1 text-sm" />
         <button data-action="admin-domain-save" data-id="${esc(s.username)}" class="px-2 py-1 rounded-lg bg-red-700 text-white text-sm font-semibold">Simpan Domain</button>
@@ -172,6 +179,27 @@ export async function adminCheckDomain(username) {
   try {
     const res = await api(`/api/admin/stores/${username}/custom-domain/check`);
     showDomainDns(username, res.domain, res);
+  } catch (e) {
+    if (errEl) errEl.innerHTML = errorBox(e.message);
+  }
+}
+
+export async function adminApproveDomain(username, render) {
+  const errEl = document.getElementById('admin-err');
+  try {
+    const res = await api(`/api/admin/stores/${username}/custom-domain/approve`, { method: 'POST' });
+    await render();
+    showDomainDns(username, res.custom_domain);
+  } catch (e) {
+    if (errEl) errEl.innerHTML = errorBox(e.message);
+  }
+}
+
+export async function adminRejectDomain(username, render) {
+  const errEl = document.getElementById('admin-err');
+  try {
+    await api(`/api/admin/stores/${username}/custom-domain/reject`, { method: 'POST' });
+    await render();
   } catch (e) {
     if (errEl) errEl.innerHTML = errorBox(e.message);
   }

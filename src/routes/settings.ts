@@ -4,6 +4,7 @@ import type { App } from '../types';
 import { err, jsonBody } from '../lib/http';
 import { getSessionUser } from '../lib/auth';
 import { getStoreByUsername, publicStore, publicUser } from '../lib/db';
+import { domainError, normalizeDomain } from '../lib/domain';
 import { isButtonStyle, isSectionOrder, isTheme, str } from '../lib/validation';
 import { normalizeSocialLinks } from '../lib/social';
 
@@ -60,4 +61,35 @@ settingsRoutes.put('/settings', async (c) => {
   await c.env.DB.prepare('UPDATE users SET whatsapp_number = ?1 WHERE id = ?2').bind(whatsapp, user.id).run();
   const store = await getStoreByUsername(c.env, user.username);
   return c.json({ store: store ? publicStore(store) : null });
+});
+
+// Pengajuan custom domain oleh agen (hanya diteruskan ke admin, bukan langsung aktif).
+settingsRoutes.put('/settings/custom-domain-request', async (c) => {
+  const user = await getSessionUser(c.env, c.req.raw);
+  if (!user) return err(c, 401, 'Belum login.');
+  const domain = normalizeDomain((await jsonBody(c))?.custom_domain);
+  const bad = domainError(domain);
+  if (bad) return err(c, 400, bad);
+  const store = await getStoreByUsername(c.env, user.username);
+  if (!store) return err(c, 404, 'Toko tidak ditemukan.');
+  if ((store.custom_domain ?? '').toLowerCase() === domain) {
+    return err(c, 400, 'Domain ini sudah aktif di tokomu.');
+  }
+  const clash = await c.env.DB.prepare(
+    'SELECT username FROM stores WHERE custom_domain = ?1 AND username != ?2',
+  ).bind(domain, user.username).first<{ username: string }>();
+  if (clash) return err(c, 409, 'Domain sudah dipakai toko lain.');
+  await c.env.DB.prepare('UPDATE stores SET custom_domain_request = ?1 WHERE username = ?2')
+    .bind(domain, user.username).run();
+  return c.json({ ok: true, custom_domain_request: domain });
+});
+
+settingsRoutes.delete('/settings/custom-domain-request', async (c) => {
+  const user = await getSessionUser(c.env, c.req.raw);
+  if (!user) return err(c, 401, 'Belum login.');
+  const store = await getStoreByUsername(c.env, user.username);
+  if (!store) return err(c, 404, 'Toko tidak ditemukan.');
+  await c.env.DB.prepare('UPDATE stores SET custom_domain_request = NULL WHERE username = ?1')
+    .bind(user.username).run();
+  return c.json({ ok: true });
 });

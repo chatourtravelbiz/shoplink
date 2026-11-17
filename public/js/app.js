@@ -8,8 +8,8 @@ import { errorBox, topbar } from './ui.js';
 import { bindAuth, viewLogin, viewSignup } from './pages/auth.js';
 import { bindDashboard, viewDashboard } from './pages/dashboard.js';
 import { bindProducts, bindShowcase, cancelProductForm, cancelShowcaseForm, deleteProductById, deleteShowcaseById, openProductForm, openShowcaseForm, viewProducts } from './pages/products.js';
-import { bindSettings, pickTheme, viewSettings } from './pages/settings.js';
-import { adminCheckDomain, adminDelete, adminRemoveDomain, adminSaveDomain, adminToggleStore, bindAdmin, cancelPostForm, deletePostById, openPostForm, showDomainDns, viewAdmin } from './pages/admin.js';
+import { bindSettings, cancelDomainRequest, pickTheme, viewSettings } from './pages/settings.js';
+import { adminApproveDomain, adminCheckDomain, adminDelete, adminRejectDomain, adminRemoveDomain, adminSaveDomain, adminToggleStore, bindAdmin, cancelPostForm, deletePostById, openPostForm, showDomainDns, viewAdmin } from './pages/admin.js';
 import { clearStoreCache, shareStore, storeFilter, trackClick, viewStore } from './pages/storefront.js';
 import { bindProduct, viewProduct } from './pages/product.js';
 
@@ -86,6 +86,8 @@ document.addEventListener('click', async (e) => {
     shareStore(el);
   } else if (action === 'theme-pick') {
     pickTheme(el.dataset.theme);
+  } else if (action === 'domain-request-cancel') {
+    await cancelDomainRequest();
   } else if (action === 'new-showcase') {
     openShowcaseForm(null);
   } else if (action === 'edit-showcase') {
@@ -114,6 +116,10 @@ document.addEventListener('click', async (e) => {
     await adminCheckDomain(el.dataset.id);
   } else if (action === 'admin-domain-dns') {
     showDomainDns(el.dataset.id, el.dataset.domain);
+  } else if (action === 'admin-domain-approve') {
+    await adminApproveDomain(el.dataset.id, render);
+  } else if (action === 'admin-domain-reject') {
+    await adminRejectDomain(el.dataset.id, render);
   } else if (action === 'admin-delete-user') {
     await adminDelete('user', el.dataset.id, render);
   } else if (action === 'admin-delete-store') {

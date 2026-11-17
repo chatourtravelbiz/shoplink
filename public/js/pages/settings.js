@@ -48,6 +48,36 @@ function themePreview(store) {
   </div>`;
 }
 
+function domainSection(s) {
+  const username = state.session?.user?.username || '';
+  const active = s.custom_domain || '';
+  const pending = s.custom_domain_request || '';
+  const status = active
+    ? `<p class="text-sm"><span class="font-semibold text-green-700">✓ Aktif:</span> <a class="text-red-700 underline" href="https://${esc(active)}" target="_blank" rel="noopener">${esc(active)}</a> — tokomu sudah bisa dibuka lewat domain ini.</p>`
+    : pending
+      ? `<p class="text-sm"><span class="font-semibold text-amber-700">⏳ Pengajuan terkirim: ${esc(pending)}</span> — menunggu admin memasang. <button type="button" data-action="domain-request-cancel" class="text-rose-700 underline text-sm">Batalkan pengajuan</button></p>`
+      : `<p class="text-sm text-stone-600"><span class="font-semibold">Belum dipasang.</span> Ikuti panduan di bawah untuk memakai domain sendiri.</p>`;
+  return `<section id="domain-section" class="mt-6 bg-white border border-stone-200 rounded-2xl p-5">
+    <h2 class="font-bold">Domain Kustom</h2>
+    <div id="domain-err"></div>
+    <div class="mt-2">${status}</div>
+    <p class="text-sm text-stone-600 mt-1">Alamat tokomu saat ini (tetap jalan sebagai cadangan): <a class="text-red-700 underline" href="/${esc(username)}">chatourtravel.com/${esc(username)}</a></p>
+    <h3 class="font-semibold text-sm mt-4">Cara memakai domain sendiri — 5 langkah</h3>
+    <ol class="list-decimal pl-5 mt-1 space-y-1 text-sm text-stone-700">
+      <li><b>Beli domain</b> di Hostinger, Niagahoster, atau Domainesia — mis. <code>tokoku.com</code> atau <code>agen-rahma.com</code>. Pilih nama yang pendek dan mudah diingat.</li>
+      <li><b>Atur DNS</b> di tempat kamu membeli domain: tambah record <b>CNAME</b>, Host <code>@</code>, target <code>shoplink-d1.chatourtravelbiz.workers.dev</code>. Kalau mau pakai <code>www.</code> juga, tambah CNAME <code>www</code> ke target yang sama.</li>
+      <li><b>Ajukan ke admin</b> lewat form di bawah ini — atau hubungi admin via WhatsApp kantor <a class="text-red-700 underline" href="https://wa.me/6282224332700" target="_blank" rel="noopener">0822 2433 2700</a>.</li>
+      <li><b>Admin memasang domain</b> di Cloudflare. DNS butuh waktu menyebar, biasanya hitungan menit sampai beberapa jam.</li>
+      <li><b>Cek sendiri</b>: buka domain itu di browser — bila sudah tampil tokomu, berarti aktif.</li>
+    </ol>
+    ${pending ? '' : `<form id="f-domain-request" class="flex flex-wrap gap-2 mt-4">
+      <input name="custom_domain" placeholder="contoh: agenku.com" class="${inputCls} flex-1 min-w-[200px]" />
+      <button class="px-4 py-2 rounded-xl bg-red-700 text-white font-semibold text-sm">Ajukan ke Admin</button>
+    </form>
+    <p class="text-xs text-stone-500 mt-1">Pengajuan hanya diteruskan ke admin — domain baru aktif setelah admin memasang dan DNS tersebar.</p>`}
+  </section>`;
+}
+
 export function viewSettings() {
   if (!state.session) {
     go('/login');
@@ -91,6 +121,7 @@ export function viewSettings() {
       <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="show_badge" ${s.show_badge !== 0 ? 'checked' : ''} class="w-4 h-4" /> Tampilkan badge "Agen Chatour Travel" di toko</label>
       <button class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Simpan Pengaturan</button>
     </form>
+    ${domainSection(s)}
   </main>`;
 }
 
@@ -110,26 +141,65 @@ export function pickTheme(key) {
 
 export function bindSettings() {
   const form = document.getElementById('f-settings');
-  if (!form) return;
-  form.addEventListener('submit', async (e) => {
+  if (form && !form.dataset.bound) {
+    form.dataset.bound = '1';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const fd = new FormData(form);
+        const payload = Object.fromEntries(fd);
+        payload.show_badge = form.querySelector('[name="show_badge"]')?.checked ? 1 : 0;
+        payload.social_links = {
+          instagram: fd.get('social_instagram') || '',
+          facebook: fd.get('social_facebook') || '',
+          tiktok: fd.get('social_tiktok') || '',
+          youtube: fd.get('social_youtube') || '',
+        };
+        for (const k of ['social_instagram', 'social_facebook', 'social_tiktok', 'social_youtube']) delete payload[k];
+        const r = await api('/api/settings', { method: 'PUT', body: JSON.stringify(payload) });
+        state.session = { ...state.session, store: r.store };
+        setErr('err', '');
+        alert('Pengaturan tersimpan.');
+      } catch (err) {
+        setErr('err', err.message);
+      }
+    });
+  }
+  bindDomainForm();
+}
+
+/** Form ajukan domain kustom — di-bind terpisah agar tidak ganda saat seksi di-refresh. */
+function bindDomainForm() {
+  const dForm = document.getElementById('f-domain-request');
+  if (!dForm || dForm.dataset.bound) return;
+  dForm.dataset.bound = '1';
+  dForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     try {
-      const fd = new FormData(form);
-      const payload = Object.fromEntries(fd);
-      payload.show_badge = form.querySelector('[name="show_badge"]')?.checked ? 1 : 0;
-      payload.social_links = {
-        instagram: fd.get('social_instagram') || '',
-        facebook: fd.get('social_facebook') || '',
-        tiktok: fd.get('social_tiktok') || '',
-        youtube: fd.get('social_youtube') || '',
-      };
-      for (const k of ['social_instagram', 'social_facebook', 'social_tiktok', 'social_youtube']) delete payload[k];
-      const r = await api('/api/settings', { method: 'PUT', body: JSON.stringify(payload) });
-      state.session = { ...state.session, store: r.store };
-      setErr('err', '');
-      alert('Pengaturan tersimpan.');
+      const val = dForm.querySelector('[name="custom_domain"]')?.value || '';
+      const r = await api('/api/settings/custom-domain-request', {
+        method: 'PUT', body: JSON.stringify({ custom_domain: val }),
+      });
+      state.session = { ...state.session, store: { ...state.session.store, custom_domain_request: r.custom_domain_request } };
+      refreshDomainSection();
     } catch (err) {
-      setErr('err', err.message);
+      setErr('domain-err', err.message);
     }
   });
+}
+
+function refreshDomainSection() {
+  const sec = document.getElementById('domain-section');
+  if (sec) sec.outerHTML = domainSection(state.session?.store || {});
+  bindDomainForm();
+}
+
+export async function cancelDomainRequest() {
+  try {
+    await api('/api/settings/custom-domain-request', { method: 'DELETE' });
+    state.session = { ...state.session, store: { ...state.session.store, custom_domain_request: '' } };
+    refreshDomainSection();
+  } catch (e) {
+    setErr('domain-err', e.message);
+  }
 }
