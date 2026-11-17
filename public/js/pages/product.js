@@ -9,16 +9,16 @@ import { imgCover, loadStore, storeFooter } from './storefront.js';
 function storeMiniHeader(store) {
   const t = themeOf(store.theme);
   const avatar = store.avatar_url || store.logo_url;
-  return `<div class="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3">
+  return `<div class="flex flex-wrap items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3">
     ${avatar
       ? `<img src="${esc(avatar)}" class="w-12 h-12 rounded-full object-cover shrink-0" alt="${esc(store.store_name)}" />`
       : `<img src="/logo-chatour.png" class="w-12 h-12 rounded-full object-contain shrink-0 bg-white p-0.5" alt="Chatour Travel" />`}
     <div class="min-w-0 flex-1">
       <a href="${storePath(store.username)}" class="font-bold leading-tight hover:underline">${esc(store.store_name)}</a>
       <p class="text-stone-500 text-xs">@${esc(store.username)}</p>
-      ${store.show_badge !== 0 ? `<span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-semibold text-white rounded-full" style="background:${t.main}">✈️ Agen Chatour Travel</span>` : ''}
+      ${store.show_badge !== 0 ? `<span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-semibold text-white rounded-full whitespace-nowrap" style="background:${t.main}">✈️ Agen Chatour Travel</span>` : ''}
     </div>
-    <a href="${storePath(store.username)}" class="shrink-0 text-sm font-semibold px-3 py-2 rounded-xl border bg-white hover:bg-stone-50">Lihat semua produk</a>
+    <a href="${storePath(store.username)}" class="shrink-0 w-full text-center sm:w-auto text-sm font-semibold px-3 py-2 rounded-xl border bg-white hover:bg-stone-50">Lihat semua produk</a>
   </div>`;
 }
 
