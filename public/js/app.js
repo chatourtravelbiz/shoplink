@@ -4,7 +4,7 @@
 import { loadSession, logout } from './api.js';
 import { go, togglePasswordVisibility, toggleTheme } from './utils.js';
 import { isInternalPath, parsePath } from './router.js';
-import { errorBox, topbar } from './ui.js';
+import { errorBox, setBusy, skeletonPage, topbar } from './ui.js';
 import { bindAuth, viewLogin, viewSignup } from './pages/auth.js';
 import { bindDashboard, viewDashboard } from './pages/dashboard.js';
 import { bindProducts, bindShowcase, cancelProductForm, cancelShowcaseForm, deleteProductById, deleteShowcaseById, openProductForm, openShowcaseForm, viewProducts } from './pages/products.js';
@@ -15,6 +15,7 @@ import { bindProduct, viewProduct } from './pages/product.js';
 
 const $app = document.getElementById('app');
 let searchTimer = null;
+let lastRouteKind = '';
 
 async function render() {
   // Di host custom domain agen, / dan /p/:id adalah toko itu sendiri
@@ -25,6 +26,14 @@ async function render() {
   else if (bootStore && /^\/p\/[^/]+$/.test(location.pathname)) {
     route = { kind: 'product', username: bootStore, productId: location.pathname.split('/')[2] };
   }
+  // Halaman yang mengambil data: tampilkan skeleton selagi fetch berjalan,
+  // tapi hanya saat pindah jenis halaman — render ulang di halaman yang sama
+  // (mis. pencarian toko) tetap memakai konten lama supaya input tidak hilang.
+  const dataKinds = ['dashboard', 'products', 'admin', 'product', 'store'];
+  if (dataKinds.includes(route.kind) && route.kind !== lastRouteKind) {
+    $app.innerHTML = skeletonPage();
+  }
+  lastRouteKind = route.kind;
   let html = '';
   try {
     // / adalah company profile (dirender server, bukan SPA) — SPA hanya

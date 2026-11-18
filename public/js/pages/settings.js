@@ -2,7 +2,7 @@
 import { api, state } from '../api.js';
 import { THEMES, esc, go, storePath, themeOf } from '../utils.js';
 import { icon, waIcon } from '../icons.js';
-import { bindPasswordForm, field, inputCls, passwordForm, setErr, showToast, topbar } from '../ui.js';
+import { bindPasswordForm, field, inputCls, passwordForm, setBusy, setErr, showToast, topbar } from '../ui.js';
 
 const BUTTON_STYLES = [
   ['rounded', 'Membulat'],
@@ -155,6 +155,8 @@ export function bindSettings() {
     form.dataset.bound = '1';
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+      setBusy(btn, true);
       try {
         const fd = new FormData(form);
         const payload = Object.fromEntries(fd);
@@ -174,6 +176,8 @@ export function bindSettings() {
         showToast('Pengaturan tersimpan.');
       } catch (err) {
         setErr('err', err.message);
+      } finally {
+        setBusy(btn, false);
       }
     });
   }
@@ -187,6 +191,8 @@ function bindDomainForm() {
   dForm.dataset.bound = '1';
   dForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = dForm.querySelector('button[type="submit"]') || dForm.querySelector('button');
+    setBusy(btn, true, 'Mengirim…');
     try {
       const val = dForm.querySelector('[name="custom_domain"]')?.value || '';
       const r = await api('/api/settings/custom-domain-request', {
@@ -196,6 +202,8 @@ function bindDomainForm() {
       refreshDomainSection();
     } catch (err) {
       setErr('domain-err', err.message);
+    } finally {
+      setBusy(btn, false);
     }
   });
 }

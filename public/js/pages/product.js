@@ -2,7 +2,7 @@
 import { api } from '../api.js';
 import { esc, go, priceLabel, storePath, themeOf, waDigits } from '../utils.js';
 import { waIcon } from '../icons.js';
-import { errorBox, field, inputCls, setErr } from '../ui.js';
+import { errorBox, field, inputCls, setBusy, setErr } from '../ui.js';
 import { imgCover, loadStore, storeFooter } from './storefront.js';
 
 /** Header toko mini: avatar/logo + nama + badge + kembali ke toko. */
@@ -141,6 +141,8 @@ export function bindProduct() {
     e.preventDefault();
     const fd = new FormData(form);
     const username = form.dataset.username;
+    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    setBusy(btn, true, 'Memesan…');
     try {
       const r = await api(`/api/stores/${username}/orders`, {
         method: 'POST',
@@ -148,6 +150,7 @@ export function bindProduct() {
       });
       go(`${storePath(username, String(fd.get('product_id')))}?done=1&wa=${encodeURIComponent(r.whatsapp_url)}`);
     } catch (err) {
+      setBusy(btn, false);
       setErr('err', err.message);
     }
   });

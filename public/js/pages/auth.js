@@ -1,7 +1,7 @@
 // Halaman publik: signup, login. (Chatour Travel tidak punya landing page.)
 import { api, loadSession } from '../api.js';
 import { esc, go } from '../utils.js';
-import { field, inputCls, setErr, topbar } from '../ui.js';
+import { field, inputCls, setBusy, setErr, topbar } from '../ui.js';
 
 /** Field password + tombol ikon mata (lihat/sembunyikan). Tombol type="button"
     agar tidak submit form; aria-label berubah sesuai state di toggle. */
@@ -70,6 +70,8 @@ export function bindAuth() {
   if (signup) {
     signup.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btn = signup.querySelector('button[type="submit"]') || signup.querySelector('button');
+      setBusy(btn, true, 'Mendaftar…');
       try {
         const fd = new FormData(signup);
         const r = await api('/api/auth/signup', { method: 'POST', body: JSON.stringify(Object.fromEntries(fd)) });
@@ -82,6 +84,7 @@ export function bindAuth() {
           <p class="text-sm"><a class="text-red-700 underline" href="/login">Ke halaman masuk →</a></p>
         </div>`;
       } catch (err) {
+        setBusy(btn, false);
         setErr('err', err.message);
       }
     });
@@ -90,11 +93,14 @@ export function bindAuth() {
   if (login) {
     login.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btn = login.querySelector('button[type="submit"]') || login.querySelector('button');
+      setBusy(btn, true, 'Masuk…');
       try {
         await api('/api/auth/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(login))) });
         await loadSession();
         go('/dashboard');
       } catch (err) {
+        setBusy(btn, false);
         setErr('err', err.message);
         if (err.code === 'email_not_verified') {
           const w = document.getElementById('resend-wrap');
@@ -112,11 +118,14 @@ export function bindAuth() {
   if (resend) {
     resend.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btn = resend.querySelector('button[type="submit"]') || resend.querySelector('button');
+      setBusy(btn, true, 'Mengirim…');
       try {
         const r = await api('/api/auth/resend-verification', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(resend))) });
         setErr('resend-err', '');
         resend.outerHTML = `<p class="text-sm ${r.email_sent ? 'text-emerald-700' : 'text-amber-700'}">✓ ${r.email_sent ? 'Email verifikasi dikirim ulang. Cek inbox (dan folder spam) kamu.' : 'Permintaan dicatat. Bila email tidak kunjung datang, hubungi admin.'}</p>`;
       } catch (err) {
+        setBusy(btn, false);
         setErr('resend-err', err.message);
       }
     });

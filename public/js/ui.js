@@ -34,6 +34,38 @@ export function showToast(msg) {
   setTimeout(() => el.remove(), 3500);
 }
 
+/** Status sibuk tombol simpan: nonaktifkan + spinner + label proses, lalu
+    kembalikan seperti semula. Dipakai semua form simpan supaya pengguna
+    tahu proses sedang berjalan sebelum toast berhasil muncul. */
+export function setBusy(btn, busy, busyLabel = 'Menyimpan…') {
+  if (!btn) return;
+  if (busy) {
+    if (btn.dataset.busy) return;
+    btn.dataset.busy = '1';
+    btn.dataset.origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-2px]"></span> ${busyLabel}`;
+  } else {
+    if (!btn.dataset.busy) return;
+    delete btn.dataset.busy;
+    btn.disabled = false;
+    btn.innerHTML = btn.dataset.origHtml || '';
+    delete btn.dataset.origHtml;
+  }
+}
+
+/** Skeleton layar pemuatan: header + blok abu-abu berdenyut, ditampilkan
+    router selagi data halaman diambil, supaya tidak tampak diam. */
+export function skeletonPage() {
+  const card = '<div class="bg-white border border-stone-200 rounded-2xl p-5"><div class="h-4 w-1/3 rounded bg-stone-200 animate-pulse"></div><div class="h-8 w-2/3 rounded bg-stone-200 animate-pulse mt-3"></div><div class="h-3 w-1/2 rounded bg-stone-200 animate-pulse mt-2"></div></div>';
+  return `${topbar()}<main class="max-w-5xl mx-auto px-4 py-8" aria-busy="true" aria-label="Memuat…">
+    <div class="h-8 w-56 max-w-full rounded-lg bg-stone-200 animate-pulse"></div>
+    <div class="h-4 w-80 max-w-full rounded bg-stone-200 animate-pulse mt-2"></div>
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6">${card.repeat(5)}</div>
+    <div class="bg-white border border-stone-200 rounded-2xl p-5 mt-4"><div class="h-4 w-40 rounded bg-stone-200 animate-pulse"></div><div class="h-40 rounded-lg bg-stone-200 animate-pulse mt-4"></div></div>
+  </main>`;
+}
+
 /** Ikon + label tiap tujuan di bottom nav mobile. */
 const bottomNavItem = (href, icon, label, active) =>
   `<a href="${href}" class="flex flex-col items-center gap-0.5 py-2 text-[11px] leading-none ${active ? 'text-red-700 font-semibold' : 'text-stone-500 hover:text-stone-800'}"><span class="text-lg leading-none">${icon}</span>${label}</a>`;
@@ -96,6 +128,8 @@ export function bindPasswordForm() {
   form.dataset.bound = '1';
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    setBusy(btn, true, 'Mengganti…');
     try {
       await api('/api/auth/change-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) });
       form.reset();
@@ -103,6 +137,8 @@ export function bindPasswordForm() {
       if (ok) ok.innerHTML = `<div class="rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-2 text-sm">✓ Password berhasil diganti. Sesi di perangkat lain sudah dicabut.</div>`;
     } catch (err) {
       setErr('pw-err', err.message);
+    } finally {
+      setBusy(btn, false);
     }
   });
 }

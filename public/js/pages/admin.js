@@ -2,7 +2,7 @@
 // tampilan di sini hanya menyembunyikan tombol yang memang tidak boleh dipakai.
 import { api, state } from '../api.js';
 import { esc, priceLabel, rupiah, STATUS_LABEL } from '../utils.js';
-import { bindPasswordForm, errorBox, passwordForm, topbar } from '../ui.js';
+import { bindPasswordForm, errorBox, passwordForm, setBusy, topbar } from '../ui.js';
 
 const ROLES = ['super_admin', 'admin', 'moderator', 'support', 'merchant'];
 const ROLE_LABEL = {
@@ -311,6 +311,8 @@ export function bindPostForm(render) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const errEl = document.getElementById('post-err');
+    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    setBusy(btn, true);
     try {
       const payload = Object.fromEntries(new FormData(form));
       if (editingPost) await api(`/api/admin/posts/${editingPost.id}`, { method: 'PATCH', body: JSON.stringify(payload) });
@@ -318,6 +320,7 @@ export function bindPostForm(render) {
       editingPost = null;
       await render();
     } catch (err) {
+      setBusy(btn, false);
       if (errEl) errEl.innerHTML = errorBox(err.message);
     }
   });
@@ -354,12 +357,16 @@ export function bindAdmin() {
     settingsForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const msgEl = document.getElementById('settings-msg');
+      const btn = settingsForm.querySelector('button[type="submit"]') || settingsForm.querySelector('button');
+      setBusy(btn, true);
       try {
         const r = await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify(Object.fromEntries(new FormData(settingsForm))) });
         if (msgEl) msgEl.innerHTML = `<div class="rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-2 text-sm">✓ Pengaturan tersimpan.${r.configured ? ` Kunci Resend terpasang (${esc(r.key_masked)}).` : ''}</div>`;
         settingsForm.querySelector('[name="resend_api_key"]').value = '';
       } catch (err) {
         if (msgEl) msgEl.innerHTML = errorBox(err.message);
+      } finally {
+        setBusy(btn, false);
       }
     });
   }
