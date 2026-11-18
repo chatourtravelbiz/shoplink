@@ -28,15 +28,20 @@ export function showToast(msg) {
   if (old) old.remove();
   const el = document.createElement('div');
   el.id = 'toast';
-  el.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold shadow-lg';
+  el.className = 'fixed bottom-20 md:bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold shadow-lg';
   el.textContent = msg;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 3500);
 }
 
+/** Ikon + label tiap tujuan di bottom nav mobile. */
+const bottomNavItem = (href, icon, label, active) =>
+  `<a href="${href}" class="flex flex-col items-center gap-0.5 py-2 text-[11px] leading-none ${active ? 'text-red-700 font-semibold' : 'text-stone-500 hover:text-stone-800'}"><span class="text-lg leading-none">${icon}</span>${label}</a>`;
+
 export function topbar(active) {
   const isAdmin = state.session && ['super_admin', 'admin', 'moderator', 'support'].includes(state.session.user.role);
   const themeBtn = `<button data-action="toggle-theme" class="px-3 py-2 rounded-lg hover:bg-stone-100" aria-label="Ganti mode gelap/terang">${isDark() ? '☀️' : '🌙'}</button>`;
+  // Desktop: semua tautan di header seperti biasa.
   const links = state.session
     ? `${themeBtn}<a href="/dashboard" class="px-3 py-2 rounded-lg ${active === 'dashboard' ? 'bg-red-100 text-red-800 font-semibold' : 'hover:bg-stone-100'}">Dashboard</a>
        <a href="/products" class="px-3 py-2 rounded-lg ${active === 'products' ? 'bg-red-100 text-red-800 font-semibold' : 'hover:bg-stone-100'}">Produk</a>
@@ -46,11 +51,28 @@ export function topbar(active) {
        <button data-action="logout" class="px-3 py-2 rounded-lg hover:bg-rose-50 text-rose-700">Keluar</button>`
     : `${themeBtn}<a href="/login" class="px-3 py-2 rounded-lg hover:bg-stone-100">Masuk</a>
        <a href="/signup" class="px-3 py-2 rounded-lg bg-red-700 text-white font-semibold">Daftar Gratis</a>`;
+  // Mobile: header hanya logo + aksi ringkas; navigasi pindah ke bottom nav
+  // supaya menu tidak melebar. Keluar tetap di header agar selalu terlihat.
+  const mobileActions = state.session
+    ? `${themeBtn}<button data-action="logout" class="px-3 py-2 rounded-lg hover:bg-rose-50 text-rose-700 text-sm">Keluar</button>`
+    : `${themeBtn}<a href="/login" class="px-3 py-2 rounded-lg hover:bg-stone-100 text-sm">Masuk</a>
+       <a href="/signup" class="px-3 py-2 rounded-lg bg-red-700 text-white font-semibold text-sm">Daftar</a>`;
+  const bottomNav = state.session
+    ? `<nav class="mobile-bottom-nav fixed bottom-0 inset-x-0 z-20 bg-white/90 backdrop-blur border-t border-stone-200 md:hidden">
+      <div class="grid ${isAdmin ? 'grid-cols-5' : 'grid-cols-4'}">
+        ${bottomNavItem('/dashboard', '🏠', 'Dashboard', active === 'dashboard')}
+        ${bottomNavItem('/products', '📦', 'Produk', active === 'products')}
+        ${bottomNavItem('/settings', '⚙️', 'Pengaturan', active === 'settings')}
+        ${isAdmin ? bottomNavItem('/admin', '🛡️', 'Admin', active === 'admin') : ''}
+        ${bottomNavItem(storePath(state.session.user.username), '🛍️', 'Toko', false)}
+      </div></nav>`
+    : '';
   return `<header class="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-stone-200">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
       <a href="${state.session ? '/dashboard' : 'https://chatourtravel.com/'}" class="flex items-center gap-2 text-xl font-extrabold tracking-tight whitespace-nowrap"><img src="/logo-chatour.png" alt="Chatour Travel" class="h-9 w-9 object-contain" />Chatour <span class="text-red-700">Travel</span></a>
-      <nav class="flex items-center gap-1 text-sm overflow-x-auto">${links}</nav>
-    </div></header>`;
+      <nav class="hidden md:flex items-center gap-1 text-sm">${links}</nav>
+      <div class="flex items-center gap-1 md:hidden">${mobileActions}</div>
+    </div></header>${bottomNav}`;
 }
 
 /** Form ganti password — dipakai di /admin (semua role admin) dan di

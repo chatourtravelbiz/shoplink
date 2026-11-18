@@ -49,6 +49,13 @@
     }
     .scroll-top:hover { background: #7e1e00; }
     .scroll-top.show { opacity: 1; pointer-events: auto; }
+    /* Bottom nav mobile: beri ruang di bawah konten agar tidak tertutup nav,
+       dan naikkan tombol kembali-ke-atas di atas nav. Hanya berlaku saat
+       bottom nav dirender (halaman SPA login), bukan di toko publik. */
+    @media (max-width: 767px) {
+      body:has(.mobile-bottom-nav) { padding-bottom: 4.25rem; }
+      .scroll-top { bottom: 76px; }
+    }
   </style>
 </head>
 <body class="bg-stone-50 text-stone-900 min-h-screen">
