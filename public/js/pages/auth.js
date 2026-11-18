@@ -70,7 +70,7 @@ export function bindAuth() {
   if (signup) {
     signup.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = signup.querySelector('button[type="submit"]') || signup.querySelector('button');
+      const btn = e.submitter || signup.querySelector('button[type="submit"]');
       setBusy(btn, true, 'Mendaftar…');
       try {
         const fd = new FormData(signup);
@@ -93,7 +93,7 @@ export function bindAuth() {
   if (login) {
     login.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = login.querySelector('button[type="submit"]') || login.querySelector('button');
+      const btn = e.submitter || login.querySelector('button[type="submit"]');
       setBusy(btn, true, 'Masuk…');
       try {
         await api('/api/auth/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(login))) });
@@ -118,7 +118,7 @@ export function bindAuth() {
   if (resend) {
     resend.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = resend.querySelector('button[type="submit"]') || resend.querySelector('button');
+      const btn = e.submitter || resend.querySelector('button[type="submit"]');
       setBusy(btn, true, 'Mengirim…');
       try {
         const r = await api('/api/auth/resend-verification', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(resend))) });

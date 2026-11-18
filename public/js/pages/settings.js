@@ -73,7 +73,7 @@ function domainSection(s) {
     </ol>
     ${pending ? '' : `<form id="f-domain-request" class="flex flex-wrap gap-2 mt-4">
       <input name="custom_domain" placeholder="contoh: agenku.com" class="${inputCls} flex-1 min-w-[200px]" />
-      <button class="px-4 py-2 rounded-xl bg-red-700 text-white font-semibold text-sm">Ajukan ke Admin</button>
+      <button type="submit" class="px-4 py-2 rounded-xl bg-red-700 text-white font-semibold text-sm">Ajukan ke Admin</button>
     </form>
     <p class="text-xs text-stone-500 mt-1">Pengajuan hanya diteruskan ke admin — domain baru aktif setelah admin memasang dan DNS tersebar.</p>`}
   </section>`;
@@ -127,7 +127,7 @@ export function viewSettings() {
           ${[0, 1, 2].map((i) => `<input name="trust_badge" value="${esc(s.trust_badges?.[i]?.text || '')}" maxlength="40" class="${inputCls}" placeholder="Badge ${i + 1} — contoh: Fast Respon via WhatsApp" />`).join('')}
         </div>
       </div>
-      <button class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Simpan Pengaturan</button>
+      <button type="submit" class="w-full py-3 rounded-xl bg-red-700 text-white font-semibold">Simpan Pengaturan</button>
     </form>
     <div class="mt-6">${passwordForm()}</div>
     ${domainSection(s)}
@@ -155,7 +155,7 @@ export function bindSettings() {
     form.dataset.bound = '1';
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+      const btn = e.submitter || form.querySelector('button[type="submit"]');
       setBusy(btn, true);
       try {
         const fd = new FormData(form);
@@ -191,7 +191,7 @@ function bindDomainForm() {
   dForm.dataset.bound = '1';
   dForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = dForm.querySelector('button[type="submit"]') || dForm.querySelector('button');
+    const btn = e.submitter || dForm.querySelector('button[type="submit"]');
     setBusy(btn, true, 'Mengirim…');
     try {
       const val = dForm.querySelector('[name="custom_domain"]')?.value || '';

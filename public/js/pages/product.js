@@ -141,7 +141,7 @@ export function bindProduct() {
     e.preventDefault();
     const fd = new FormData(form);
     const username = form.dataset.username;
-    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const btn = e.submitter || form.querySelector('button[type="submit"]');
     setBusy(btn, true, 'Memesan…');
     try {
       const r = await api(`/api/stores/${username}/orders`, {

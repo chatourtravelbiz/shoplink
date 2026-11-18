@@ -124,7 +124,7 @@ export function bindShowcase(onRerender) {
   if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const btn = e.submitter || form.querySelector('button[type="submit"]');
     setBusy(btn, true);
     const fd = new FormData(form);
     let fileUrl = String(fd.get('file_url') || '').trim();
@@ -236,7 +236,7 @@ export function bindProducts(onRerender) {
   if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const btn = e.submitter || form.querySelector('button[type="submit"]');
     setBusy(btn, true);
     const fd = new FormData(form);
     let imageUrl = String(fd.get('image_url') || '').trim();

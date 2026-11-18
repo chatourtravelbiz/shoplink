@@ -311,7 +311,7 @@ export function bindPostForm(render) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const errEl = document.getElementById('post-err');
-    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const btn = e.submitter || form.querySelector('button[type="submit"]');
     setBusy(btn, true);
     try {
       const payload = Object.fromEntries(new FormData(form));
@@ -357,7 +357,7 @@ export function bindAdmin() {
     settingsForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const msgEl = document.getElementById('settings-msg');
-      const btn = settingsForm.querySelector('button[type="submit"]') || settingsForm.querySelector('button');
+      const btn = e.submitter || settingsForm.querySelector('button[type="submit"]');
       setBusy(btn, true);
       try {
         const r = await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify(Object.fromEntries(new FormData(settingsForm))) });

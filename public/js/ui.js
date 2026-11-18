@@ -128,7 +128,7 @@ export function bindPasswordForm() {
   form.dataset.bound = '1';
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const btn = e.submitter || form.querySelector('button[type="submit"]');
     setBusy(btn, true, 'Mengganti…');
     try {
       await api('/api/auth/change-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) });
