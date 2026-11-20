@@ -1,13 +1,15 @@
 // Chatour Travel — bootstrap Hono saja. Semua route ada di src/routes/*,
 // semua helper ada di src/lib/*. Satu Worker di root chatourtravel.com:
-// company profile (/) + blog (/blog) + toko agen (/:username) + /api/*.
+// company profile (/) + blog (/blog) + /api/*.
+// Toko agen tinggal di subdomainnya masing-masing (nama.chatourtravel.com);
+// /:username di domain utama dialihkan permanen (301) ke subdomain itu.
 // Tanpa pembayaran online: order via WhatsApp / COD / Transfer manual.
 // Tanpa Stripe/Razorpay/billing.
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import type { App } from './types';
-import { serveSpa, serveSpaForStore, serveSpaWithStoreMeta } from './lib/spa';
-import { getStoreByCustomDomain } from './lib/db';
+import { serveSpa, serveSpaForStore } from './lib/spa';
+import { getStoreByCustomDomain, getStoreByUsername } from './lib/db';
 import { profileRoutes } from './routes/profile';
 import { authRoutes } from './routes/auth';
 import { dashboardRoutes } from './routes/dashboard';
@@ -23,10 +25,11 @@ import { uploadsRoutes } from './routes/uploads';
 
 const app: App = new Hono();
 
-// Host utama (profile + toko di /:username). Domain lain dicocokkan dengan
+// Host utama (profile + blog + /api). Domain lain dicocokkan dengan
 // stores.custom_domain — fondasi custom domain agen — termasuk subdomain
-// chatourtravel.com (mis. demo.chatourtravel.com), yang dicadangkan untuk
-// platform dan dipasang langsung oleh admin, bukan lewat pengajuan agen.
+// chatourtravel.com. Subdomain platform (nama.chatourtravel.com) dipasang
+// otomatis oleh job attach-subdomains (cron) saat agen daftar; Worker
+// mengenalinya dari custom_domain, dengan fallback username = label subdomain.
 function isMainHost(host: string): boolean {
   const h = host.toLowerCase();
   return (
@@ -46,6 +49,18 @@ app.use(async (c, next) => {
     try {
       const store = await getStoreByCustomDomain(c.env, host);
       if (store) c.set('customStore', store.username);
+      else if (ownSubdomain) {
+        // Fallback: nama.chatourtravel.com -> toko dengan username = label.
+        // Menangani jeda singkat antara agen daftar dan cron memasang
+        // custom_domain-nya (juga toko yang custom_domain-nya terhapus).
+        const label = host.toLowerCase().slice(0, -'.chatourtravel.com'.length);
+        if (/^[a-z0-9]{3,30}$/.test(label)) {
+          const byName = await getStoreByUsername(c.env, label);
+          if (byName && (byName.status ?? 'active') !== 'suspended') {
+            c.set('customStore', byName.username);
+          }
+        }
+      }
     } catch {
       // DB belum punya kolom custom_domain (dev lokal lama): abaikan, lanjut normal.
     }
@@ -83,12 +98,19 @@ app.route('/api', showcaseRoutes);
 app.route('/api', uploadsRoutes);
 
 // 404 JSON hanya untuk /api/* yang tidak dikenal. Path non-API adalah route SPA:
-// /login, /dashboard, /:username, /:username/p/:id, ... — layani spa.html.
-// Di host custom domain agen, /p/:id adalah produk toko itu sendiri.
+// /login, /dashboard, ... — layani spa.html.
+// Di host custom domain/subdomain agen, /p/:id adalah produk toko itu sendiri.
 app.notFound(async (c) => {
   const path = c.req.path;
   if (path.startsWith('/api/') || /\.[a-z0-9]+$/i.test(path)) {
     return c.json({ error: 'Tidak ditemukan.' }, 404);
+  }
+  const host = new URL(c.req.url).hostname.toLowerCase();
+  // www.chatourtravel.com -> domain utama (301).
+  if (host === 'www.chatourtravel.com') {
+    const url = new URL(c.req.url);
+    url.hostname = 'chatourtravel.com';
+    return c.redirect(url.toString(), 301);
   }
   const customStore = c.get('customStore');
   // /demo pindah permanen ke demo.chatourtravel.com (301; query dipertahankan,
@@ -106,12 +128,28 @@ app.notFound(async (c) => {
     if (productMatch) return serveSpaForStore(c, customStore, productMatch[1]);
     if (path === '/') return serveSpaForStore(c, customStore);
   }
-  // /:username dan /:username/p/:id — shell SPA + meta Open Graph toko/produk
-  // (crawler WhatsApp/Telegram membaca meta ini; username bukan toko → shell polos).
-  const productMatch = /^\/([a-z0-9_]{3,30})\/p\/([^/]+)$/.exec(path);
-  if (productMatch) return serveSpaWithStoreMeta(c, productMatch[1], productMatch[2]);
-  const storeMatch = /^\/([a-z0-9_]{3,30})$/.exec(path);
-  if (storeMatch) return serveSpaWithStoreMeta(c, storeMatch[1]);
+  // Toko agen tinggal di subdomain: /:username dan /:username/p/:id di domain
+  // utama dialihkan permanen (301) ke nama.chatourtravel.com (query
+  // dipertahankan, mis. ?done=1&wa=... dari alur order). Username yang bukan
+  // toko tetap dilayani shell SPA seperti sebelumnya.
+  const redirectToSubdomain = async (username: string, productId?: string) => {
+    const store = await getStoreByUsername(c.env, username.toLowerCase());
+    if (!store) return null;
+    const url = new URL(c.req.url);
+    url.hostname = `${username.toLowerCase()}.chatourtravel.com`;
+    url.pathname = productId ? `/p/${productId}` : '/';
+    return c.redirect(url.toString(), 301);
+  };
+  const productMatch = /^\/([a-z0-9]{3,30})\/p\/([^/]+)$/.exec(path);
+  if (productMatch) {
+    const r = await redirectToSubdomain(productMatch[1], productMatch[2]);
+    if (r) return r;
+  }
+  const storeMatch = /^\/([a-z0-9]{3,30})$/.exec(path);
+  if (storeMatch) {
+    const r = await redirectToSubdomain(storeMatch[1]);
+    if (r) return r;
+  }
   return serveSpa(c);
 });
 

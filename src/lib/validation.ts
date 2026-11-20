@@ -1,6 +1,9 @@
 // Aturan validasi input (dipakai semua route). Nilai yang lolos di sini saja
 // yang diteruskan ke query D1 — selalu lewat .bind(), tidak pernah interpolasi.
-export const USERNAME_RE = /^[a-z0-9_]{3,30}$/;
+// Username = label subdomain toko (nama.chatourtravel.com): huruf kecil dan
+// angka saja — garis bawah (_) tidak valid di DNS. Dulu underscore diizinkan;
+// tidak ada pengguna lama yang memakainya (diperiksa 2026-11-20).
+export const USERNAME_RE = /^[a-z0-9]{3,30}$/;
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const THEMES = ['chatour', 'emerald', 'ocean', 'sunset', 'rose', 'dark', 'light', 'forest', 'amber', 'sky', 'violet'] as const;
 export const BUTTON_STYLES = ['rounded', 'pill', 'square'] as const;
@@ -17,7 +20,7 @@ export const STORE_STATUSES = ['active', 'suspended'] as const;
 /** Username yang tidak boleh didaftar — route sistem / panel admin. */
 export const RESERVED_USERNAMES = new Set([
   'admin', 'api', 'app', 'www', 'mail', 'dashboard', 'settings', 'products',
-  'login', 'signup', 'support', 'help', 'chatour', 'shoplink',
+  'login', 'signup', 'support', 'help', 'chatour', 'shoplink', 'blog', 'demo',
 ]);
 
 export const MAX_NAME_LEN = 120;

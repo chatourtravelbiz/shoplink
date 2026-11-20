@@ -62,7 +62,7 @@ function domainSection(s) {
     <h2 class="font-bold">Domain Kustom</h2>
     <div id="domain-err"></div>
     <div class="mt-2">${status}</div>
-    <p class="text-sm text-stone-600 mt-1">Alamat tokomu saat ini (tetap jalan sebagai cadangan): <a class="text-red-700 underline" href="/${esc(username)}">chatourtravel.com/${esc(username)}</a></p>
+    <p class="text-sm text-stone-600 mt-1">Alamat tokomu: <a class="text-red-700 underline" href="${storePath(username)}">${esc(username)}.chatourtravel.com</a></p>
     <h3 class="font-semibold text-sm mt-4">Cara memakai domain sendiri — 5 langkah</h3>
     <ol class="list-decimal pl-5 mt-1 space-y-1 text-sm text-stone-700">
       <li><b>Beli domain</b> di Hostinger, Niagahoster, atau Domainesia — mis. <code>tokoku.com</code> atau <code>agen-rahma.com</code>. Pilih nama yang pendek dan mudah diingat.</li>
@@ -90,6 +90,7 @@ export function viewSettings() {
   <main class="max-w-2xl mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold">Pengaturan toko</h1>
     <p class="text-sm text-stone-600 mt-1">Perubahan langsung terlihat di toko publikmu: <a class="text-red-700 underline" href="${storePath(state.session.user.username)}">${storePath(state.session.user.username)}</a></p>
+    ${s.custom_domain ? '' : `<p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2">⏳ Subdomain tokomu sedang disiapkan (maks. beberapa menit) — setelah siap, link di atas bisa dibuka.</p>`}
     <form id="f-settings" class="mt-6 space-y-4 bg-white border border-stone-200 rounded-2xl p-5">
       <div id="err"></div>
       ${field('Nama toko *', `<input required name="store_name" value="${esc(s.store_name || '')}" class="${inputCls}" />`)}

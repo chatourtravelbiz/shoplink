@@ -1,7 +1,7 @@
 // Admin platform — /admin. Data hanya dari /api/admin/* (RBAC di server);
 // tampilan di sini hanya menyembunyikan tombol yang memang tidak boleh dipakai.
 import { api, state } from '../api.js';
-import { esc, priceLabel, rupiah, STATUS_LABEL } from '../utils.js';
+import { esc, priceLabel, rupiah, STATUS_LABEL, storePath } from '../utils.js';
 import { bindPasswordForm, errorBox, passwordForm, setBusy, topbar } from '../ui.js';
 
 const ROLES = ['super_admin', 'admin', 'moderator', 'support', 'merchant'];
@@ -96,7 +96,7 @@ function storesTable(stores) {
   const canDelete = ['super_admin', 'admin'].includes(roleOf());
   const canDomain = ['super_admin', 'admin'].includes(roleOf());
   const rows = stores.map((s) => `<tr class="border-t border-stone-100 align-top">
-    <td class="py-2 pr-2 pl-4"><div class="font-semibold">${esc(s.store_name)}</div><div class="text-xs text-stone-500">@${esc(s.username)} · ${esc(s.email)}</div><a href="/${esc(s.username)}" class="text-xs text-red-700 underline">chatourtravel.com/${esc(s.username)}</a></td>
+    <td class="py-2 pr-2 pl-4"><div class="font-semibold">${esc(s.store_name)}</div><div class="text-xs text-stone-500">@${esc(s.username)} · ${esc(s.email)}</div><a href="${storePath(s.username)}" class="text-xs text-red-700 underline">${esc(s.username)}.chatourtravel.com</a></td>
     <td class="py-2 pr-2">${s.status === 'suspended'
       ? '<span class="px-2 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-semibold">Suspended</span>'
       : '<span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">Aktif</span>'}</td>
@@ -119,13 +119,13 @@ function storesTable(stores) {
       </div>` : ''}</td>
     <td class="py-2 text-right whitespace-nowrap">
       ${canSuspend ? `<button data-action="admin-toggle-store" data-id="${esc(s.username)}" data-status="${esc(s.status)}" class="px-3 py-1 rounded-lg bg-white border text-sm">${s.status === 'suspended' ? 'Aktifkan' : 'Suspend'}</button>` : ''}
-      <a href="/${esc(s.username)}" class="px-3 py-1 rounded-lg bg-white border text-sm inline-block">Lihat</a>
+      <a href="${storePath(s.username)}" class="px-3 py-1 rounded-lg bg-white border text-sm inline-block">Lihat</a>
       ${canDelete ? `<button data-action="admin-delete-store" data-id="${esc(s.username)}" class="px-3 py-1 rounded-lg bg-rose-50 text-rose-700 text-sm">Hapus</button>` : ''}
     </td>
   </tr>`).join('');
   return `<div class="bg-white border border-stone-200 rounded-2xl overflow-x-auto"><table class="w-full text-sm min-w-[720px]"><thead><tr class="text-left text-stone-500"><th class="py-2 pr-2 pl-4">Toko</th><th class="py-2 pr-2">Status</th><th class="py-2 pr-2">Domain Kustom</th><th></th></tr></thead><tbody>${rows || '<tr><td class="py-6 text-center text-stone-500" colspan="4">Belum ada toko.</td></tr>'}</tbody></table></div>
   <div id="domain-panel" class="mt-4"></div>
-  <p class="text-xs text-stone-500 mt-2">Toko yang di-suspend tidak tampil di storefront publik dan tidak bisa menerima order. Domain kustom hanya bisa dipasang Super Admin / Admin; alamat chatourtravel.com/:username tetap jalan sebagai cadangan.</p>`;
+  <p class="text-xs text-stone-500 mt-2">Toko yang di-suspend tidak tampil di storefront publik dan tidak bisa menerima order. Domain kustom hanya bisa dipasang Super Admin / Admin. Alamat platform tiap toko adalah subdomain nama.chatourtravel.com (dipasang otomatis saat agen daftar).</p>`;
 }
 
 /** Panel instruksi DNS + status untuk satu domain kustom. */
@@ -142,7 +142,7 @@ export function showDomainDns(username, domain, check) {
     <tbody><tr class="border-t"><td class="px-3 py-2 font-mono">CNAME</td><td class="px-3 py-2 font-mono">@</td><td class="px-3 py-2 font-mono">shoplink-d1.chatourtravelbiz.workers.dev</td></tr></tbody></table></div>
     <p class="text-xs text-stone-500 mt-2">Untuk subdomain (mis. toko.agenku.com), isi Nama/Host dengan <code>toko</code> saja. Bila penyedia DNS tidak menerima CNAME di @, pakai CNAME di <code>www</code>, lalu pasang juga hostname <code>www</code>-nya di Cloudflare.</p>
     <p class="text-sm text-stone-600 mt-3">Langkah 2 — <b>manual, oleh Muse</b>: aktifkan domain di Cloudflare (Workers Custom Domains). Setelah itu domain baru melayani toko.</p>
-    <p class="text-sm text-stone-600 mt-1">Langkah 3 — tekan tombol di bawah untuk memeriksa apakah domain sudah menampilkan toko ini. Alamat lama <a class="text-red-700 underline" href="/${esc(username)}">chatourtravel.com/${esc(username)}</a> tetap jalan.</p>
+    <p class="text-sm text-stone-600 mt-1">Langkah 3 — tekan tombol di bawah untuk memeriksa apakah domain sudah menampilkan toko ini. Alamat platform toko ini: <a class="text-red-700 underline" href="${storePath(username)}">${esc(username)}.chatourtravel.com</a>.</p>
     ${statusHtml}
     <div class="flex gap-2 mt-3"><button data-action="admin-domain-check" data-id="${esc(username)}" class="px-4 py-2 rounded-xl bg-red-700 text-white text-sm font-semibold">Periksa Status</button></div>
   </div>`;
@@ -164,7 +164,7 @@ export async function adminSaveDomain(username, render) {
 }
 
 export async function adminRemoveDomain(username, render) {
-  if (!window.confirm(`Lepas domain kustom dari toko @${username}? Toko tetap jalan di chatourtravel.com/${username}.`)) return;
+  if (!window.confirm(`Lepas domain kustom dari toko @${username}? Toko tetap jalan di ${username}.chatourtravel.com.`)) return;
   const errEl = document.getElementById('admin-err');
   try {
     await api(`/api/admin/stores/${username}/custom-domain`, { method: 'DELETE' });

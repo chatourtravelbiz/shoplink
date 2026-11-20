@@ -39,14 +39,15 @@ export function go(path) {
   window.dispatchEvent(new Event('popstate'));
 }
 
-/** Path toko/produk: di host custom domain agen (window.__CUSTOM_STORE__)
-    pakai bentuk pendek / dan /p/:id; di domain utama pakai /:username(/p/:id).
-    Mencegah URL /:username/p/:id muncul di subdomain agen. */
+/** URL toko/produk: di host tokonya sendiri (window.__CUSTOM_STORE__)
+    pakai bentuk pendek / dan /p/:id; dari mana pun yang lain pakai alamat
+    subdomain toko: https://nama.chatourtravel.com(/p/:id). Toko di
+    chatourtravel.com/:username sudah dihapus (dialihkan 301 ke subdomain). */
 export function storePath(username, productId) {
   if (typeof window !== 'undefined' && window.__CUSTOM_STORE__ && window.__CUSTOM_STORE__ === username) {
     return productId ? `/p/${productId}` : '/';
   }
-  return productId ? `/${username}/p/${productId}` : `/${username}`;
+  return productId ? `https://${username}.chatourtravel.com/p/${productId}` : `https://${username}.chatourtravel.com/`;
 }
 
 /** Toggle lihat/sembunyikan password pada field di sekitar tombol. */

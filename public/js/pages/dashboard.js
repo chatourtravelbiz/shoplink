@@ -61,11 +61,12 @@ export async function viewDashboard() {
   // Nama toko ditampilkan apa adanya (tanpa awalan "Toko") — nama toko
   // sudah bisa mengandung kata "Toko" sendiri (mis. "Toko Demo"), dan
   // awalan itu membuat dashboard menulis "Toko Toko Demo". Tautan memakai
-  // domain kustom bila ada, kalau tidak chatourtravel.com/:username.
+  // domain kustom bila ada, kalau tidak subdomain platform nama.chatourtravel.com
+  // (alamat chatourtravel.com/:username sudah dihapus).
   const storeHref = store.custom_domain
     ? `https://${store.custom_domain}`
-    : `https://chatourtravel.com/${state.session.user.username}`;
-  const storeLabel = store.custom_domain || `chatourtravel.com/${state.session.user.username}`;
+    : `https://${state.session.user.username}.chatourtravel.com/`;
+  const storeLabel = store.custom_domain || `${state.session.user.username}.chatourtravel.com`;
   return `${topbar('dashboard')}
   <main class="max-w-5xl mx-auto px-4 py-8">
     <div class="flex flex-wrap items-end justify-between gap-3">
