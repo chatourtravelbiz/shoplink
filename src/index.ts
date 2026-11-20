@@ -44,6 +44,12 @@ function isMainHost(host: string): boolean {
 
 app.use(async (c, next) => {
   const host = new URL(c.req.url).hostname;
+  // www.chatourtravel.com -> domain utama (301, sebelum route lain).
+  if (host.toLowerCase() === 'www.chatourtravel.com') {
+    const url = new URL(c.req.url);
+    url.hostname = 'chatourtravel.com';
+    return c.redirect(url.toString(), 301);
+  }
   const ownSubdomain = host.toLowerCase().endsWith('.chatourtravel.com');
   if (!isMainHost(host) || ownSubdomain) {
     try {
@@ -106,12 +112,6 @@ app.notFound(async (c) => {
     return c.json({ error: 'Tidak ditemukan.' }, 404);
   }
   const host = new URL(c.req.url).hostname.toLowerCase();
-  // www.chatourtravel.com -> domain utama (301).
-  if (host === 'www.chatourtravel.com') {
-    const url = new URL(c.req.url);
-    url.hostname = 'chatourtravel.com';
-    return c.redirect(url.toString(), 301);
-  }
   const customStore = c.get('customStore');
   // /demo pindah permanen ke demo.chatourtravel.com (301; query dipertahankan,
   // mis. /demo/p/:id?done=1&wa=... dari alur order). Berlaku juga bila path
